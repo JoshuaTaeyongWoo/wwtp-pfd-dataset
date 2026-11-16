@@ -33,6 +33,12 @@ indexes and APIs (Europe PMC, the PMC Open Access bucket on AWS, OpenAlex, Media
 operator web pages). No access controls are circumvented. The Wikimedia collector requires a contact URL
 (`--contact`), as the Wikimedia User-Agent policy asks; this repository URL is used for that purpose.
 
+## Licence
+
+The code in this repository is released under the MIT License (see `LICENSE`). The dataset itself is not part of
+this repository; when released, its redistributable subset will carry the licences of the source images (CC0,
+CC BY, CC BY-SA, public domain, patent drawings) with per-image attribution in the provenance records.
+
 ## Contact
 
 Questions about the collector or the dataset, including requests from site operators about the crawler, can be
