@@ -479,3 +479,11 @@ main의 약 1/4(EPA 64, OpenAlex 109; 크기 h > 1400 px, 종횡비 1.25~1.5)은
 ## 12. 파일럿 표본 — `s15_pilot_sample.py`
 
 설계안 §5.1의 60장 파일럿 표본. `python s15_pilot_sample.py` 로 1차 추출(seed 20261116, 출처별 제곱근 배분, 문서당 1장, 출처마다 비영문 ≥ 1, 카테고리 분산) → 접촉 시트(`data/pilot/sheets/`)에서 양식 A~E를 눈으로 판정해 `visual_form_prelim_draw1.csv`에 적음 → `--prelim` 옵션으로 재실행하면 페이지 렌더(E) 항목을 같은 출처·카테고리·언어의 그림 크기 이미지로 교체하고 `replacements.json`에 기록. 산출물: `data/pilot/pilot60.csv`(record_id ↔ pilot_no ↔ 잠정 양식), `images/pilot_NN__*.ext`(CVAT 업로드용), `allocation.md`(배분·양식 분포·페이지 렌더 비율 메모). 데이터 폴더는 git에 올리지 않으므로 같은 seed로 재실행하면 동일 표본이 나온다.
+
+## 13. 파일럿 어노테이션 패키지 — `annotation/`, `s17_pilot_agreement.py`
+
+- `annotation/classes.yaml`: 체계 v1.1의 기계용 정의(L2 33 + 예비 7 + 연결 8, 속성 어휘와 T1/T2/T3 층, QSDsan·GPS-X·SUMO·BSM·DEXPI·ISO·KDS 매핑, 엣지 스키마).
+- `annotation/label_studio_config.xml`: Label Studio 라벨 설정(박스 41종, perRegion 속성, 관계 라벨 `medium|direction_confidence`·`parent_of`). `annotation/cvat_labels.json` → `python s17_pilot_agreement.py --expand-cvat …` 로 CVAT용 전개본(`cvat_labels_expanded.json`).
+- `docs/annotation_guideline_v1.md`: 어노테이터 규칙서(클래스 표, 판별 규칙 22개, 엣지 기록법, 자주 틀리는 것).
+- `annotation/README_pilot.md`: 설치·프로젝트 생성·교육·내보내기·일치도 계산 절차.
+- `s17_pilot_agreement.py`: 두 어노테이터의 Label Studio 내보내기에서 κ(L2/L1)·IoU·누락·엣지 F1·클래스별 κ·부트스트랩 CI를 계산.

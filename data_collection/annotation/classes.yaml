@@ -1,0 +1,497 @@
+# WWTP process-diagram annotation taxonomy — machine-readable form of
+# data_collection/docs/annotation_taxonomy_plan.md §4 (v1.1, frozen as git tag taxonomy-v1.1).
+# Every entry cites evidence_ledger.md IDs. Tools (Label Studio / CVAT configs, evaluation
+# scripts, simulator export) read this file; the Markdown plan stays the human-readable source.
+
+meta:
+  version: "1.1"
+  frozen_tag: taxonomy-v1.1
+  frozen_commit: 03f3d10
+  date: 2026-11-16
+  min_instances: {train: 50, eval: 20}          # P3 ② activation threshold for classes
+  l3_promotion_instances: 150                   # optional L3 becomes an evaluation class above this
+  evaluation_fields: T1                          # only tier-1 fields define the benchmark (§4.5b)
+
+l1:
+  - {id: preliminary,  ko: 전처리}
+  - {id: primary,      ko: 1차 처리}
+  - {id: separation,   ko: 분리(위치 무관)}
+  - {id: secondary,    ko: 생물학적 처리}
+  - {id: sidestream,   ko: 반류수 처리}
+  - {id: tertiary,     ko: 고도 처리·소독}
+  - {id: sludge,       ko: 슬러지 처리}
+  - {id: ancillary,    ko: 부대 설비}
+  - {id: generic,      ko: 종류 미상}
+  - {id: annotation,   ko: 연결·주석}
+
+# ---------------------------------------------------------------------------------------------
+# L2 unit-process classes (33 = 31 + 2 generic). Fields:
+#   ko, l1, definition, aliases (EN/KO, used for OCR normalisation), l3 {required|optional: [...]},
+#   cues (visual), position_free, mapping {qsdsan_unit, gpsx_unit, sumo_unit, bsm_unit,
+#   dexpi_parent, iso10628_group, kds61_term}, multi_unit, evidence, expected_freq (high/mid/low)
+# ---------------------------------------------------------------------------------------------
+classes:
+  screen:
+    ko: 스크린
+    l1: preliminary
+    definition: Coarse, fine, drum or step screens at the plant inlet; comminutors/grinders are aliases.
+    aliases: [bar screen, fine screen, drum screen, step screen, comminutor, grinder, 스크린, 세목스크린, 조목스크린]
+    cues: [comb or grid pattern]
+    mapping: {qsdsan_unit: null, gpsx_unit: Screen, sumo_unit: null, bsm_unit: null, dexpi_parent: Filter, iso10628_group: "7 screening devices", kds61_term: 스크린}
+    evidence: [S-01, S-03, B2-14]
+    expected_freq: mid
+
+  grit_chamber:
+    ko: 침사지
+    l1: preliminary
+    definition: Grit removal channel or tank, aerated or vortex; sits before the primary clarifier.
+    aliases: [grit removal, aerated grit chamber, vortex grit, 침사지, 포기식 침사지, 침사스크린조]
+    cues: [long channel-shaped box]
+    mapping: {qsdsan_unit: null, gpsx_unit: Grit Chamber, sumo_unit: null, bsm_unit: null, dexpi_parent: Separator(ext), iso10628_group: "8 separators", kds61_term: 침사지}
+    evidence: [S-03, B2-14]
+    expected_freq: mid
+
+  equalization_tank:
+    ko: 유량조정조
+    l1: preliminary
+    position_free: true
+    definition: Tank that evens out flow or load; storm, detention and buffer tanks included. Korean textbooks also place it after secondary settling.
+    aliases: [equalization basin, flow equalization, buffer tank, storm tank, detention tank, 유량조정조, 완충조]
+    cues: [large tank with a liquid level]
+    mapping: {qsdsan_unit: null, gpsx_unit: Equalization Tank, sumo_unit: null, bsm_unit: storage, dexpi_parent: Tank, iso10628_group: "1 vessels and tanks", kds61_term: 유량조정조}
+    evidence: [B-28, K-03]
+    expected_freq: mid
+
+  pump_station:
+    ko: 펌프장
+    l1: preliminary
+    position_free: true
+    definition: Wet well with several pumps (influent, intermediate, effluent or return pump station). A single pump symbol is `pump`. Korean "유입펌프장" boxes that contain screen/grit are parents of those children.
+    aliases: [pumping station, wet well, lift station, 유입펌프장, 중계펌프장, 방류펌프장]
+    cues: [pump circle plus a sump]
+    mapping: {qsdsan_unit: null, gpsx_unit: Pumping Station, sumo_unit: null, bsm_unit: null, dexpi_parent: Pump, iso10628_group: "15 liquid pumps", kds61_term: 펌프장시설}
+    evidence: [B-28, B2-14]
+    expected_freq: mid
+
+  primary_clarifier:
+    ko: 1차 침전지
+    l1: primary
+    definition: Primary sedimentation tank upstream of the biological stage; sludge goes to the sludge line, no RAS line.
+    aliases: [primary sedimentation tank, primary settler, primary settling tank, PST, 일차침전지, 최초침전지, 초침]
+    l3: {optional: [imhoff_septic]}
+    attributes: [clarifier_shape, primary_enhancement]
+    cues: [cone bottom or trapezoid section, sludge line only]
+    mapping: {qsdsan_unit: PrimaryClarifier, gpsx_unit: Primary Clarifier, sumo_unit: Primary clarifier, bsm_unit: primary clarifier, dexpi_parent: Separator(ext), iso10628_group: "8 separators", kds61_term: 일차침전지}
+    multi_unit_note: imhoff_septic -> [primary_clarifier, digester]
+    evidence: [S-04, B-25, B2-03, B2-13, B2-22]
+    expected_freq: mid
+
+  flotation_unit:
+    ko: 부상조
+    l1: separation
+    position_free: true
+    definition: Dissolved-air flotation or other flotation separator; used for primary treatment, secondary separation, tertiary phosphorus removal or sludge thickening (attribute `function`).
+    aliases: [DAF, dissolved air flotation, flotation thickener, 부상조, 부상분리조, 부상식 농축조, 총인처리 부상조]
+    attributes: [function]
+    cues: [bubbles or foam drawn]
+    mapping: {qsdsan_unit: null, gpsx_unit: DAF, sumo_unit: null, bsm_unit: null, dexpi_parent: Separator(ext), iso10628_group: "8 separators", kds61_term: 부상식 농축조}
+    evidence: [B-09, K-05, B2-22]
+    expected_freq: mid
+
+  chemical_treatment_unit:
+    ko: 약품 처리조
+    l1: separation
+    position_free: true
+    definition: Rapid-mix, flocculation or chemical precipitation TANK drawn as a unit. Dosing arrows are edges (rule 6), not this class. Lime stabilisation of sludge is this class with treatment_line=sludge.
+    aliases: [coagulation tank, flocculation tank, rapid mix, chemical precipitation, 급속교반조, 완속교반조, 응집조, 혼화조(약품)]
+    attributes: [mixing_stage]
+    cues: [mixer plus chemical tank]
+    mapping: {qsdsan_unit: null, gpsx_unit: Chemical Dosage, sumo_unit: null, bsm_unit: input model, dexpi_parent: Vessel, iso10628_group: "12/28 mixers", kds61_term: 약품처리}
+    evidence: [B-08, K-05]
+    expected_freq: mid
+
+  aerobic_zone:
+    ko: 호기조(포기조)
+    l1: secondary
+    definition: Aerated activated-sludge zone. Oxidation ditches/Carrousel/Orbal are one box with is_loop_reactor=true (rule 22). High-purity-oxygen covered reactors use aeration_mode=hpo. Swing zones use zone_role=swing.
+    aliases: [aeration tank, aeration basin, aerator, aerobic reactor, oxic tank, oxidation ditch, Deep Shaft, swing zone, 포기조, 폭기조, 호기조, 산화구, 생물반응조(호기), 활성오니조, 공기공급조]
+    attributes: [zone_role, aeration_mode, operation_mode, biomass_form, n_pathway, is_loop_reactor, n_compartments]
+    cues: [bubbles, diffuser rows, surface aerator]
+    mapping: {qsdsan_unit: CSTR, gpsx_unit: CSTR aerobic / Oxidation Ditch, sumo_unit: CSTR, bsm_unit: aerobic CSTR, dexpi_parent: Vessel, iso10628_group: "1 vessels and tanks", kds61_term: 포기조}
+    evidence: [B-05, B-06, B-07, B-27, B2-03, B2-20, B2-23]
+    expected_freq: high
+
+  anoxic_zone:
+    ko: 무산소조
+    l1: secondary
+    definition: Denitrification zone (nitrate present, no O2); pre-anoxic (receives a-recycle or RAS), RAS-only pre-anoxic (JHB, zone_role=underflow_anoxic) or post-anoxic (Bardenpho, zone_role=post_anoxic, external carbon dosing is the cue).
+    aliases: [anoxic tank, anoxic reactor, denitrification tank, pre-anoxic, post-anoxic, 무산소조, 탈질조]
+    attributes: [zone_role, aeration_mode, operation_mode, biomass_form, n_pathway, n_compartments]
+    cues: [mixer only, nitrate recycle (a) or RAS entering]
+    mapping: {qsdsan_unit: CSTR, gpsx_unit: Anoxic CSTR, sumo_unit: CSTR, bsm_unit: anoxic CSTR, dexpi_parent: Vessel, iso10628_group: "1 vessels and tanks", kds61_term: 무산소조}
+    evidence: [B-04, B-05, B-06]
+    expected_freq: high
+
+  anaerobic_zone:
+    ko: 혐기조
+    l1: secondary
+    definition: EBPR phosphorus-release zone (no O2, no nitrate); RAS-fed P-stripper uses zone_role=stripper. First mixed zone receiving influent, followed by another mixed zone (rule 1 decision table).
+    aliases: [anaerobic tank, anaerobic selector, P-release zone, 혐기조, 혐기성조(활성슬러지)]
+    attributes: [zone_role, aeration_mode, operation_mode, biomass_form, n_compartments]
+    cues: [mixer only, first in the train, another mixed zone follows]
+    mapping: {qsdsan_unit: CSTR, gpsx_unit: CSTR (anaerobic), sumo_unit: CSTR, bsm_unit: null, dexpi_parent: Vessel, iso10628_group: "1 vessels and tanks", kds61_term: 혐기조}
+    evidence: [B-04, B-06, B-15, B2-23]
+    expected_freq: mid
+
+  secondary_clarifier:
+    ko: 2차 침전지
+    l1: secondary
+    definition: Final settling tank downstream of a biological stage, incl. humus tanks, intermediate clarifiers between two biological stages (clarifier_stage=intermediate) and chemical post-precipitation clarifiers (clarifier_stage=chemical).
+    aliases: [final clarifier, final settling tank, secondary settling tank, SST, final settler, humus tank, 이차침전지, 최종침전지, 종침, 침전조]
+    attributes: [clarifier_shape, clarifier_stage]
+    cues: [cone bottom, RAS line returning upstream]
+    mapping: {qsdsan_unit: FlatBottomCircularClarifier, gpsx_unit: Secondary Clarifier, sumo_unit: Clarifier, bsm_unit: secondary clarifier, dexpi_parent: Separator(ext), iso10628_group: "8 separators", kds61_term: 이차침전지}
+    evidence: [B-25, B-26, B2-06]
+    expected_freq: high
+
+  mbr_unit:
+    ko: 막분리 생물반응조(막조)
+    l1: secondary
+    definition: Membrane module/tank (immersed or sidestream) that receives mixed liquor and returns sludge to the bioreactor. Bioreactor zones are labelled separately; a lone "MBR" box gets multi_unit=[aerobic_zone, mbr_unit].
+    aliases: [membrane bioreactor, MBR, membrane tank, iMBR, sMBR, 막분리조, 막조, MBR조]
+    attributes: [mbr_config]
+    cues: [membrane cassette comb pattern]
+    mapping: {qsdsan_unit: MembraneBioreactor, gpsx_unit: MBR, sumo_unit: MBR, bsm_unit: null, dexpi_parent: Filter, iso10628_group: "6 filters", kds61_term: 막분리활성슬러지법}
+    evidence: [B-32, B2-04]
+    expected_freq: high
+
+  sbr_tank:
+    ko: 연속회분식 반응조
+    l1: secondary
+    definition: Sequencing batch reactor (fill/react/settle/decant in one tank). Multi-panel phase drawings: one unit per panel with panel_phase. Granular (Nereda-type) SBR uses biomass_form=granular.
+    aliases: [sequencing batch reactor, SBR, 연속회분식반응조, 회분식 반응조, SBR조]
+    attributes: [operation_mode, panel_phase, biomass_form]
+    cues: [water-level marks, decanter]
+    mapping: {qsdsan_unit: null, gpsx_unit: SBR, sumo_unit: SBR, bsm_unit: null, dexpi_parent: Vessel, iso10628_group: "1 vessels and tanks", kds61_term: 연속회분활성슬러지법}
+    evidence: [B-16, B2-04, B2-23]
+    expected_freq: mid
+
+  biofilm_reactor:
+    ko: 생물막 반응기
+    l1: secondary
+    position_free: true
+    definition: Attached-growth reactor. L3 is REQUIRED. Whole tank filled with carriers = one box; a carrier cage or MABR cassette drawn inside an aeration tank = child of aerobic_zone (rule 13).
+    aliases: [trickling filter, RBC, rotating biological contactor, BAF, biological aerated filter, submerged biofilter, contact oxidation, MBBR, IFAS, moving bed, fluidized bed, MABR, denitrification filter, 살수여상, 회전원판법, 생물여과, 접촉산화조, 담체 반응조, 유동상, 탈질여과]
+    l3:
+      required: [trickling_filter, rbc, submerged_biofilter, mbbr_ifas, fluidized_expanded_bed, mabr]
+    attributes: [redox_condition, aeration_mode]
+    cues: [media, carriers, discs, three-phase separator]
+    mapping: {qsdsan_unit: null, gpsx_unit: TF / BAF / RBC / IFAS-MBBR, sumo_unit: MBBR / TF, bsm_unit: null, dexpi_parent: Vessel, iso10628_group: "1 vessels and tanks / 6 filters", kds61_term: 부착미생물 처리}
+    evidence: [B-10, D-04, B2-07, B2-10, B2-13, B2-20]
+    expected_freq: mid
+
+  anaerobic_wastewater_reactor:
+    ko: 혐기성 폐수 반응기
+    l1: secondary
+    position_free: true
+    definition: High-rate anaerobic reactor treating wastewater (not sludge); allowed as pre-treatment before activated sludge. L3 required. UASB/IC box maps to several simulator units (multi_unit).
+    aliases: [UASB, EGSB, IC reactor, anaerobic filter, anaerobic contact process, anaerobic baffled reactor, ABR, AnMBR, anaerobic MBR, 혐기성 반응조(폐수), UASB 반응조]
+    l3:
+      required: [uasb_egsb_ic, anaerobic_filter, anaerobic_contact, anaerobic_cstr, abr, anaerobic_mbr]
+    cues: [upflow, gas-liquid-solid separator, gas dome, biogas line]
+    mapping: {qsdsan_unit: AnaerobicCSTR / AnaerobicBaffledReactor / AnMBR, gpsx_unit: UASB, sumo_unit: null, bsm_unit: null, dexpi_parent: Vessel, iso10628_group: "1 vessels and tanks", kds61_term: 혐기성 처리시설}
+    multi_unit: [primary_clarifier, reactor, secondary_clarifier, digester]
+    evidence: [B-06, B-11, B-12, B2-11, B2-17]
+    expected_freq: mid
+
+  pond_lagoon_wetland:
+    ko: 연못·라군·인공습지
+    l1: secondary
+    definition: Stabilisation pond, lagoon or constructed wetland (natural systems).
+    aliases: [lagoon, stabilization pond, oxidation pond, aerated lagoon, facultative pond, maturation pond, constructed wetland, 산화지, 안정화지, 라군, 인공습지, 자연정화시설]
+    attributes: [pond_type]
+    cues: [plants, earth section]
+    mapping: {qsdsan_unit: null, gpsx_unit: lagoon, sumo_unit: null, bsm_unit: null, dexpi_parent: Vessel, iso10628_group: "1 vessels and tanks", kds61_term: null}
+    evidence: [B-27, B2-07, B2-10, B2-23]
+    expected_freq: low
+
+  sidestream_reactor:
+    ko: 반류수 처리 반응기
+    l1: sidestream
+    definition: Biological reactor whose only feed is reject water/centrate/supernatant from the sludge line (rule 20). Shape is not a criterion.
+    aliases: [sidestream treatment, plant recycle flow treatment, SHARON, anammox reactor, DEMON, CANON, ANITA-Mox, BABE, 반류수 처리, 반류수 처리시설]
+    l3:
+      optional: [nitritation_denitritation, deammonification_anammox, bioaugmentation, nutrient_recovery]
+    attributes: [n_pathway, operation_mode]
+    cues: [feed line comes from dewatering or digester]
+    mapping: {qsdsan_unit: CSTR, gpsx_unit: null, sumo_unit: null, bsm_unit: null, dexpi_parent: Vessel, iso10628_group: "1 vessels and tanks", kds61_term: 반류수 처리}
+    evidence: [B-13, D-04, B2-01, B2-08, B2-17]
+    expected_freq: low
+
+  filtration_unit:
+    ko: 여과
+    l1: tertiary
+    definition: Tertiary depth/surface filter (sand, media, disc, cloth, microscreen at tertiary position). Media with an air line or carbon-source line is biofilm_reactor/submerged_biofilter (rule 2).
+    aliases: [sand filter, media filter, disc filter, cloth filter, microscreen, rapid filter, 여과지, 모래여과, 디스크필터, 섬유여과]
+    l3:
+      optional: [activated_carbon]
+    cues: [media bed pattern]
+    mapping: {qsdsan_unit: null, gpsx_unit: Sand/Disc Filter, sumo_unit: null, bsm_unit: null, dexpi_parent: Filter, iso10628_group: "6 filters", kds61_term: 여과시설}
+    evidence: [B-10, B2-07, D-06]
+    expected_freq: mid
+
+  membrane_unit:
+    ko: 막 여과
+    l1: tertiary
+    definition: MF/UF/NF/RO membrane receiving treated effluent (mixed liquor -> mbr_unit).
+    aliases: [ultrafiltration, UF, MF, NF, RO, reverse osmosis, nanofiltration, membrane filtration, 막여과, 역삼투, 정밀여과, 한외여과]
+    attributes: [membrane_type]
+    cues: [cylindrical membrane module]
+    mapping: {qsdsan_unit: null, gpsx_unit: Membrane Filter / RO, sumo_unit: null, bsm_unit: null, dexpi_parent: Filter, iso10628_group: "6 filters", kds61_term: 막여과}
+    evidence: [B-32]
+    expected_freq: mid
+
+  disinfection_unit:
+    ko: 소독
+    l1: tertiary
+    definition: Disinfection (UV, chlorine contact tank, dechlorination, ozone, PAA). Ozone/AOP for micropollutants stays here with purpose=micropollutant until the reserve class is activated.
+    aliases: [UV disinfection, chlorination, chlorine contact tank, dechlorination, ozonation, 소독조, 소독지, 염소접촉조, UV소독조, 오존접촉조]
+    attributes: [disinfectant, purpose, dechlorination]
+    cues: [lamps, contact channel]
+    mapping: {qsdsan_unit: null, gpsx_unit: UV / Chemical Disinfection, sumo_unit: null, bsm_unit: null, dexpi_parent: Vessel, iso10628_group: "1 vessels and tanks", kds61_term: 소독시설}
+    evidence: [B-30, B2-08, B2-13, D-06]
+    expected_freq: mid
+
+  fermenter:
+    ko: 1차 슬러지 발효조
+    l1: sludge
+    definition: Prefermenter producing VFA; fermentate goes to the mainstream anaerobic/anoxic zone (rule 21). Acid-phase digesters feeding a methane digester are digester(acid_phase).
+    aliases: [prefermenter, primary sludge fermenter, VFA fermenter, 발효조, 슬러지발효조, 산발효조(본류 공급)]
+    cues: [digester-like, primary sludge feed, fermentate to bioreactor]
+    mapping: {qsdsan_unit: null, gpsx_unit: null, sumo_unit: null, bsm_unit: null, dexpi_parent: Vessel, iso10628_group: "1 vessels and tanks", kds61_term: null}
+    evidence: [B-14, D-04, B2-10, B2-23]
+    expected_freq: low
+    merge_candidate: digester
+
+  thickener:
+    ko: 농축조
+    l1: sludge
+    definition: Gravity or mechanical thickener (GBT, drum, disc, centrifuge) upstream of the digester; flotation thickening is flotation_unit(function=thickening).
+    aliases: [gravity thickener, gravity belt thickener, GBT, rotary drum thickener, centrifuge thickener, 농축조, 농축지, 중력농축조, 기계농축]
+    cues: [small cone tank on the sludge line, supernatant returned]
+    mapping: {qsdsan_unit: Thickener, gpsx_unit: Thickener, sumo_unit: Thickener, bsm_unit: thickener, dexpi_parent: Separator(ext), iso10628_group: "8 separators / 9 centrifuges", kds61_term: 농축}
+    evidence: [B-28, B2-15]
+    expected_freq: mid
+
+  digester:
+    ko: 소화조
+    l1: sludge
+    definition: Sludge-fed stabilisation reactor (anaerobic, aerobic, ATAD, two-stage); co-digestion feeds use stream_role=co_substrate.
+    aliases: [anaerobic digester, aerobic digester, sludge digester, ATAD, egg-shaped digester, 소화조, 혐기성소화조, 호기성소화조, 제1소화조, 제2소화조(세정조)]
+    attributes: [digester_type, co_digestion]
+    cues: [egg or dome shape, sludge feed, biogas line]
+    mapping: {qsdsan_unit: AnaerobicDigestion / AnaerobicCSTR, gpsx_unit: Anaerobic/Aerobic Digestion, sumo_unit: Digester, bsm_unit: ADM1 digester, dexpi_parent: Vessel, iso10628_group: "1 vessels and tanks", kds61_term: 혐기성 소화}
+    evidence: [B-12, B-29, B2-10, B2-15]
+    expected_freq: mid
+
+  dewatering_unit:
+    ko: 탈수기
+    l1: sludge
+    definition: Centrifuge, belt/screw/filter press, drying beds, reed beds or sludge lagoons downstream of the digester; product is cake.
+    aliases: [centrifuge, belt filter press, screw press, filter press, drying bed, reed bed, sludge lagoon, 탈수기, 원심탈수기, 벨트프레스, 스크류프레스, 건조상]
+    cues: [drum or rollers, downstream of digester, cake out]
+    mapping: {qsdsan_unit: Centrifuge, gpsx_unit: Dewatering, sumo_unit: Dewatering, bsm_unit: dewatering, dexpi_parent: Filter, iso10628_group: "9 centrifuges / 6 filters", kds61_term: 탈수}
+    evidence: [B-28, B2-15]
+    expected_freq: mid
+
+  drying_incineration_unit:
+    ko: 건조·소각·퇴비화
+    l1: sludge
+    definition: Thermal dryer, incinerator, composting, pyrolysis/gasification (final processing of cake). Natural drying beds are dewatering_unit.
+    aliases: [thermal dryer, incinerator, fluidized bed incinerator, multiple hearth, composting, pyrolysis, gasification, 건조기, 소각로, 퇴비화시설, 열분해]
+    attributes: [final_process]
+    cues: [flame, stack]
+    mapping: {qsdsan_unit: null, gpsx_unit: Sludge Drying / Incinerator, sumo_unit: null, bsm_unit: null, dexpi_parent: Vessel, iso10628_group: "1 vessels and tanks", kds61_term: 건조·소각·퇴비화}
+    evidence: [B-29, B2-07, B2-15]
+    expected_freq: low
+    merge_candidate: dewatering_unit
+
+  biogas_unit:
+    ko: 바이오가스 설비
+    l1: sludge
+    definition: Gas holder, flare, CHP engine, boiler, H2S removal or gas upgrading.
+    aliases: [gas holder, flare, CHP, cogeneration, boiler, biogas upgrading, 가스홀더, 소화가스 저장조, 가스탱크, 발전기, 보일러]
+    cues: [spherical holder, engine]
+    mapping: {qsdsan_unit: null, gpsx_unit: null, sumo_unit: null, bsm_unit: gas storage, dexpi_parent: Tank, iso10628_group: "1 vessels and tanks", kds61_term: 소화가스 포집·저장·에너지화}
+    evidence: [B-29, B2-15]
+    expected_freq: low
+    merge_candidate: unknown_equipment
+
+  pump:
+    ko: 펌프
+    l1: ancillary
+    definition: Single pump symbol; chemical dosing pumps are pump + stream_role=chemical_dose.
+    aliases: [pump, 펌프, 이송펌프, 반송펌프, 약품펌프]
+    cues: [circle with triangle]
+    mapping: {qsdsan_unit: Pump, gpsx_unit: Pump, sumo_unit: null, bsm_unit: null, dexpi_parent: Pump, iso10628_group: "15 liquid pumps", kds61_term: 펌프}
+    evidence: [B-28]
+    expected_freq: mid
+
+  blower:
+    ko: 송풍기
+    l1: ancillary
+    definition: Blower, compressor, fan or oxygen generator.
+    aliases: [blower, air compressor, fan, 송풍기, 블로워, 공기압축기]
+    cues: [trapezoid or fan symbol]
+    mapping: {qsdsan_unit: null, gpsx_unit: null, sumo_unit: null, bsm_unit: null, dexpi_parent: Compressor, iso10628_group: "17 blowers/fans", kds61_term: 송풍기}
+    evidence: [B-18, B-19]
+    expected_freq: low
+    merge_candidate: unknown_equipment
+
+  storage_tank:
+    ko: 저류 탱크
+    l1: ancillary
+    position_free: true
+    definition: Tank that only holds effluent, sludge, RAS or chemicals (no process function); treatment_line says which line.
+    aliases: [storage tank, holding tank, sludge storage, sludge holding tank, chemical storage, 저류조, 슬러지저류조, 약품저장조, 처리수조, 여과기 이송조]
+    attributes: [treatment_line]
+    cues: [tank with liquid level]
+    mapping: {qsdsan_unit: null, gpsx_unit: Storage, sumo_unit: null, bsm_unit: storage, dexpi_parent: Tank, iso10628_group: "1 vessels and tanks", kds61_term: 저류조}
+    evidence: [B-28, B2-07, B2-15]
+    expected_freq: mid
+
+  valve:
+    ko: 밸브
+    l1: ancillary
+    definition: Any valve symbol; no sub-types (Theisen's 8 valve classes scored 45-65 AP).
+    aliases: [valve, control valve, gate valve, 밸브]
+    cues: [ISO valve symbol]
+    mapping: {qsdsan_unit: null, gpsx_unit: null, sumo_unit: null, bsm_unit: null, dexpi_parent: Valve, iso10628_group: "valves", kds61_term: 밸브}
+    evidence: [B-18, T-02]
+    expected_freq: low
+    merge_candidate: unknown_equipment
+
+  aerator_mixer_symbol:
+    ko: 산기·교반 기호
+    l1: ancillary
+    definition: Surface aerator, brush, diffuser row or "M" mixer symbol drawn inside a tank; evidence for aeration_mode.
+    aliases: [aerator, diffuser, surface aerator, brush aerator, mixer, agitator, 산기관, 표면포기기, 교반기]
+    cues: [the symbol itself]
+    mapping: {qsdsan_unit: null, gpsx_unit: null, sumo_unit: null, bsm_unit: aeration sub-model, dexpi_parent: Agitator, iso10628_group: "12/28 mixers", kds61_term: 교반장치/산기장치}
+    evidence: [B-19]
+    expected_freq: mid
+
+  process_unit_generic:
+    ko: 공정 단위(종류 미상)
+    l1: generic
+    definition: Process box with no text or only a number (patent "412", Korean "#1~#4"), so even the annotator cannot assign an L2. Text-box diagrams whose text names the unit get the real L2 with visual_form=box (rule 15).
+    aliases: []
+    cues: [rectangle with number or nothing]
+    mapping: {qsdsan_unit: null, gpsx_unit: null, sumo_unit: null, bsm_unit: null, dexpi_parent: null, iso10628_group: null, kds61_term: null}
+    evidence: [B-01, D-01, K-06]
+    expected_freq: mid
+
+  unknown_equipment:
+    ko: 기타 장치
+    l1: generic
+    definition: Any other equipment; label_text is mandatory. Examples - post-aeration cascade, odour scrubber, heat exchanger/boiler, screenings washer, grit classifier, hydrocyclone, chemical make-up tank.
+    aliases: []
+    mapping: {qsdsan_unit: null, gpsx_unit: null, sumo_unit: null, bsm_unit: null, dexpi_parent: null, iso10628_group: null, kds61_term: null}
+    evidence: [T-02, D-07]
+    expected_freq: low
+
+# Reserve L2 classes (plan §4.1b): recorded through the fallback given, activated when instances >= 50
+reserve_classes:
+  granular_sludge_reactor:     {ko: 호기성 입상슬러지 반응조, fallback: "sbr_tank or aerobic_zone + biomass_form=granular/densified", evidence: [B2-04, B2-17, B2-16, B2-19, S-03], caption_count: 16}
+  sludge_conditioning_unit:    {ko: 슬러지 개량(열가수분해), fallback: "chemical conditioning = junction_merge(chemical_dosing_point); THP reactor = process_unit_generic + label_text + treatment_line=sludge", evidence: [B2-07, B2-15, B2-22], caption_count: 7}
+  nutrient_recovery_unit:      {ko: 영양염 회수, fallback: "sidestream_reactor/nutrient_recovery", evidence: [B2-01, B2-08, B2-17, B2-22], caption_count: 4}
+  primary_filter:              {ko: 1차 여과, fallback: "primary_clarifier + primary_enhancement=primary_filter, or filtration_unit + label_text", evidence: [B2-08, B2-17, B2-22], caption_count: 0}
+  adsorption_oxidation_unit:   {ko: 오존·AOP·활성탄 고도처리, fallback: "filtration_unit/activated_carbon; disinfection_unit(disinfectant=ozone|aop, purpose=micropollutant)", evidence: [B2-07, B2-13, B2-16, S-03], caption_count: 31}
+  hydrocyclone:                {ko: 하이드로사이클론, fallback: "unknown_equipment + label_text", evidence: [B2-19], caption_count: 1}
+  odor_control_unit:           {ko: 탈취 설비, fallback: "unknown_equipment + label_text; edge medium=gas, stream_role=off_gas", evidence: [B2-13, B2-07, D-07], caption_count: 12}
+
+# ---------------------------------------------------------------------------------------------
+# Connection / annotation classes (8). Not graph nodes unless stated (plan §4.6).
+# ---------------------------------------------------------------------------------------------
+connection_classes:
+  arrowhead:      {ko: 화살촉, node: false, definition: Arrowhead at the end of a flow line (tight box)., evidence: [T-03]}
+  text_label:     {ko: 텍스트 라벨, node: false, definition: Unit name, zone name or design-value text block (also the name inside a unit box, rule 15)., attributes: [tag_kind_text], evidence: [B-24, K-08]}
+  stream_tag:     {ko: 스트림 태그, node: false, definition: Numbers/IDs attached to a line - stream number, flow, concentration, fraction, loading, quality, hydraulic values., attributes: [tag_kind_stream], evidence: [B-24, K-08]}
+  stream_label:   {ko: 스트림 이름, node: false, definition: Word label on/next to a line (RAS, WAS, a, s, r, reject water); mixed text+number is one stream_label with tag_kind., attributes: [stream_role], evidence: [B-20]}
+  io_terminal:    {ko: 유입·유출 단자, node: true, definition: Plant-boundary arrow tail/head with its text (influent, effluent, external waste in, solids out, chemical source)., attributes: [io_role], evidence: [B-24, B2-15, D-07]}
+  junction_split: {ko: 분기점, node: true, definition: Point where a line splits, or a drawn distribution box/divider (box covers the structure when drawn)., attributes: [split_type], evidence: [B-22, K-03]}
+  junction_merge: {ko: 합류점, node: true, definition: Point where lines merge, incl. chemical dosing points and sidestream returns., attributes: [merge_role], evidence: [B-22, B-24]}
+  instrument:     {ko: 계측·제어, node: optional, definition: Sensor/analyser/controller symbol or tag (DO, NH4, pH, F, L); src/dst of signal edges only., attributes: [measured_variable, instrument_role], evidence: [B-17, T-04, T-05, D-04]}
+
+# ---------------------------------------------------------------------------------------------
+# Attribute vocabularies with tiers (T1 mandatory / T2 only when text states it / T3 optional)
+# ---------------------------------------------------------------------------------------------
+attributes:
+  # --- box level ---
+  visual_form:        {tier: T1, values: [symbol, box, pictorial, simulator_icon, section_view]}
+  label_text:         {tier: T1, type: free_text}
+  confidence:         {tier: T1, values: [certain, inferred_from_text, inferred_from_context]}
+  is_zone:            {tier: T1, type: bool}
+  parent_id:          {tier: T1, type: box_ref, nullable: true}
+  graph_id:           {tier: T1, type: int, default: 1}
+  treatment_line:     {tier: T2, values: [mainstream, sidestream, sludge]}
+  zone_role:          {tier: T2, values: [main, selector, contact, reaeration, deoxygenation, degasifier, underflow_anoxic, post_anoxic, stripper, swing], note: swing is provisional (B2-03 unverified)}
+  aeration_mode:      {tier: T2, values: [diffused, surface, brush, jet, hpo, membrane, mixer_only, none, unknown]}
+  operation_mode:     {tier: T2, values: [continuous, sequencing, alternating, intermittent]}
+  redox_condition:    {tier: T2, values: [aerobic, anoxic, anaerobic, unknown], applies_to: [biofilm_reactor]}
+  clarifier_stage:    {tier: T2, values: [primary, intermediate, secondary, chemical]}
+  clarifier_shape:    {tier: T2, values: [circular, rectangular, vertical_flow, lamella, multi_storey, unknown]}
+  digester_type:      {tier: T2, values: [anaerobic, aerobic, atad, two_stage, acid_phase, thp_fed, unknown]}
+  function:           {tier: T2, values: [primary, secondary_separation, tertiary, thickening], applies_to: [flotation_unit]}
+  n_compartments:     {tier: T2, type: int}
+  n_parallel_lanes:   {tier: T2, type: int}
+  lane_group_id:      {tier: T2, type: int}
+  panel_phase:        {tier: T2, type: free_text}
+  existing_or_new:    {tier: T2, values: [existing, new, unknown]}
+  is_loop_reactor:    {tier: T2, type: bool}
+  mbr_config:         {tier: T3, values: [immersed, sidestream, unknown]}
+  biomass_form:       {tier: T3, values: [floc, granular, densified, unknown]}
+  n_pathway:          {tier: T3, values: [conventional, nitrite_shunt, pdna, anammox, unknown], note: only when caption/labels state it}
+  primary_enhancement: {tier: T3, values: [none, cept, ballasted, primary_filter, unknown]}
+  membrane_type:      {tier: T3, values: [mf, uf, nf, ro, unknown]}
+  pond_type:          {tier: T3, values: [anaerobic, facultative, aerated, maturation, wetland_surface, wetland_subsurface, unknown]}
+  mixing_stage:       {tier: T3, values: [rapid_mix, flocculation, combined, unknown]}
+  disinfectant:       {tier: T3, values: [chlorine, chlorine_dioxide, ozone, uv, paa, aop, other, unknown]}
+  purpose:            {tier: T3, values: [pathogen, micropollutant], applies_to: [disinfection_unit]}
+  dechlorination:     {tier: T3, values: ["true", "false", unknown]}
+  co_digestion:       {tier: T3, values: ["true", "false", unknown]}
+  final_process:      {tier: T3, values: [drying, incineration, composting, pyrolysis_gasification]}
+  standby_count:      {tier: T3, type: int}
+  # --- connection-class attributes ---
+  tag_kind_text:      {tier: T2, values: [name, volume, depth, equipment_count, hrt, spec, material, capacity, patent_number, other]}
+  tag_kind_stream:    {tier: T2, values: [stream_no, flow, fraction, concentration, loading, performance, quality, hydraulic, other]}
+  io_role:            {tier: T1, values: [raw_influent, settled_influent, external_waste_in, effluent, reclaimed_water_out, solids_disposal, biogas_use, off_gas_out, chemical_source, overflow_bypass_out, external_sidestream]}
+  split_type:         {tier: T2, values: [ratio, fraction, pumped, bypass, router_alternating, pacing, unknown]}
+  merge_role:         {tier: T2, values: [step_feed_inlet, sidestream_return, chemical_dosing_point, recycle_return, lane_combiner]}
+  instrument_role:    {tier: T2, values: [sensor, analyser, controller, setpoint]}
+  measured_variable:  {tier: T2, type: free_text}
+  # --- image level ---
+  diagram_style:      {tier: T1, values: [A_box, B_symbol, C_pictorial, D_simulator, E_page, hydraulic_profile]}
+  language:           {tier: T1, values: [en, ko, zh, ja, other, mixed]}
+  n_panels:           {tier: T1, type: int, default: 1}
+  process_configuration:
+    tier: T2
+    values: [cas, cmas, csas, eaas, hpoas, sfas, step_feed, contact_stabilization, extended_aeration, oxidation_ditch, deep_shaft, mle, ao, a2o, uct, muct, vip, bardenpho_4, bardenpho_5, jhb, sbr, mbr, ifas, mbbr, ags, uasb_as, tf, rbc, baf, contact_oxidation, unknown]
+    free_text: true
+    korean_series: [A2O 계열, SBR 계열, 담체 계열, MBR 계열, 기타]
+
+# ---------------------------------------------------------------------------------------------
+# Graph ground truth (plan §4.6): edges between leaf nodes
+# ---------------------------------------------------------------------------------------------
+edge_schema:
+  fields: [id, src, dst, medium, stream_role, split_fraction, direction_confidence, line_style, evidence, polyline]
+  medium:               [liquid, mixed_liquor, sludge, gas, air, chemical, solid, signal]
+  stream_role:          [influent, settled_influent, effluent, reclaimed_water, mixed_liquor, internal_recycle_a, ras_s, r_recycle, effluent_recirculation_qr, was, scum, primary_sludge, thickened_sludge, digested_sludge, dewatered_cake, chemical_sludge, screenings_grit, fermentate, co_substrate, sidestream_return, backwash_return, bypass, overflow, step_feed, biogas, off_gas, air_supply, oxygen, chemical_dose, carbon_source, signal]
+  direction_confidence: [arrowhead, inferred, ambiguous]
+  line_style:           [solid, dashed, dotted, unknown]
+  tier: {src: T1, dst: T1, medium: T1, direction_confidence: T1, stream_role: T2, split_fraction: T2, line_style: T2, evidence: T2, polyline: T3}
+  rules:
+    - splits and merges always go through a junction node
+    - adjacent zones are connected by an inferred edge even without a drawn line
+    - edge endpoints are leaf nodes (zone if zones exist, else the tank)
+    - point-class boxes: junction side = max(12 px, 2 % of the shorter image side); drawn distribution boxes keep their outline

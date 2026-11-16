@@ -1,0 +1,2934 @@
+[
+ {
+  "name": "screen",
+  "color": "#1f77b4",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "grit_chamber",
+  "color": "#1f77b4",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "equalization_tank",
+  "color": "#1f77b4",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "pump_station",
+  "color": "#1f77b4",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "primary_clarifier",
+  "color": "#8c564b",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "clarifier_stage",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "primary",
+     "intermediate",
+     "secondary",
+     "chemical"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "clarifier_shape",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "circular",
+     "rectangular",
+     "vertical_flow",
+     "lamella",
+     "multi_storey"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "flotation_unit",
+  "color": "#8c564b",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "function",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "primary",
+     "secondary_separation",
+     "tertiary",
+     "thickening"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "chemical_treatment_unit",
+  "color": "#8c564b",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "aerobic_zone",
+  "color": "#2ca02c",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "zone_role",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "main",
+     "selector",
+     "contact",
+     "reaeration",
+     "deoxygenation",
+     "degasifier",
+     "underflow_anoxic",
+     "post_anoxic",
+     "stripper",
+     "swing"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "aeration_mode",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "diffused",
+     "surface",
+     "brush",
+     "jet",
+     "hpo",
+     "membrane",
+     "mixer_only",
+     "none"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "operation_mode",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "continuous",
+     "sequencing",
+     "alternating",
+     "intermittent"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "n_compartments",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "anoxic_zone",
+  "color": "#2ca02c",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "zone_role",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "main",
+     "selector",
+     "contact",
+     "reaeration",
+     "deoxygenation",
+     "degasifier",
+     "underflow_anoxic",
+     "post_anoxic",
+     "stripper",
+     "swing"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "aeration_mode",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "diffused",
+     "surface",
+     "brush",
+     "jet",
+     "hpo",
+     "membrane",
+     "mixer_only",
+     "none"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "operation_mode",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "continuous",
+     "sequencing",
+     "alternating",
+     "intermittent"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "n_compartments",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "anaerobic_zone",
+  "color": "#2ca02c",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "zone_role",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "main",
+     "selector",
+     "contact",
+     "reaeration",
+     "deoxygenation",
+     "degasifier",
+     "underflow_anoxic",
+     "post_anoxic",
+     "stripper",
+     "swing"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "aeration_mode",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "diffused",
+     "surface",
+     "brush",
+     "jet",
+     "hpo",
+     "membrane",
+     "mixer_only",
+     "none"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "operation_mode",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "continuous",
+     "sequencing",
+     "alternating",
+     "intermittent"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "n_compartments",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "secondary_clarifier",
+  "color": "#2ca02c",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "clarifier_stage",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "primary",
+     "intermediate",
+     "secondary",
+     "chemical"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "clarifier_shape",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "circular",
+     "rectangular",
+     "vertical_flow",
+     "lamella",
+     "multi_storey"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "mbr_unit",
+  "color": "#2ca02c",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "sbr_tank",
+  "color": "#2ca02c",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "zone_role",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "main",
+     "selector",
+     "contact",
+     "reaeration",
+     "deoxygenation",
+     "degasifier",
+     "underflow_anoxic",
+     "post_anoxic",
+     "stripper",
+     "swing"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "aeration_mode",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "diffused",
+     "surface",
+     "brush",
+     "jet",
+     "hpo",
+     "membrane",
+     "mixer_only",
+     "none"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "operation_mode",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "continuous",
+     "sequencing",
+     "alternating",
+     "intermittent"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "n_compartments",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "biofilm_reactor",
+  "color": "#17becf",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "l3",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "trickling_filter",
+     "rbc",
+     "submerged_biofilter",
+     "mbbr_ifas",
+     "fluidized_expanded_bed",
+     "mabr"
+    ],
+    "default_value": "trickling_filter"
+   },
+   {
+    "name": "redox_condition",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "aerobic",
+     "anoxic",
+     "anaerobic"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "aeration_mode",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "diffused",
+     "surface",
+     "brush",
+     "jet",
+     "hpo",
+     "membrane",
+     "mixer_only",
+     "none"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "anaerobic_wastewater_reactor",
+  "color": "#9467bd",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "l3",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "uasb_egsb_ic",
+     "anaerobic_filter",
+     "anaerobic_contact",
+     "anaerobic_cstr",
+     "abr",
+     "anaerobic_mbr"
+    ],
+    "default_value": "uasb_egsb_ic"
+   }
+  ]
+ },
+ {
+  "name": "pond_lagoon_wetland",
+  "color": "#bcbd22",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "sidestream_reactor",
+  "color": "#e377c2",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "filtration_unit",
+  "color": "#ff7f0e",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "membrane_unit",
+  "color": "#ff7f0e",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "disinfection_unit",
+  "color": "#ff7f0e",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "fermenter",
+  "color": "#7f7f7f",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "thickener",
+  "color": "#7f7f7f",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "digester",
+  "color": "#7f7f7f",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "digester_type",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "anaerobic",
+     "aerobic",
+     "atad",
+     "two_stage",
+     "acid_phase",
+     "thp_fed"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "co_digestion",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "true",
+     "false"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "dewatering_unit",
+  "color": "#7f7f7f",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "drying_incineration_unit",
+  "color": "#7f7f7f",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "biogas_unit",
+  "color": "#7f7f7f",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "pump",
+  "color": "#d62728",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "blower",
+  "color": "#d62728",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "storage_tank",
+  "color": "#d62728",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "valve",
+  "color": "#d62728",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "aerator_mixer_symbol",
+  "color": "#d62728",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "process_unit_generic",
+  "color": "#000000",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "unknown_equipment",
+  "color": "#000000",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "visual_form",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "symbol",
+     "box",
+     "pictorial",
+     "simulator_icon",
+     "section_view"
+    ],
+    "default_value": "symbol"
+   },
+   {
+    "name": "confidence",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "certain",
+     "inferred_from_text",
+     "inferred_from_context"
+    ],
+    "default_value": "certain"
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "is_zone",
+    "input_type": "checkbox",
+    "mutable": true,
+    "values": [
+     "false"
+    ],
+    "default_value": "false"
+   },
+   {
+    "name": "parent_id",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "treatment_line",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "mainstream",
+     "sidestream",
+     "sludge"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "arrowhead",
+  "color": "#ffbb78",
+  "type": "rectangle",
+  "attributes": []
+ },
+ {
+  "name": "text_label",
+  "color": "#aec7e8",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "tag_kind_text",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "name",
+     "volume",
+     "depth",
+     "equipment_count",
+     "hrt",
+     "spec",
+     "material",
+     "capacity",
+     "patent_number",
+     "other"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "stream_tag",
+  "color": "#aec7e8",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "tag_kind_text",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "name",
+     "volume",
+     "depth",
+     "equipment_count",
+     "hrt",
+     "spec",
+     "material",
+     "capacity",
+     "patent_number",
+     "other"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "stream_label",
+  "color": "#aec7e8",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "stream_role",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "influent",
+     "settled_influent",
+     "effluent",
+     "reclaimed_water",
+     "mixed_liquor",
+     "internal_recycle_a",
+     "ras_s",
+     "r_recycle",
+     "effluent_recirculation_qr",
+     "was",
+     "scum",
+     "primary_sludge",
+     "thickened_sludge",
+     "digested_sludge",
+     "dewatered_cake",
+     "chemical_sludge",
+     "screenings_grit",
+     "fermentate",
+     "co_substrate",
+     "sidestream_return",
+     "backwash_return",
+     "bypass",
+     "overflow",
+     "step_feed",
+     "biogas",
+     "off_gas",
+     "air_supply",
+     "oxygen",
+     "chemical_dose",
+     "carbon_source",
+     "signal"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "io_terminal",
+  "color": "#ff9896",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "io_role",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "raw_influent",
+     "settled_influent",
+     "external_waste_in",
+     "effluent",
+     "reclaimed_water_out",
+     "solids_disposal",
+     "biogas_use",
+     "off_gas_out",
+     "chemical_source",
+     "overflow_bypass_out",
+     "external_sidestream"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "label_text",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "junction_split",
+  "color": "#ff9896",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "split_type",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "ratio",
+     "fraction",
+     "pumped",
+     "bypass",
+     "router_alternating",
+     "pacing"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "junction_merge",
+  "color": "#ff9896",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "merge_role",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "step_feed_inlet",
+     "sidestream_return",
+     "chemical_dosing_point",
+     "recycle_return",
+     "lane_combiner"
+    ],
+    "default_value": ""
+   }
+  ]
+ },
+ {
+  "name": "instrument",
+  "color": "#c5b0d5",
+  "type": "rectangle",
+  "attributes": [
+   {
+    "name": "instrument_role",
+    "input_type": "select",
+    "mutable": true,
+    "values": [
+     "",
+     "sensor",
+     "analyser",
+     "controller",
+     "setpoint"
+    ],
+    "default_value": ""
+   },
+   {
+    "name": "measured_variable",
+    "input_type": "text",
+    "mutable": true,
+    "values": [
+     ""
+    ],
+    "default_value": ""
+   }
+  ]
+ }
+]

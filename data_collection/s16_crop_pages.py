@@ -120,7 +120,46 @@ def band_region(page: pymupdf.Page, cap: dict, body: list[dict], labels: list[di
     return region, area
 
 
-def crop_for(pdf: Path, pno: int, caption: str, img_w: int):
+def band_bounds(page: pymupdf.Page, cap: dict, body: list[dict], above: bool):
+    pr = page.rect
+    cy0, cy1 = cap["bbox"][1], cap["bbox"][3]
+    if above:
+        top = max([pr.y0 + 20] + [b["bbox"][3] for b in body if b["bbox"][3] <= cy0 + 2])
+        return top, cy0
+    bottom = min([pr.y1 - 20] + [b["bbox"][1] for b in body if b["bbox"][1] >= cy1 - 2])
+    return cy1, bottom
+
+
+def ink_region(image_path: Path, page: pymupdf.Page, y0: float, y1: float, body: list[dict], cap: dict):
+    """Scan mode: the page is one full-page raster + OCR text. Inside the caption band, mask the OCR
+    body-text blocks and the caption, threshold the render, remove specks with an opening and take the
+    bounding box of the remaining ink. Returns (Rect in pt, ink fraction) or (None, 0)."""
+    import numpy as np
+    from PIL import ImageFilter
+    pr = page.rect
+    im = Image.open(image_path).convert("L")
+    s = im.width / pr.width
+    x0p, y0p, x1p, y1p = int(10 * s), int(y0 * s), int((pr.width - 10) * s), int(y1 * s)
+    if y1p - y0p < 60 * s:
+        return None, 0.0
+    band = im.crop((x0p, y0p, x1p, y1p))
+    arr = np.array(band) < 160
+    for b in body + [cap]:  # erase running text and the caption itself
+        bx0, by0, bx1, by1 = (int(v * s) for v in b["bbox"])
+        arr[max(0, by0 - y0p - 2):max(0, by1 - y0p + 2), max(0, bx0 - x0p - 2):max(0, bx1 - x0p + 2)] = False
+    mask = Image.fromarray((arr * 255).astype("uint8")).filter(ImageFilter.MinFilter(3)).filter(ImageFilter.MaxFilter(3))
+    ink = np.array(mask) > 0
+    ys, xs = np.where(ink)
+    if len(ys) < 200:
+        return None, 0.0
+    # trim stray specks: keep the 0.5-99.5 percentile extent
+    ry0, ry1 = np.percentile(ys, [0.5, 99.5])
+    rx0, rx1 = np.percentile(xs, [0.5, 99.5])
+    region = pymupdf.Rect((rx0 + x0p) / s - PAD, (ry0 + y0p) / s - PAD, (rx1 + x0p) / s + PAD, (ry1 + y0p) / s + PAD)
+    return region & pymupdf.Rect(pr.x0, y0, pr.x1, y1), float(ink.mean())
+
+
+def crop_for(pdf: Path, pno: int, caption: str, img_w: int, image_path: Path | None = None):
     doc = pymupdf.open(pdf)
     page = doc[pno - 1]
     pr = page.rect
@@ -138,6 +177,17 @@ def crop_for(pdf: Path, pno: int, caption: str, img_w: int):
     ra, aa = band_region(page, cap, body, labels, gfx, above=True)
     rb, ab = band_region(page, cap, body, labels, gfx, above=False)
     region, side = (ra, "above") if aa >= ab else (rb, "below")
+    scan_note = ""
+    if region is None and image_path is not None:
+        # scanned page (full-page raster + OCR): fall back to pixel ink inside the OCR band
+        best = (None, 0.0, "")
+        for above in (True, False):
+            y0, y1 = band_bounds(page, cap, body, above)
+            r, frac = ink_region(image_path, page, y0, y1, body, cap)
+            if r is not None and frac > best[1]:
+                best = (r, frac, "above" if above else "below")
+        region, _, side = best
+        scan_note = "scan mode (pixel ink in OCR band); "
     if region is None:
         doc.close()
         return None, "no graphic content next to the caption"
@@ -154,7 +204,7 @@ def crop_for(pdf: Path, pno: int, caption: str, img_w: int):
         return "full_page", f"figure fills the page ({region.get_area() / pr.get_area():.0%}); keep uncropped"
     s = img_w / pr.width
     box = [int(region.x0 * s), int(region.y0 * s), int(region.x1 * s), int(region.y1 * s)]
-    return box, f"caption-anchored band, figure {side} caption; text share {text_area / region.get_area():.0%}"
+    return box, f"{scan_note}caption-anchored band, figure {side} caption; text share {text_area / region.get_area():.0%}"
 
 
 def preview(rows: list[dict], font) -> None:
@@ -190,15 +240,23 @@ def main():
     ap.add_argument("--sources", default="openalex_nonpmc,epa_manuals")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--reject", default="", help="text file with one record_id (or preview idx) per line to move to the manual queue after visual review")
+    ap.add_argument("--only", default="", help="CSV with a record_id column: process only these rows (e.g. the manual queue of a previous run)")
+    ap.add_argument("--tag", default="", help="suffix for the output files (crops_auto<tag>.json etc.)")
     a = ap.parse_args()
     rejects: set[str] = set()
     if a.reject and Path(a.reject).exists():
         rejects = {l.strip() for l in Path(a.reject).read_text(encoding="utf-8").splitlines() if l.strip()}
     df = pd.read_csv(DATA / "triage_final.csv", dtype=str, encoding="utf-8-sig").fillna("")
-    sel = df[(df["split"] == "main") & df["source"].isin(a.sources.split(",")) & df["image_size"].map(page_like)
-             & (~df["record_id"].str.contains("#crop"))]
+    if a.only:
+        ids = pd.read_csv(a.only, dtype=str, encoding="utf-8-sig")["record_id"].tolist()
+        sel = df[df["record_id"].isin(ids)]
+    else:
+        sel = df[(df["split"] == "main") & df["source"].isin(a.sources.split(",")) & df["image_size"].map(page_like)
+                 & (~df["record_id"].str.contains("#crop"))]
     if a.limit:
         sel = sel.head(a.limit)
+    global SHEETS
+    SHEETS = REVIEW / f"sheets_crops{a.tag}"
     REVIEW.mkdir(parents=True, exist_ok=True)
     try:
         font = ImageFont.truetype("arial.ttf", 18)
@@ -217,7 +275,7 @@ def main():
             reason = "page number missing"
         else:
             try:
-                box, reason = crop_for(pdf, int(extra["page"]), r["caption"], img_w)
+                box, reason = crop_for(pdf, int(extra["page"]), r["caption"], img_w, ROOT / r["image_path"])
             except Exception as e:  # noqa: BLE001
                 box, reason = None, f"error: {e}"
         if box and (r["record_id"] in rejects or str(idx) in rejects):
@@ -232,9 +290,9 @@ def main():
             manual.append({"record_id": r["record_id"], "source": r["source"], "image_path": r["image_path"], "reason": reason})
         report.append({"idx": idx, "record_id": r["record_id"], "source": r["source"], "page": extra.get("page", ""),
                        "status": status, "box_px": json.dumps(box) if box else "", "reason": reason})
-    (REVIEW / "crops_auto.json").write_text(json.dumps(boxes, indent=1), encoding="utf-8")
-    pd.DataFrame(report).to_csv(REVIEW / "crops_auto_report.csv", index=False, encoding="utf-8-sig")
-    pd.DataFrame(manual).to_csv(REVIEW / "crops_auto_manual.csv", index=False, encoding="utf-8-sig")
+    (REVIEW / f"crops_auto{a.tag}.json").write_text(json.dumps(boxes, indent=1), encoding="utf-8")
+    pd.DataFrame(report).to_csv(REVIEW / f"crops_auto{a.tag}_report.csv", index=False, encoding="utf-8-sig")
+    pd.DataFrame(manual).to_csv(REVIEW / f"crops_auto{a.tag}_manual.csv", index=False, encoding="utf-8-sig")
     preview(ok_rows, font)
     n = len(report)
     print(f"{n} page renders: auto {len(boxes)}, manual {len(manual)}")
