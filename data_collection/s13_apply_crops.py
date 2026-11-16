@@ -25,6 +25,8 @@ OUT = RAW / "crops"
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", default=str(DATA / "review" / "crops.json"))
+    ap.add_argument("--method", default="manual crop", help='provenance label, e.g. "auto crop (s16 PDF layout)"')
+    ap.add_argument("--parent-split", default="", help="if given, move the cropped parent rows to this split (e.g. crop_pending)")
     args = ap.parse_args()
     boxes = json.load(open(args.json, encoding="utf-8"))
     df = pd.read_csv(DATA / "triage_final.csv", dtype=str).fillna("")
@@ -54,19 +56,27 @@ def main():
             im.crop((x0, y0, x1, y1)).save(dest)
             rec = provenance_record(
                 source=r["source"], tier=r["tier"], image_path=dest,
-                acquisition_method=f"manual crop of {rid} (box {x0},{y0},{x1},{y1}); parent: {parent.get('acquisition_method', '')}",
+                acquisition_method=f"{args.method} of {rid} (box {x0},{y0},{x1},{y1}); parent: {parent.get('acquisition_method', '')}",
                 file_url=r["file_url"], landing_url=r["landing_url"], license=r["license"],
                 license_url=parent.get("license_url"), rights_holder=r["rights_holder"], doc_id=r["doc_id"],
                 title=r["title"], venue=r["venue"], year=r["year"] or None, figure_label=r["figure_label"],
-                caption=r["caption"], query=r["query"], filter_rule="manual crop", extra={"parent": rid, "box": [x0, y0, x1, y1]})
+                caption=r["caption"], query=r["query"], filter_rule=args.method, extra={"parent": rid, "box": [x0, y0, x1, y1]})
             rec["record_id"] = f"{rid}#crop{k}"
             append_jsonl(PROV / "crops.jsonl", rec)
             row = r.to_dict(); row.update({"record_id": rec["record_id"], "image_path": rec["image_path"], "sha256": rec["sha256"],
+                                           "acquisition_method": rec["acquisition_method"], "filter_rule": args.method,
+                                           "image_size": str(im.crop((x0, y0, x1, y1)).size), "extra_json": json.dumps(rec.get("extra") or {}),
                                            "phash": rec["phash"] or "", "decision": "keep", "split": "main",
                                            "note": f"crop of {rid}", "duplicate_of": "", "canonical": "True"})
             new_rows.append(row); n += 1
     if new_rows:
         df = pd.concat([df, pd.DataFrame(new_rows)], ignore_index=True)
+        if args.parent_split:
+            parents = {row["note"].replace("crop of ", "") for row in new_rows}
+            mask = df["record_id"].isin(parents)
+            df.loc[mask, "split"] = args.parent_split
+            df.loc[mask, "note"] = (df.loc[mask, "note"].str.strip() + "; cropped by " + args.method).str.strip("; ")
+            print(f"{int(mask.sum())} parent rows moved to split '{args.parent_split}'")
         df.to_csv(DATA / "triage_final.csv", index=False, encoding="utf-8-sig")
     print(f"{n} crops written to {OUT}; triage_final.csv now has {len(df)} rows")
 

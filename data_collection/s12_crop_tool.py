@@ -57,16 +57,22 @@ load();
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--split", default="crop_pending")
+    ap.add_argument("--ids", default="", help="CSV with a record_id column: build the tool for exactly these rows instead of a split")
+    ap.add_argument("--out", default="crop_tool.html", help="output file name under data/review/")
     args = ap.parse_args()
-    df = pd.read_csv(DATA / "triage_final.csv", dtype=str).fillna("")
-    sub = df[df["split"] == args.split]
+    df = pd.read_csv(DATA / "triage_final.csv", dtype=str, encoding="utf-8-sig").fillna("")
+    if args.ids:
+        ids = pd.read_csv(args.ids, dtype=str, encoding="utf-8-sig")["record_id"].tolist()
+        sub = df[df["record_id"].isin(ids)]
+    else:
+        sub = df[df["split"] == args.split]
     items = []
     for _, r in sub.iterrows():
         p = ROOT / r["image_path"]
         if p.suffix.lower() == ".svg" or not image_size(p):
             continue
         items.append({"rid": r["record_id"], "uri": p.resolve().as_uri(), "cap": (r["note"] + " | " + (r["caption"] or r["title"]))[:200]})
-    out = DATA / "review" / "crop_tool.html"
+    out = DATA / "review" / args.out
     out.write_text(PAGE.replace("__ITEMS__", json.dumps(items, ensure_ascii=False)), encoding="utf-8")
     print(len(items), "images ->", out)
 

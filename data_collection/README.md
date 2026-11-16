@@ -467,6 +467,15 @@ validation → Split", 오른쪽 확대 박스에 캡션 규칙(강한 다이어
 - `docs/taxonomy_textbook_review.md`: v0를 교과서 4권으로 검토한 보고서(오류 E1–E11, v1 제안).
 - 설명 페이지(비전문가용 시각 설명): https://claude.ai/artifact/RHaxhG7DwhQaEy8HA47FzY
 
-## 11. 파일럿 표본 — `s15_pilot_sample.py`
+## 11. 페이지 렌더 자동 크롭 — `s16_crop_pages.py`
+
+main의 약 1/4(EPA 64, OpenAlex 109; 크기 h > 1400 px, 종횡비 1.25~1.5)은 `pdf_figures.py`가 저장한 **페이지 전체 렌더**였다(벡터 도면은 이미지 객체가 아니라서 페이지를 통째로 저장). 어노테이터가 텍스트 페이지를 받지 않도록 그림 영역만 잘라낸다.
+
+- 방법: 원본 PDF를 PyMuPDF로 열어 캡션 블록("Fig./Figure n")을 찾고, 캡션 위(또는 아래)에서 본문 텍스트 블록(3줄 이상·페이지 폭 30 % 이상)을 만나기 전까지의 띠 안에 있는 벡터 드로잉·이미지·짧은 라벨 텍스트의 합집합을 그림 영역으로 잡는다. 영역이 본문 텍스트 35 % 이상이면, 또는 120×60 pt·페이지의 5 % 미만이면 수작업 큐로; 페이지의 65 % 이상이면 자르지 않는다.
+- 검토: `data/review/sheets_crops/`에 "페이지 + 빨간 박스 | 잘린 그림" 미리보기 시트를 만들고 사람이 전부 훑는다. 2026-11-16: 162장 중 자동 114 → 눈으로 8장 기각(`crops_auto_reject.txt`: 회전된 전면 도면 3, 사진·그래프·피라미드 그림 4, 검은 가림 블록 1) → **자동 106장 적용**, 수작업 큐 56장(`crops_auto_manual.csv`; 대부분 EPA 스캔본 "캡션 옆에 그래픽 객체 없음").
+- 적용: `s13_apply_crops.py --json data/review/crops_auto.json --method "auto crop (s16 PDF layout)" --parent-split crop_pending` → 잘린 그림이 `record_id#crop0`으로 main에 들어가고 부모 페이지는 `crop_pending`으로 빠진다. provenance에는 `auto crop (s16 PDF layout) of <parent> (box …)`가 남는다.
+- 수작업 큐는 `s12_crop_tool.py --ids data/review/crops_auto_manual.csv`로 크롭 도구를 만들어 처리한 뒤 같은 s13으로 적용한다.
+
+## 12. 파일럿 표본 — `s15_pilot_sample.py`
 
 설계안 §5.1의 60장 파일럿 표본. `python s15_pilot_sample.py` 로 1차 추출(seed 20261116, 출처별 제곱근 배분, 문서당 1장, 출처마다 비영문 ≥ 1, 카테고리 분산) → 접촉 시트(`data/pilot/sheets/`)에서 양식 A~E를 눈으로 판정해 `visual_form_prelim_draw1.csv`에 적음 → `--prelim` 옵션으로 재실행하면 페이지 렌더(E) 항목을 같은 출처·카테고리·언어의 그림 크기 이미지로 교체하고 `replacements.json`에 기록. 산출물: `data/pilot/pilot60.csv`(record_id ↔ pilot_no ↔ 잠정 양식), `images/pilot_NN__*.ext`(CVAT 업로드용), `allocation.md`(배분·양식 분포·페이지 렌더 비율 메모). 데이터 폴더는 git에 올리지 않으므로 같은 seed로 재실행하면 동일 표본이 나온다.
