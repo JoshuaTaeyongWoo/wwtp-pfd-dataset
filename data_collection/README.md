@@ -466,3 +466,7 @@ validation → Split", 오른쪽 확대 박스에 캡션 규칙(강한 다이어
 - `docs/evidence_ledger.md`: 설계안의 모든 결정을 출처(데이터·선행연구·표준·교과서·KDS·방법론)와 분석 방법으로 추적하는 근거 원장. "미확인" 행은 논문에 인용하지 않는다.
 - `docs/taxonomy_textbook_review.md`: v0를 교과서 4권으로 검토한 보고서(오류 E1–E11, v1 제안).
 - 설명 페이지(비전문가용 시각 설명): https://claude.ai/artifact/RHaxhG7DwhQaEy8HA47FzY
+
+## 11. 파일럿 표본 — `s15_pilot_sample.py`
+
+설계안 §5.1의 60장 파일럿 표본. `python s15_pilot_sample.py` 로 1차 추출(seed 20261116, 출처별 제곱근 배분, 문서당 1장, 출처마다 비영문 ≥ 1, 카테고리 분산) → 접촉 시트(`data/pilot/sheets/`)에서 양식 A~E를 눈으로 판정해 `visual_form_prelim_draw1.csv`에 적음 → `--prelim` 옵션으로 재실행하면 페이지 렌더(E) 항목을 같은 출처·카테고리·언어의 그림 크기 이미지로 교체하고 `replacements.json`에 기록. 산출물: `data/pilot/pilot60.csv`(record_id ↔ pilot_no ↔ 잠정 양식), `images/pilot_NN__*.ext`(CVAT 업로드용), `allocation.md`(배분·양식 분포·페이지 렌더 비율 메모). 데이터 폴더는 git에 올리지 않으므로 같은 seed로 재실행하면 동일 표본이 나온다.
