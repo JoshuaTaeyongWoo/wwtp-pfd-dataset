@@ -486,4 +486,5 @@ main의 약 1/4(EPA 64, OpenAlex 109; 크기 h > 1400 px, 종횡비 1.25~1.5)은
 - `annotation/label_studio_config.xml`: Label Studio 라벨 설정(박스 41종, perRegion 속성, 관계 라벨 `medium|direction_confidence`·`parent_of`). `annotation/cvat_labels.json` → `python s17_pilot_agreement.py --expand-cvat …` 로 CVAT용 전개본(`cvat_labels_expanded.json`).
 - `docs/annotation_guideline_v1.md`: 어노테이터 규칙서(클래스 표, 판별 규칙 22개, 엣지 기록법, 자주 틀리는 것).
 - `annotation/README_pilot.md`: 설치·프로젝트 생성·교육·내보내기·일치도 계산 절차.
+- `s18_setup_pilot_projects.py`: 로컬 Label Studio에 `pilot_A`·`pilot_B` 프로젝트를 만들고 라벨 설정과 60장을 업로드(토큰은 `data/pilot/.ls_token`, git 제외). 2026-11-17 실행: 각 60 task.
 - `s17_pilot_agreement.py`: 두 어노테이터의 Label Studio 내보내기에서 κ(L2/L1)·IoU·누락·엣지 F1·클래스별 κ·부트스트랩 CI를 계산.

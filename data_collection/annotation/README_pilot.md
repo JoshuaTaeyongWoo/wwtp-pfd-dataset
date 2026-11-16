@@ -20,6 +20,10 @@ label-studio start --port 8080
 
 같은 설정으로 프로젝트를 **두 개** 만든다(`pilot_A`, `pilot_B`). 한 프로젝트에 두 사람을 넣으면 서로의 라벨을 볼 수 있어 일치도가 오염된다.
 
+**자동 (2026-11-17 완료)**: 계정 → Account & Settings → Access Token을 `data/pilot/.ls_token`에 저장한 뒤
+`python data_collection/s18_setup_pilot_projects.py` → 프로젝트 2개 생성 + 라벨 설정 + 60장 업로드(pilot 번호 순, SVG/WebP는 PNG로 변환).
+이미 있으면 라벨 설정만 갱신한다. 수동으로 할 때는 아래 순서.
+
 1. Create Project → 이름 `pilot_A`.
 2. Data Import → `data/pilot/images/` 의 60장 업로드(드래그). 파일명이 `pilot_NN__…` 이라 순서가 유지된다.
 3. Labeling Setup → Custom template → Code → `annotation/label_studio_config.xml` 내용을 붙여넣기 → Save.
