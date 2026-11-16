@@ -1,0 +1,139 @@
+# 근거 원장 (Evidence Ledger) — 어노테이션 클래스 체계 v1
+
+목적: 클래스 체계의 각 결정이 **어떤 자료의 어떤 부분**에서, **어떤 분석**을 거쳐 나왔는지 추적한다. 설계안(`annotation_taxonomy_plan.md`)과
+검토 보고서(`taxonomy_textbook_review.md`)는 본 원장의 ID(`[D-nn]` 데이터, `[T-nn]` Theisen·선행 데이터셋, `[S-nn]` 표준·시뮬레이터,
+`[B-nn]` 교과서, `[K-nn]` 한국 자료, `[M-nn]` 방법론)를 인용한다.
+
+표기: 출처 약어 — IWA08 = Henze et al. 2008 *Biological Wastewater Treatment* (인쇄 쪽수); OLS = Olsson & Newell 1999 (PDF 쪽수);
+GMP = Rieger et al. 2012 *Guidelines for Using ASMs* (PDF 쪽수); ASM = Henze et al. ASM1/2/2d/3 보고서; THE = Theisen et al. 2023.
+분석 방법 약어 — 정독 = 전담 검토 에이전트가 해당 장을 읽고 쪽수와 함께 보고; 빈도 = 전체 텍스트에서 정규식 용어 빈도 집계;
+표본 = 무작위 표본 이미지를 사람이 분류; 캡션 = 후보 이미지 캡션·제목 정규식 집계.
+
+## A. 우리 데이터에서 나온 근거 [D]
+
+| ID | 사실 / 결정 | 출처·위치 | 분석 방법 | 영향 받는 클래스·원칙 |
+|---|---|---|---|---|
+| D-01 | main 993장 중 그림 양식(40장 표본, 중복 허용): 텍스트 박스형 16장(40 %), 기호형 11장(28 %), 그림형 9장(22 %), 시뮬레이터 2장(5 %), 페이지 렌더·다중 패널 5장(12.5 %) | `data/review/taxonomy_sample_0/1.jpg` (40장) | 표본 | 원칙 1(의미/양식 분리), `visual_form`, `process_unit_generic` |
+| D-02 | 40장 중 6장(15 %)이 중국어·한국어·일본어 라벨 | 같은 표본 | 표본 | `text_label`, 다국어 OCR, `language` 속성 |
+| D-03 | 캡션 용어 빈도(993장): 포기조·생물반응조 264, MBR 83, 무산소·혐기 75, 탱크 67, 반송 60, 여과 40, 생물막 38, 소화조 38, 소독 34, 펌프 33, UASB 32, 막 28, DAF 27, 계측 26, 스크린 24, 1차 침전지 19, 탈수 19, SBR 18, 습지·연못 17, 응집 16, 바이오가스 16, 2차 침전지 14, 침사지 12, 송풍기 12, 유량조정 10, 농축 9, 건조·소각 9, 열교환기 1 | `triage_final.csv` main, 정규식 | 캡션 | 예상 빈도 등급, 병합 후보 선정, "화공 47클래스 재사용 불가" |
+| D-04 | 후보 1,325장(main+aux_unit+crop) 캡션: 반류수 처리 42, 계측·제어 52, 교대·간헐·상 운전 31, MBBR/IFAS 25, BAF 14, 살수여상 9, RBC 2, DAF 22, 응집·침전 26, 연못 19, 발효조 11, 밸브 14, 교반기 17, 산기 11, 산화구 11, 우회·월류 15, selector 3, 재포기 2, humus 0, step feed 1 | `triage_final.csv`, 정규식 | 캡션 | E6 추가 클래스의 실현 가능성, L3 분할 우선순위, 속성 vs 클래스 판단 |
+| D-05 | 수집 출처 구성: 특허 342, PMC 325, OpenAlex 178, EPA 90, Wikimedia 36, 한국 지자체 22; 카테고리 wwtp 774, pilot 105, sludge 45, other 42, wtp 27 | `triage_final_stats.md` | 집계 | 문서 단위 분할, 보조 세트 운용 |
+| D-06 | 후보 1,226장(main 993 + aux_unit 233; D-04와 달리 crop_pending 원본 99장은 제외) 캡션·제목에서 최신 단위 언급 수: 재이용·RO 49, 호기성 소화·ATAD 35, 활성탄·GAC/BAC 31, AOP 17, 호기성 입상슬러지(AGS) 16, anammox·deammonification·nitritation 15, 오존 13, AnMBR 12, 개량(conditioning) 7, MABR 6, 유동상 6, 스트루바이트·영양염 회수 4, 퇴비화 4, co-digestion 2, 슬러지 저류 2, selector 2, CEPT·ballasted·lamella 1, hydrocyclone 1, 열가수분해 0, 1차 여과(RBF·CMF) 0, PAA 0, 접촉산화 0 | `triage_final.csv`, 정규식 (2026-11-16) | 캡션 | G절 최신 단위를 **독립 L2가 아닌 예비 클래스·L3·속성**으로 두는 결정(조건 ② ≥ 50 미달) |
+| D-07 | 도메인 검토에서 의심한 누락 항목의 캡션 언급(main+aux_unit 1,226장): A2O·A/O 21, 분뇨·음식물·septage 연계 19, 탈취·스크러버·악취 12, 외부 탄소원·메탄올 12, 유량계·Parshall 8, 산화구·Carrousel 7, MLE 7, Imhoff·septic 4, 탈질 여과·후무산소 4, UCT·JHB·Bardenpho 3, 열교환기·보일러 2, step feed 2, 건조상 1, 마이크로스크린 1, 후포기·스컴·순산소·분쇄기·중간 침전지·석회 안정화·분배조 0 | `triage_final.csv`, 정규식 (2026-11-16) | 캡션 | 예비 클래스 `odor_control_unit`; `stream_role`에 co_substrate·carbon_source·off_gas; `io_terminal.external_waste_in`; 공정 구성 판별표(규칙 1)는 캡션 빈도가 낮아도 A2O 외 구성이 실재하므로 필요; 후포기·스컴은 클래스 없이 `unknown_equipment`·`stream_role`로 |
+
+## B. 선행 연구·데이터셋 [T]
+
+| ID | 사실 / 결정 | 출처·위치 | 분석 방법 | 영향 |
+|---|---|---|---|---|
+| T-01 | Theisen 47 클래스 = Zhang 2019의 12개를 3규칙(세부 유형 분할, 그림 양식 분할, 도면 고유 기호 추가)으로 분해 | THE §2.2, Table 1 (p.4) | 원문 | 원칙 2(L3 양식 분할), 연결 클래스 |
+| T-02 | 클래스별 AP: col_aspen 90, tank_gas 89, blwr 88(35개 인스턴스) vs tank 37, IO 44, mix2 34, 밸브 8종 45~65 | THE Table 4 (p.8) | 원문 | 원칙 3 ②(수보다 모양 일관성), `valve` 세부형 금지, generic·unknown 필요 |
+| T-03 | Theisen은 연결 인식을 정량 평가하지 못함; 흐름 방향 오류 원인은 작은 화살촉 미검출 | THE §4.3 (p.9) | 원문 | `arrowhead` 클래스, 그래프 정답 라벨 |
+| T-04 | PID2Graph는 7 기호 클래스(General, Pump/Compressor, Tank/Vessel, Instrumentation, Inlet/Outlet, Valve, Arrow) + 선 2종으로 그래프 복원 평가 | Stürmer et al. 2025, Table I; Zenodo 14803338 | 웹 조사 | 거친 클래스로도 평가 가능; `instrument`, `io_terminal` 선례 |
+| T-05 | Kim et al. 2022: 76 라벨(장비 25/배관 33/계기 18), ISO 10628-2·PIP PIC001 참조 | J. Comput. Des. Eng. 9(4):1298 | 웹 조사 | 계기 18종 분할은 우리 규모에 과함 → `instrument` 1클래스 |
+| T-06 | Elyan 2018: 37→57 하위 클래스 분해; Jamieson 2024: 분해가 샘플링 기반 불균형 대응보다 우수 | RGU repository | 웹 조사 | L3 분할 정당화 |
+| T-07 | FC_A 흐름도 데이터셋 7 클래스(arrow, text, process …); hdFlowmind(Liu et al. 2024, arXiv 2401.03742) 1,776장 손그림 흐름도·마인드맵, 키포인트 검출로 연결 복원; FR-DETR(DETR + LETR 선분 검출, 기계 생성 흐름도 >1,000장) | Awal 2011; arXiv 2401.03742; FR-DETR (2022) | 웹 조사 | 박스형 도면 검출 선례; 화살표 머리·꼬리 키포인트와 선분 검출 = 그래프 복원의 학습 기반 대안(§6 baselines) |
+| T-08 | 2026 *Chem. Eng. Res. Des.* "Automated process flow diagram parsing and simulation model generation via visual perception and topology reasoning": YOLOv11 기호 검출 mAP50 91.6 %, 흐름 방향 추론 평균 77.6 %(시험 PFD 5장), 시뮬레이션 모델 자동 생성; 화살표 주석이 드물고 작은 화살표 검출이 어렵다고 보고 | ScienceDirect S0263876226006180 (검색 요약; 원문 403으로 **미확인**) | 웹 조사 | 화공 PFD에서 "도면 → 시뮬레이션 구조"가 이미 나왔음 → 우리 신규성은 **WWTP 도메인 + 공개 그래프 정답 벤치마크 + ASM/BSM 매핑**으로 좁혀 주장; 방향 추론 77.6 %는 비교 기준; 원문 확인 필요 |
+| T-09 | Sketch2Simulation (Bahamdan, Pajak, Hedengren, del Rio Chanona, arXiv 2603.24629, 2026-03): 멀티모달 LLM 에이전트가 PFD에서 단위·연결을 추출해 방향 그래프 중간표현 → Aspen HYSYS 모델; 연결 일관성 ≥ 0.93, 스트림 일관성 ≥ 0.96; 밀집 재순환·암묵적 의미가 남은 난제 | arXiv 2603.24629 | 웹 조사(초록) | VLM/LLM 에이전트가 강력한 baseline → §6에 VLM 제로샷 기준 모델 필수; 우리 차별점은 벤치마크 정답(박스+그래프)과 WWTP 사전지식(공정 순서·반송) |
+
+## C. 표준·시뮬레이터 [S]
+
+| ID | 사실 / 결정 | 출처·위치 | 분석 방법 | 영향 |
+|---|---|---|---|---|
+| S-01 | ISO 10628-2 주제군 29개; WWTP 관련 1 tanks, 6 filters, 7 screens, 8 separators, 9 centrifuges, 12/28 mixers, 15 pumps, 17 blowers; 침전지·포기조·소화조 전용 기호 없음 | ISO 10628-2:2012 Table 1 (iTeh 샘플) | 웹 조사 | 양식 편차의 원인, L3 필요성, `iso10628_group` |
+| S-02 | DEXPI Equipment 계층(Agitator, Compressor, Filter, HeatExchanger, Mixer, ProcessColumn, Pump, Vessel/Tank…)에 Separator·Clarifier·Blower·Centrifuge·Digester 없음 | OPC 30250 / DEXPI 정보모델 | 웹 조사 | `dexpi_parent` 확장 규칙 |
+| S-03 | GPS-X 단위 목록: preliminary / primary / suspended growth / attached growth / secondary clarifier / tertiary / biosolids / flow / control (세부 단위 전체) | hydromantis.com/GPSX-unit-processes | 웹 조사 | L2 설계의 정답지, `gpsx_unit` |
+| S-04 | BSM2 = 1차 침전지 + 무산소 2 + 호기 3 + 2차 침전지 + 분기 + 농축 + 소화(ADM1) + 탈수 + 반류수 저류 | BSM1 보고서(Alex 2008), WaterTAP BSM2 | 웹 조사 | 최소 구별 단위, `bsm_unit` |
+| S-05 | EN 1085 철회(2016) → EN 16323:2014; KDS 61(61 45 00 펌프장, 61 50 00 수처리, 61 55 00 슬러지) | BSI, kcsc.re.kr | 웹 조사 | 영문·한글 명명 출처 |
+| S-06 | QSDsan(오픈소스 Python, Li et al. 2022 ESWRT) `sanunits`: ActivatedSludgeProcess, CSTR(동적 부유성장), FlatBottomCircularClarifier(1-D N층 침강), IdealClarifier, PrimaryClarifier(SOR 기본 41 m³/m²/d), AnaerobicCSTR, AnaerobicDigestion, AnaerobicBaffledReactor, AnMBR, MembraneBioreactor, ADMtoASM 등; 살수여상·RBC·MBBR·UV 등은 없음 | qsdsan.readthedocs.io `api/sanunits/_index`, 개별 클래스 페이지; 연구실 선호(2026-11-16 사용자 확인) | 웹 조사(문서 페이지) | `qsdsan_unit` 매핑 필드(1순위), round-trip 검증 대상, 매핑 불가 단위 집계 |
+
+## D. 교과서 [B] (2026-11-16 정독)
+
+| ID | 사실 / 결정 | 출처·위치 | 분석 방법 | 영향 |
+|---|---|---|---|---|
+| B-01 | 교과서의 전형적 공정흐름도가 기능 코드(C, N, DN, CP, PR, PU, S)만 적은 동일 사각형 연쇄; 1차·2차 침전지는 둘 다 "S" | OLS Fig 2.5 p.32 | 정독 | 원칙 1 확정, `process_unit_generic`, `confidence=inferred_from_context` |
+| B-02 | 모델 레이아웃 = 아이콘 + 연결; 실제 공정도를 모델 개념으로 "번역"; 연결은 물질 흐름 또는 신호 | GMP p.80-81 | 정독 | 원칙 1, `medium=signal` |
+| B-03 | 실제 탱크는 격벽으로 나뉜 한 상자, 모델은 격벽·산기관 구역을 따라 자른 CSTR 연쇄(Werdhoelzli) | GMP Fig A.9 p.196, p.195 | 정독 | `is_zone`/`parent_id` 필수, `n_compartments` |
+| B-04 | IWA08은 구역을 각각 별도 상자("Anaerobic reactor", "Primary anoxic reactor", …)로 그리고 본문에서만 한 반응조의 구역이라 말함; 산화구는 상자 없는 수로 구간 | IWA08 Fig 5.13 p.111-112, Fig 7.12 p.165-171, p.80, Fig 9.4 p.249 | 정독 | `parent_id` null 허용, 인접 추론, `is_loop_reactor` |
+| B-05 | BNR 공정은 prefermenter, anaerobic zone, anoxic zone, aerobic zone으로 나뉨("zone") | OLS p.361 | 정독 | 구역 명명 `*_zone` |
+| B-06 | "anaerobic reactor"가 EBPR 구역(ch.7)과 UASB(ch.16 "Anaerobic reactor systems") 둘 다에 쓰임; anoxic = 질산염 있음·O2 없음, anaerobic = 둘 다 없음 | IWA08 p.165, 433, 각주 p.167; OLS 글로서리 p.678 | 정독 | E1 개명: `aerobic/anoxic/anaerobic_zone`, `anaerobic_wastewater_reactor` |
+| B-07 | 용어 빈도(IWA08): aerobic reactor/zone 273, anoxic 225, anaerobic 227 vs aeration tank/basin 41; clarifier 170 vs settling tank/settler 56; selector 115; RBC 202; UASB 114; MBR 513; lagoon/pond/wetland 198; SHARON/anammox 125 | 4권 전체 텍스트 | 빈도 | 명명 선호, 누락 후보 식별 |
+| B-08 | 약품 주입은 대부분 기존 단위(PST, 혐기조, 포기조, SST)로 들어가는 화살표; 전·동시·후침전; 후침전은 별도 침전지와 chemical sludge return | IWA08 Fig 7.11 p.164, p.356, 403, 407; OLS p.30, 417, Fig 15.1 p.395; GMP p.83 | 정독 | E2: `chemical_treatment_unit` 축소, 주입점 = `io_terminal(chemical_source)` |
+| B-09 | DAF는 WAS 농축 또는 활성슬러지 분리 대안; 1차 단계 DAF 없음 | IWA08 p.80, 83, 309; GMP p.144 | 정독 | E3: `flotation_unit` 위치 무관 + `function` |
+| B-10 | 생물막 반응기 유형 A~H가 서로 다른 그림(TF 탑, RBC 디스크, BAF 여재+역세+공기, MBBR 캐리어, airlift 3상 분리기, MABR) | IWA08 Fig 18.1 p.494, Fig 18.3/18.5/18.7/18.9/18.10 | 정독 | E4: `biofilm_reactor` L3 필수, 판별 규칙 2·3 |
+| B-11 | 혐기성 폐수 반응기 유형(UASB/EGSB/IC, 여상, ACP, CSTR, ABR, AnMBR, 연못)과 그림; UASB 한 상자 = 1차 침전·반응·2차 침전·소화 네 기능 | IWA08 Fig 16.14 p.434, 16.15 p.435, 16.20, 16.25 p.449, p.447 | 정독 | E5: L3, `multi_unit` |
+| B-12 | 활성슬러지 소화는 단순 완전혼합 반응기, 고농도 폐수는 2단 반응기; 혐기 CSTR과 소화조 기호 동일 | OLS p.89, 536; IWA08 p.436, 450 | 정독 | 판별 규칙 1(공급 스트림), `confidence` |
+| B-13 | 반류수(sidestream) 처리: SHARON(CSTR), Anammox(IC형), CANON/DEMON(SBR), BABE/BAR, P-stripper, 스트루바이트; reject water가 공급 | IWA08 ch.6 p.144-150, Fig 6.11; GMP p.56, 180(정의) | 정독 | E6-①: `sidestream_reactor`, `treatment_line` |
+| B-14 | 1차 슬러지 발효조(prefermenter)가 독립 단위이자 시뮬레이터 단위 | IWA08 p.163-164 Fig 7.11; OLS p.35, 361-363, 395, 246-247 | 정독 | E6-②: `fermenter` |
+| B-15 | 구역 역할: selector(≥3 격실), reaeration/flash, oxygen depletion, underflow anoxic(JHB), degasifier; GMP는 이들을 이름 짓지 않고 "산기 상태가 다른 CSTR"로 취급; OLS의 "selector"는 제어 선택기 | IWA08 p.299-302 Table 11.2, p.111-112, 356, 170, 435; GMP p.195; OLS p.444, 547 | 정독 | E6-③: 클래스가 아닌 `zone_role` 속성; `selector` 클래스명 금지 |
+| B-16 | 교대·간헐 운전(MIA, Bio-Denitro/Denipho, IDEA, 교대 포기조 침전, SBR fill/react/settle/decant); SBR은 한 탱크를 상(phase)마다 다시 그림 | IWA08 p.80, 171, 300, 356-357; OLS p.522-524, 550-551, Fig 4.26 p.107; GMP Table 5.3.3 p.83, p.97 | 정독 | E6-④: `operation_mode`, `panel_phase` |
+| B-17 | 센서·제어기는 PFD가 아니라 P&ID에 위치; 교과서 플랜트 그림에는 태그·버블로만 등장; 신호선은 점선 | OLS p.573, 507, 536, 456, 362; IWA08 Fig 13.24, 14.4, 15.11; GMP p.81 | 정독 | E6-⑤: `instrument` 주석 클래스, `medium=signal` |
+| B-18 | 제어밸브가 "predominant actuator"; 공기 헤더·반송선의 밸브가 교과서 도식에 등장 | OLS p.608, 444, 456, 548 | 정독 | E6-⑥: `valve`(세부형 없음) |
+| B-19 | 산기 장치(표면 포기기, 브러시, 산기관)와 교반기가 호기/무산소를 가르는 시각 단서이며 별도 aeration sub-model | IWA08 ch.9 Fig 9.2-9.10 p.247-252; GMP p.82, 194-196; OLS p.36, 550 | 정독 | E6-⑦: `aerator_mixer_symbol`, `aeration_mode` |
+| B-20 | 스트림 명명: a(MLR), s(RAS), r(anoxic→anaerobic), QR(TF 순환), WAS, primary/thickened/digested/chemical sludge, supernatant/reject/centrate/filtrate/backwash, bypass/overflow, step feed, biogas/off-gas/N2, process air/air scour/O2, chemicals, signal; "internal recirculations" vs "external recycle streams" 구분 | IWA08 p.56, 84-85, 169, 402-403, 495; OLS Fig 15.1 p.395, Table 16.4 p.422; GMP p.82, 185, 196 | 정독 | E7: `medium` + `stream_role`, `stream_label` |
+| B-21 | WAS는 반응조에서 직접 뽑는 그림이 IWA08 ch.4-7 전부(수리학적 SRT 제어); 침전지 하부 또는 반송선 위 무산소조에서 뽑기도 함 | IWA08 Fig 4.2 p.55, p.56, Fig 7.12D p.170 | 정독 | E7: WAS 출처 가정 금지 |
+| B-22 | 분기기 6유형(ratio, fraction, pumped, bypass, router/alternating, pacing); 분배조·"Divider"·"Mix" 박스로 그려짐 | GMP p.186; IWA08 Fig 14.4 p.372, Fig 16.25 p.449, p.315; OLS p.241, 413 | 정독 | E8: `split_type`, 그려진 분배조도 junction |
+| B-23 | 병렬 계열은 "총 부피 한 계열"로 합치거나 하나만 모델링; 분기 비율 40/60 % | GMP Table 5.3.1 p.80, p.172, p.146 | 정독 | E9: `n_parallel_lanes`, `lane_group_id`, `split_fraction` |
+| B-24 | 모델러가 도면에서 읽는 것: 탱크 부피·깊이·계열, 연결과 혼합 거동, 유입점 위치, 산기·교반 장치, 펌프, 센서(P&ID), 슬러지 처리 종류와 반류 지점, 분기 비율·설정값 | GMP p.55, 58-60, 81, 146 | 정독 | `stream_tag.tag_kind`, `text_label` 범위, `merge_role` |
+| B-25 | 침전지 모델 종류(point/ideal/layered/reactive)는 그림에 보이지 않는 모델링 결정; 원형/사각/수직류(Dortmund)/lamella는 그림이 다름 | GMP p.84-87, 186-187; IWA08 Fig 12.3-12.6 p.312-314; OLS Fig 2.10 p.37 | 정독 | 침전지 L2 유지, L3 형상 4종 |
+| B-26 | humus tank = 살수여상 후단 침전지; 후침전 침전지 = chemical settler | OLS p.245, 689, 395, 415 | 정독 | `secondary_clarifier` 정의 확장, `clarifier_stage` |
+| B-27 | "aerator"가 포기조를 뜻함(OLS); oxidation ditch, Deep Shaft, aerated lagoon(활성슬러지의 일종이나 연못으로 그림) | OLS p.379, 483, 245; IWA08 p.77-80, Fig 9.28 | 정독 | `aerobic_zone` 별칭, `pond_lagoon_wetland.aerated` |
+| B-28 | 유량조정조에 storm/detention/buffer tank 포함; 펌프장 = wet well + 펌프 여러 대; 저류탱크에 반송슬러지·슬러지 저류 포함 | OLS p.245, 62, 414, 508, 552, 485, 363, 395 | 정독 | 정의 보강 |
+| B-29 | 소화조에 호기·ATAD·2단(산발효/메탄) 포함; 바이오가스 설비 = 가스홀더·플레어·엔진/CHP·보일러·H2S 제거 | OLS p.245, 89, 388-389, 536; IWA08 p.79-80, 113, 441, 403, 245, 429, 447 | 정독 | `digester_type`, `biogas_unit` 정의 |
+| B-30 | AOP는 독립 단위로 등장하지 않음; 오존은 소독·벌킹 제어 | IWA08 p.237, 299 | 정독 | E11: `advanced_oxidation_unit` → `disinfection_unit` 병합 |
+| B-31 | ASM 보고서의 ASM1 "복잡 흐름도 모델링"·ASM2 부분은 스캔 이미지라 확인 불가 | ASM PDF p.10-82 | 추출 시도 | 한계 기록 |
+| B-32 | MBR 구성 그림: 침지식(iMBR, 막 모듈이 반응조 안 또는 별도 막조)과 외부식(sMBR, 혼합액을 펌프로 막 모듈에 보내고 농축액을 반응조로 반송); 3차 막 여과(MF/UF/NF/RO)는 침전지 처리수를 받음 | IWA08 ch.13 Fig 13.1-13.3 (p.336-340) | 정독 | `mbr_unit` vs `membrane_unit` 판별 규칙 4(혼합액 수용 + 반송 여부), `mbr_unit` L3 immersed/sidestream |
+
+## E. 방법론 [M]
+
+| ID | 사실 / 결정 | 출처 | 영향 |
+|---|---|---|---|
+| M-01 | Open Images: 가장 하위 라벨만 달고 평가 시 상위로 확장; 박스 검증 수용 IoU ≥ 0.7; 전문가 일치도 0.88 | Kuznetsova et al., arXiv 1811.00982 | 원칙 2, 파일럿 일치도 기준 |
+| M-02 | LVIS: rare(1~10장)/common(11~100)/frequent(>100) 구간 보고; repeat factor sampling t = 0.001 | Gupta et al. 2019 | 원칙 3 ②, 불균형 대응 |
+| M-03 | COCO: 다단계 어노테이션, 검증 5명 중 4명 동의 | Lin et al. 2014 | 파일럿 절차 |
+| M-04 | Ultralytics: 모든 인스턴스 완전 라벨링, 배경 이미지 0~10 % | Ultralytics docs | 라벨링 완전성 규칙 |
+
+## F. 한국 자료 [K] — 환경종합설계·수리설계 과목 자료 (`WWTP_RL/수리설계_자료모음`, 2026-11-16 검토)
+
+자료: 교재 『환경장치설계』 2.7절 "계획하수량 8만 m³/day의 처리장설계" 사진 21장(pp.218-238); 학생 설계보고서(불당 공공하수처리시설 증설, 기산하수종말처리장), 용량·수리설계 xlsx 18개, pptx 10개. hwp 2개는 미검토. 분석 방법: 전담 에이전트가 텍스트 추출본과 사진 전부를 읽고 보고.
+
+| ID | 사실 / 결정 | 출처·위치 | 영향 |
+|---|---|---|---|
+| K-01 | 교재 처리공정도(flow sheet)는 텍스트 화살표 나열; 물질수지 블록도는 텍스트 든 직사각형 + 좌→우 실선 화살표에 Qᵢ/Sᵢ/Dᵢ 라벨, 슬러지·부산물은 아래 점선, 가스는 위 화살표, 약품은 위에서 유입, 반송은 하단 실선 루프에 R·C_R | 사진 _01(p.219), _04·_05·_07·_08(pp.223-226); 05_물질수지1.pptx | 원칙 1 추가 확인(한국 교재식 = 박스형 A); `stream_label` 예(R=25%, C_R=8,000 mg/L); 선 종류로 매체 구별 |
+| K-02 | 물질수지 범례가 "수처리계통 / 슬러지처리계통 / 반송수" 3종 선 종류 | 04_물질수지.xlsx | `medium`/`stream_role` 3대 분류의 한국 실무 근거 |
+| K-03 | 표준 순서(교재): 침사지 → 유입펌프 → 분배탱크 → 최초침전지 → 공기공급조 → 최종침전조 → 유량조정조 → 고도처리조 → 소독조 → 방류; 찌꺼기: 분배탱크 → 농축조 → 소화조 → 세정조 → 저류조 → 개량조 → 탈수. 학생 보고서(불당): 유입분배조 → 일차침전지 → 생물반응조 #1~#4 → 이차침전지 → 분배조 → 여과(디스크필터) → UV 소독 → 방류맨홀; 슬러지발효조·농축탈수·슬러지저류조. 기산: 유량조정조 → 혼화조 → 혐기조 → Symbio조 → 침전조 → 여과기 이송조 → UV | 사진 _01, _08~_19; 02_용량설계.xlsx; 07_기산 xlsx | L1 골격 확인; `equalization_tank` 위치가 자료마다 다름(위치 무관); `junction_split`로 그려진 분배조·분배탱크; `fermenter`(슬러지발효조) 실재 |
+| K-04 | 한국어 동의어: 침사지=포기침사지=침사스크린조; 1차침전지=일차=최초침전지=초침; 포기조=폭기조=포기탱크=활성오니조/활성오니지=공기공급조=생물반응조; 2차침전지=이차=최종침전지=종침=침전조; 소독조=소독지=염소접촉조=UV소독조; 농축조=농축지=찌꺼기 농축조; 소화조=제1소화조, 세정조=제2소화조, 가스탱크=dome tank; 저류조=슬러지저류조; 탈수기=진공/원심/Screw-Press; 찌꺼기=오니=슬러지; 반송슬러지=반송활성오니=반송수=RAS; 잉여슬러지=잉여오니; 생슬러지=생오니; 반류수, 역세척수, 탈수여액, 탈수케이크, 소화가스, 세정수 | 사진 _08~_19; 01·02·07 xlsx; 06 pptx | 클래스별 `kds61_term`·별칭 표; OCR 후 정규화 사전 필요(찌꺼기/오니/슬러지 혼용) |
+| K-05 | 한국 특유 단위: 총인처리시설(급속교반조 → 완속교반조 → 부상조), 슬러지발효조(탈질 탄소원), 혼화조(반송슬러지+원수 접촉), 분배조/유입분배조, 여과기 이송조, 방류맨홀, 고도처리조 | Scale2.xlsx; 02_용량설계; 07_기산; 사진 _01 | 총인처리시설 = `chemical_treatment_unit` + `flotation_unit(function=tertiary)`; 혼화조 = `zone_role=selector/contact`; 방류맨홀 = `io_terminal(effluent)` |
+| K-06 | 생물반응조를 혐기/무산소/호기 명칭 없이 "#1~#4(간벽 3, 오리피스)"로 번호만 표기; 간헐포기접촉산화(DeNiPho), Symbio조(동시 질산화·탈질); MLE/A2O/SBR/MBR·내부반송 사례 없음 | 06_불당 pptx; 02_용량설계; 07_기산 | `n_compartments`, `operation_mode=intermittent`, `confidence=inferred_from_context`(redox 미표기 구역) |
+| K-07 | 기존시설/증설시설(신설) 병기, "금회 증설"; 계열 표기 지(池)·조(槽)·열/회로/수로·기(基)·대(臺)·본(本)·개소, 예비 S.B(stand by) 대수; 배치 개요에 "×N개"로 계열 수 표기 | 02·Scale2 xlsx; 환경종합설계 PPT slide 2 | 속성 `existing_or_new`, `n_parallel_lanes`(지·열 수), `standby_count` |
+| K-08 | 단위 옆 라벨 항목 5군: 유량(Q 일평균/일최대/시간최대, 반송율 R, C_R), 규격(형식, W×L×EH×열×지, ø D×H×기, 재질, 유효용량), 성능(수면적부하, weir 월류부하, HRT, 고형물부하, F/M, MLSS, SRT, SVI, 공기량, 여과속도, UV 램프수, 함수율, 소화일수), 수질(BOD/COD/SS/T-N/T-P 유입·유출·제거율), 수리(EL.m, WSE/CBE, LWL/DWL/HWL, 관경·관종·조도계수, 손실수두) | 01·02·07 xlsx, 사진 _08~_19 | `text_label.tag_kind`·`stream_tag.tag_kind` 값 집합 확장(규격·성능·수질·수리) |
+| K-09 | 수리종단도(hydraulic profile) 그림은 없음; 수리설계는 하류(방류)→상류(유입) 역산 시트이며 LWL/DWL/HWL 3열 EL 값 | 02_설계보고서_수리설계.xlsx | 수리종단도는 별도 도면 유형(PFD 아님) — 수집·분류 시 `diagram_style`에 'hydraulic_profile' 추가 고려 |
+
+## G. 최신·주요 교과서·기준 [B2] (2026-11-16 웹 조사)
+
+자료 접근 방식: 로컬 PDF가 없어 전담 조사 에이전트가 **출판사·도서관 목차 페이지와 공개 PDF**(KDS 61 전문, EPA 2013 보고서)를 가져와 장·절 제목을 확인했다. 열람하지 못한 절 단위 내용은 에이전트가 기억에 의존해 보고했으며 아래 "검증" 열에 **미확인**으로 표시한다. 미확인 항목은 클래스 결정의 단독 근거로 쓰지 않고, 확인된 항목(목차·KDS 전문) 또는 D-06 데이터 빈도와 함께 쓴다.
+
+출처 약어: ME5 = Tchobanoglous, Stensel, Tsuchihashi, Burton (Metcalf & Eddy | AECOM) 2014 *Wastewater Engineering: Treatment and Resource Recovery* 5판; IWA20 = Chen, van Loosdrecht, Ekama, Brdjanovic (eds.) 2020 *Biological Wastewater Treatment* 2판; MOP8-6/7 = WEF MOP 8 *Design of Water Resource Recovery Facilities* 6판(2017)/7판(2025); GDLF = Grady, Daigger, Love, Filipe 2011 *Biological Wastewater Treatment* 3판; vH&L = van Haandel & van der Lubbe 2012 *Handbook of Biological Wastewater Treatment* 2판; KDS61 = 환경부 『하수도설계기준 KDS 61 00 00 : 2022』; EPA13 = US EPA 832-R-12-011 (2013) *Emerging Technologies for Wastewater Treatment and In-Plant Wet Weather Management*.
+
+| ID | 사실 / 결정 | 출처·위치 | 검증 | 영향 |
+|---|---|---|---|---|
+| B2-01 | ME5 장 구성: 5 Physical Unit Operations, 6 Chemical Unit Processes, 8 Suspended Growth, 9 Attached Growth and Combined, 10 Anaerobic Suspended and Attached Growth, 11 Separation Processes for Removal of Residual Constituents, 12 Disinfection Processes, 13 Processing and Treatment of Sludges, 14 Biosolids Processing, Resource Recovery and Beneficial Use, 15 **Plant Recycle Flow Treatment and Nutrient Recovery** | McGraw-Hill 상품 페이지, schweitzer-online 목차 | 웹 확인(목차 원문) | L1 골격 확인(전처리·1차·2차·3차·소독·슬러지·반류수); 반류수가 장 단위 → `sidestream` L1 유지; 영양염 회수가 반류수 장에 속함 → `nutrient_recovery`를 `sidestream_reactor` L3로 |
+| B2-02 | ME5 절 단위 단위공정(보고자 기억): 5장 고속 침전(ballasted·lamella), 6장 CEPT, 8장 AGS(신규·"emerging"), 10장 AnMBR·ABR·AMBR, 11장 depth/surface/membrane filtration·adsorption·ion exchange, 13장 열가수분해(conditioning)·co-digestion·ATAD, 15장 스트루바이트·암모니아 스트리핑·nitritation/denitritation·deammonification·bioaugmentation | ME5 5·6·8·10·11·13·15장 | **미확인**(절 목차 403) | 예비 클래스 후보 목록(§4.1b); 단독 근거로 쓰지 않음 — B2-08·B2-13·B2-17·D-06과 함께 사용 |
+| B2-03 | ME5 용어: "primary sedimentation tank"와 "primary clarifier" 혼용, 설계 절은 "secondary clarifier", 개요는 "secondary sedimentation"; "aeration tank/basin"; 구역은 anaerobic/anoxic/aerobic/**swing zone** | ME5 5·8장 관용 | 미확인(용어 관용) | 별칭 추가; `zone_role`에 `swing` 추가 |
+| B2-04 | IWA20 장 구성(18장): 1 WWT development, 4 Organic matter removal, 5 Nitrogen removal, 6 EBPR, **7 Innovative sulphur-based WWT(신규)**, 8 Disinfection, 9 Aeration and mixing, **10 Bulking sludge**, **11 Aerobic granular sludge(신규)**, 12 Final settling, **13 Membrane bioreactors(신규)**, 14 Modelling AS, 15 Process control, 16 Anaerobic WWT, 17 Modelling biofilms, **18 Biofilm reactors(신규)**; 2008판의 "Innovative nitrogen removal"은 5장에 흡수 | bdd.pseau.org 목차, Portobello 소개문 | 웹 확인(목차 원문) | AGS가 기술 단위 장으로 승격 → 예비 L2 `granular_sludge_reactor`(D-06 16장이라 현재 속성 `biomass_form`); `selector`는 10장(벌킹) 맥락의 구역 역할 → B-15 유지; MBR·생물막·혐기 반응기 L2 확인 |
+| B2-05 | IWA *Examples and Exercises* (Lopez-Vazquez et al. 2023)가 OA(CC BY-NC-ND)이며 IWA20과 장별 대응; 17장 "Biofilm modelling and biofilm reactors" | bdd.pseau.org, TU Delft repository, iwaponline ebook 871 | 웹 확인 | **수집 후보**: OA 교과서 도식(비상업 조건이라 tier B 보조 세트) |
+| B2-06 | IWA 계열 용어: "final settling (tank)", "secondary settling tank (SST)", "aerobic/anoxic/anaerobic reactor (zone)" | IWA20 12장 제목; vH&L 부록 "final settler" | 웹 확인(장 제목) | `secondary_clarifier` 별칭 final settling tank / SST / final settler |
+| B2-07 | MOP8-6 장 구성(25장): 9 Preliminary, 10 Primary, 11 Biofilm Reactor Technology, 12 Suspended-Growth, 13 **Integrated Biological Treatment(IFAS·hybrid)**, 14 Physical and Chemical Processes for Advanced WWT, 15 **Sidestream Treatment**, 16 **Natural Systems**, 17 Disinfection, 18 Solids management intro, 19 **Storage and Transport**, 20 **Chemical Conditioning**, 21 Thickening, 22 Dewatering, 23 Stabilization, 24 Thermal Processing, 25 Use and Disposal | UPenn 도서관 목차 | 웹 확인(목차 원문) | 슬러지 라인에 **저류·수송**과 **개량(conditioning)** 단계가 장 단위로 존재 → `storage_tank(treatment_line=sludge)` 정의 보강, 예비 L2 `sludge_conditioning_unit`; 자연정화 = `pond_lagoon_wetland` 확인; IFAS/hybrid = `biofilm_reactor/mbbr_ifas` 라벨을 "MBBR / IFAS (hybrid)"로 |
+| B2-08 | MOP8-7(2025) 1~14장 제목과 신규 내용: "Emerging primary filtration technologies", "Membrane, suspended-biofilm, and evolving biofilm reactors", "Tertiary treatment, with significant attention to PFAS", "Sidestream nitrogen removal and nutrient recovery", "Peracids and other emerging disinfection technologies", "Expanded thermal technologies coverage"; 6장 제목이 "Biofilm Reactor Technology and **Hybrid System** Design" | wef.org/?p=2184 (15장 이후는 페이지 절단 가능) | 웹 확인(목차 원문, 일부) | 예비 L2 `primary_filter`(D-06 0장 → 비활성); `disinfection_unit.disinfectant`에 `paa`; MABR을 "evolving biofilm reactor"로 인정 → L3 `mabr` 유지 + `aeration_mode=membrane` |
+| B2-09 | WEF는 2014년부터 WWTP 대신 **WRRF(water resource recovery facility)** 를 표준 용어로 사용 | MOP8 제목, wef.org | 웹 확인 | 논문·데이터셋 명칭에 WWTP/WRRF 병기; 검색어에 WRRF 추가(수집 재실행 시) |
+| B2-10 | GDLF 구조: 1장 "Classification of Biochemical Operations"(절: Criteria for Classification, Common "Named" Biochemical Operations); 13 Aerobic Digestion, 14 Anaerobic Processes, 15 Lagoons, 17 Biofilm Reactors(Packed Towers, Rotating Disc), 18 Fluidized Bed, 19 TF, 20 RBC, 21 Submerged Attached Growth. 분류 기준 3축(생화학적 변환 / 환경 aerobic·anoxic·anaerobic / 반응기 구성 부유·부착·CSTR·plug·SBR·lagoon)과 "named operations"(CAS, BNR 공정 MLE·A/O·A2/O·UCT·VIP·Bardenpho, 호기성 소화, UASB, 발효조, 연못; TF·RBC·FBBR·packed bed·IFAS) | Perlego·Routledge 목차; 검색 스니펫 | 웹 확인(장·절 제목), **표 1.2 내용은 미확인** | **MLE·A2O·UCT 등 이름 붙은 공정은 구역+반송의 배치(flowsheet)이지 장치가 아님** → 이미지 수준 속성 `process_configuration`; 호기성 소화는 `digester_type=aerobic`; `biofilm_reactor` L3 `airlift_fluidized_granular` → `fluidized_expanded_bed`로 개명; 3축 = 우리 속성(`*_zone` / 부유·부착 / `operation_mode`)과 일치 |
+| B2-11 | vH&L 장 구성: Membrane Bioreactors, Moving Bed Biofilm Reactors, **Anaerobic Pretreatment**(UASB → 활성슬러지, 브라질 관행), Sludge Treatment and Disposal; 용어 "primary settler", "final settler"; AGS는 부록 | Perlego 목차, sswm.info 소개 | 웹 확인(목차 원문) | `anaerobic_wastewater_reactor`를 **전처리 위치(1차 단계)에서도 허용**(L1 secondary 고정 아님); 별칭 settler |
+| B2-12 | Davis 2판 목차는 403으로 열람 불가; 보고자 기억으로는 2차 침전·소독·후포기를 한 장에 둠 | TAMU 목록 | **미확인** | 결정에 사용하지 않음(한계 기록) |
+| B2-13 | KDS 61 50 00 수처리시설 목차 전문: 2 유량조정조; 3 침전지(3.1 일차, 3.2 이차, **3.3 다층식**); 5 활성슬러지법(5.3 처리방식: 5.4 표준, 5.5 순산소, 5.6 심층포기, 5.7 연속회분, 5.8 산화구, 5.9 장기포기); 6 부착미생물(6.2 **접촉산화법**, 6.3 호기성여상법); 7 고도처리(7.3 질소, 7.4 인, 7.5 동시, 7.7 잔류 SS 및 용존유기물 제거); 8 소독(8.2 염소, 8.3 **탈염소**, 8.4 오존, 8.5 UV); 9 간이공공하수처리시설; 10 부대시설(10.3 방류구) | KDS 61 00 00:2022 PDF(files-scs.pstatic.net 사본; 원본 kcsc.re.kr) | PDF 추출(원문) | `kds61_term` 값 확정; `process_configuration` 한글 값(표준활성슬러지법·순산소·심층포기·연속회분·산화구·장기포기·접촉산화·호기성여상); 접촉산화 = `biofilm_reactor/submerged_biofilter` 별칭(역세 없음); 다층식침전지 = `clarifier_shape=multi_storey`; `disinfection_unit.dechlorination`; 방류구 = `io_terminal(effluent)` |
+| B2-14 | KDS에서 **스크린·침사지는 61 45 00 펌프장시설(유입펌프장)** 소속; 61 90 05 건물 목록에 "3.1 유입펌프동, 3.2 송풍기동, 3.4 스크린 및 침사지동, 3.5 소화조 관리건물, 3.6 화학약품건물" | KDS 61 45 00 / 61 90 05 | PDF 추출(원문; 61 45 00 절 제목은 미추출) | 한국 도면은 유입펌프장 상자 안에 스크린·침사지를 그릴 수 있음 → `pump_station`을 parent로, `screen`/`grit_chamber`를 `parent_id` 자식으로 허용(판별 규칙 13) |
+| B2-15 | KDS 61 55 00 찌꺼기(슬러지)처리시설 목차 전문: 1.3 **반류수 처리**; 2 수송·저류(2.4 **저류조**); 3 농축(중력·부상·원심·벨트·디스크); 4 혐기성 소화(4.7 상징수, 4.9 소화가스 포집·저장, 4.10 에너지화, **4.12 분뇨·음식물폐수 연계처리**); 5 호기성 소화; 6 **개량**(6.1 세정, 6.2 약품처리, 6.3 열처리); 7 탈수(가압·벨트프레스·원심); 8 건조; 9 **퇴비화**; 10 소각(다단·회전…) | KDS 61 55 00 | PDF 추출(원문; 10.3 이후 미추출) | 슬러지 체인 = 저류 → 농축 → 소화 → 개량 → 탈수 → 건조/퇴비화/소각; `drying_incineration_unit`에 퇴비화·열분해 포함(`final_process` 속성); `stream_role`에 `co_substrate`(분뇨·음식물폐수 연계); 개량·열처리 = 예비 L2 `sludge_conditioning_unit` |
+| B2-16 | 하수도정보시스템 처리공법 검색: 분류 {고도처리공법, 일반공법}, **계열 {A2O 계열, SBR 계열, 담체 계열, 기타}**; 인천시 공식 현황의 실제 처리공법 문자열 예: "MLE응집 4-stage BNR", "A2O + MBR", "MBR(HANT) + 고속침전응집 + 오존", "산화구공법", "ACS공법 + 여과시설 + UV소독", "AGS-SBR+고속응집침전", "Biostyr®", "DeNiPho공법(1단계), 4-Stage BNR(2단계)"; 한국 논문은 A/S·A2O·MBR·SBR·Media(담체)로 묶음 | hasudoinfo.or.kr program.do; incheon.go.kr/env/ENV030301; koreascience JAKO201404065096535, JAKO202032265178936 | 웹 확인(원문) | `process_configuration`은 플랜트 수준 라벨이며 한국 표기는 단계를 "+"로 잇는다 → 파싱 규칙(판별 규칙 12); AGS·오존·고속응집침전이 국내 실플랜트에 존재 → 예비 클래스 유지 근거; 환경부 하수도통계 "처리방법별" 공식 목록은 미확보 |
+| B2-17 | EPA13 기술 목록(원문): 물리·화학 — Blue PRO 반응여과, **Phosphorus Recovery (Struvite)**, Compressible Media Filtration, Magnetite Ballasted Sedimentation, NF/RO, Actiflo, DensaDeg, **PAA·BCDMH 소독**, Ammonia Recovery, **Salsnes Filter**(회전 벨트 1차 여과); 생물 — Bioaugmentation, **Deammonification(sidestream·mainstream·nitrite shunt)**, Nitritation/Denitritation, Deep Shaft, Magnetite Ballasted AS, BCFS, MUCT, Westbank, Modified A/O, **MBfR(=MABR)**, VRM, IFAS-BPR, MSABP, **AGSP**, AMBR, **An-MBR**, MFC | EPA 832-R-12-011 PDF "List of Technologies" | PDF 추출(원문) | 예비 클래스 후보의 2차 근거; 공공저작물이라 **보조 세트 수집 후보**(s03 DOCS 추가) |
+| B2-18 | IWA In Focus: *Water Resource Recovery Modelling* (2021; 플랜트 전체 모델링, MBBR 생물막, 열가수분해) 및 *Modelling for Water Resource Recovery* (2024; "Modelling of aerobic granular sludge reactors", "Mainstream short-cut N removal modelling", "Hybrid modelling of WRRFs", "transition of WRRF models to digital twin") | schweitzer-online 목차 | 웹 확인(장 제목) | `n_pathway` 속성(mainstream short-cut N); 하류 활용 동기(디지털 트윈 입력 구조 자동 생성) |
+| B2-19 | 밀집(densified) 활성슬러지: 하이드로사이클론으로 입상 슬러지를 물리 선별, PdNA(partial denitrification–anammox)와 결합; WRF 5130 설계 지침 | *Water Research* 2024 "Making waves"; WRF 5130; accesswater Fairfax 사례 | 웹 확인(초록) | `biomass_form=densified`; hydrocyclone은 D-06 1장 → 클래스 아님, `unknown_equipment` + `stream_role=hydrocyclone_underflow/overflow` 미도입(필요 시 추가) |
+| B2-20 | MABR 상용화 검토(Daigger 등, WST 2021), *Intensifying Activated Sludge Using Media-Supported Biofilms* (CRC 2020): MABR·IFAS는 기존 포기조 안에 설치되는 하이브리드 | DOAJ 717e4755…, taylorfrancis 9780367202279 | 웹 확인(초록) | 생물막 L3(`mabr`, `mbbr_ifas`)가 `aerobic_zone` parent 안에 자식으로 올 수 있음(판별 규칙 3 보강) |
+| B2-21 | 미확인 항목 종합: ME5 절 제목(B2-02·03), GDLF 표 1.2, MOP8-6 절 제목, MOP8-7 15장 이후, Davis 목차, IWA20 18장 소절(MABR 위치), 환경부 하수도통계 처리방법 공식 목록, 「공공하수처리시설 운영관리 실무지침」 목차, KDS 61 45 00 절 제목 | — | — | 후속: 도서관에서 ME5·GDLF·MOP8 실물 목차 확인 후 B2-02·03·10을 "확인"으로 갱신 |

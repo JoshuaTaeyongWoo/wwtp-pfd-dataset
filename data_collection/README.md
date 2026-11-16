@@ -459,3 +459,10 @@ Return: K, provenance records, splits
 "Discovery → Acquisition → Caption filter (T1/T2) → Provenance record → Dedup (SHA-256, pHash) → AI triage → Human
 validation → Split", 오른쪽 확대 박스에 캡션 규칙(강한 다이어그램어 / 플랜트어 / 제외어)과 triage 결정 트리.
 수치(후보 10,323편, 그림 56,617장, 3,300 → 3,114 → main 952)를 화살표 옆에 표기.
+
+## 10. 어노테이션 클래스 체계 — `docs/`
+
+- `docs/annotation_taxonomy_plan.md`: 클래스 체계 설계안 v1.1 (요구조건 → 근거 → 원칙 → L2 33 클래스 + 연결 8 클래스 + 예비 7 클래스, 속성, 판별 규칙 22개, 그래프 정답 스키마, 확정 절차, 평가 지표).
+- `docs/evidence_ledger.md`: 설계안의 모든 결정을 출처(데이터·선행연구·표준·교과서·KDS·방법론)와 분석 방법으로 추적하는 근거 원장. "미확인" 행은 논문에 인용하지 않는다.
+- `docs/taxonomy_textbook_review.md`: v0를 교과서 4권으로 검토한 보고서(오류 E1–E11, v1 제안).
+- 설명 페이지(비전문가용 시각 설명): https://claude.ai/artifact/RHaxhG7DwhQaEy8HA47FzY
