@@ -33,7 +33,7 @@ label-studio start --port 8080
 
 ## 3. 어노테이터 교육 (2시간 + 연습 5장)
 
-- 읽을 것: `docs/annotation_guideline_v1.md` (규칙 22개, 클래스 표, 엣지 기록법).
+- 읽을 것: **`annotation/manual/WWTP_annotation_manual_v1.pdf`** (그림 포함 초보자용 매뉴얼 17쪽; Word 원본 `.docx`, 생성 스크립트 `manual/build_manual.py`·`make_manual_figures.py`). 규칙 원문은 `docs/annotation_guideline_v1.md`.
 - 연습: `data/pilot/images/`가 아닌 main의 다른 5장(판정자가 고름)으로 연습하고, 판정자와 함께 맞춰 본다. 연습 결과는 버린다.
 - 단축키: 숫자 1~0 = 자주 쓰는 클래스, `r` = 관계, `Ctrl+Enter` = 제출.
 

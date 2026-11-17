@@ -30,3 +30,6 @@ Thumbs.db
 
 # --- local dev-server launcher (Claude desktop) ---
 .claude/launch.json
+
+# --- manual render checks ---
+data_collection/annotation/manual/_render/
