@@ -14,9 +14,7 @@ the "parent_of" relation (parent -> zone).
     .hdr { font-weight: 700; margin: 6px 0 2px; }
   </Style>
 
-  <Header value="1. 장치·구역 박스 (L2 33 클래스; 생물막·혐기성 반응기는 L3로 그린다)"/>
-  <Image name="img" value="$image" zoom="true" zoomControl="true" rotateControl="false" brightnessControl="true"/>
-
+  <Header value="1. 라벨 버튼을 먼저 누르고 그림 위에서 드래그 (숫자키 1~0 = 자주 쓰는 클래스, r = 연결)"/>
   <RectangleLabels name="unit" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
     <!-- preliminary -->
     <Label value="screen" background="#1f77b4" hotkey="1"/>
@@ -78,6 +76,9 @@ the "parent_of" relation (parent -> zone).
     <Label value="junction_merge" background="#ff9896"/>
     <Label value="instrument" background="#c5b0d5"/>
   </RectangleLabels>
+
+  <Image name="img" value="$image" zoom="true" zoomControl="true" rotateControl="false" brightnessControl="true"/>
+
 
   <Header value="2. 박스 속성 (박스를 선택하면 나타남) — T1 필수"/>
   <View style="display:flex; gap:12px; flex-wrap:wrap">
