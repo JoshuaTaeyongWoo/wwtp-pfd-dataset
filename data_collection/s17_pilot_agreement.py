@@ -113,8 +113,22 @@ def cohen_kappa(pairs: list[tuple[str, str]]) -> float:
     return (po - pe) / (1 - pe) if pe < 1 else 1.0
 
 
-def per_image_stats(A: dict, B: dict, key: str) -> dict:
+FULL_ONLY = {"arrowhead", "text_label", "stream_tag", "stream_label"}
+
+
+def pilot_no(key: str) -> int:
+    import re
+    m = re.match(r"pilot_(\d+)", key)
+    return int(m.group(1)) if m else 0
+
+
+def per_image_stats(A: dict, B: dict, key: str, full_subset: int = 20) -> dict:
     a, b = A.get(key, {"boxes": [], "edges": []}), B.get(key, {"boxes": [], "edges": []})
+    if full_subset and pilot_no(key) > full_subset:  # pilot-lite images: full-only classes are not expected
+        a = {"boxes": [x for x in a["boxes"] if x["l2"] not in FULL_ONLY], "edges": a["edges"]}
+        b = {"boxes": [x for x in b["boxes"] if x["l2"] not in FULL_ONLY], "edges": b["edges"]}
+    a["edges"] = [e for e in a["edges"] if "parent_of" not in (e[2] or "")]
+    b["edges"] = [e for e in b["edges"] if "parent_of" not in (e[2] or "")]
     matched, miss_a, miss_b = match(a["boxes"], b["boxes"])
     cls_pairs = [(a["boxes"][i]["l2"], b["boxes"][j]["l2"]) for i, j, _ in matched]
     l1_pairs = [(L1_OF.get(x, x), L1_OF.get(y, y)) for x, y in cls_pairs]
@@ -224,6 +238,7 @@ def main():
     ap.add_argument("--format", choices=["labelstudio", "graphdir"], default="labelstudio")
     ap.add_argument("--out", default="")
     ap.add_argument("--expand-cvat", default="")
+    ap.add_argument("--full-subset", type=int, default=20, help="pilot numbers <= N were annotated in full (arrowheads, text); 0 = all full")
     args = ap.parse_args()
     if args.expand_cvat:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -232,9 +247,10 @@ def main():
     load = load_label_studio if args.format == "labelstudio" else load_graph_dir
     A, B = load(Path(args.a)), load(Path(args.b))
     keys = sorted(set(A) | set(B))
-    stats = [per_image_stats(A, B, k) for k in keys]
+    stats = [per_image_stats(A, B, k, args.full_subset) for k in keys]
     agg, ci = aggregate(stats), bootstrap(stats)
-    lines = [f"# Pilot agreement — {len(keys)} images, annotator A vs B", "",
+    n_full = sum(1 for k in keys if not args.full_subset or pilot_no(k) <= args.full_subset)
+    lines = [f"# Pilot agreement — {len(keys)} images, annotator A vs B (full subset: {n_full} images for arrowhead/text classes; edges compared by src→dst only, medium filled by s19 rules)", "",
              "| metric | value | 95 % CI |", "|---|---|---|"]
     for k in ["kappa_l2", "kappa_l1", "iou07", "mean_iou", "unmatched_a", "unmatched_b", "edge_p", "edge_r", "edge_f1"]:
         lo, hi = ci.get(k, (float("nan"), float("nan")))
