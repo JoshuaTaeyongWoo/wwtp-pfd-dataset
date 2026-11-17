@@ -384,8 +384,9 @@ classes:
   process_unit_generic:
     ko: 공정 단위(종류 미상)
     l1: generic
-    definition: Process box with no text or only a number (patent "412", Korean "#1~#4"), so even the annotator cannot assign an L2. Text-box diagrams whose text names the unit get the real L2 with visual_form=box (rule 15).
+    definition: Process box whose L2 cannot be read - no text, only a number (patent "412", Korean "#1~#4"), or text that names a STAGE rather than a unit ("Biological Treatment", "Preliminary Treatment"). Always record l1_hint (v1.1a) and label_text. Text-box diagrams whose text names the unit get the real L2 with visual_form=box (rule 15).
     aliases: []
+    attributes: [l1_hint]
     cues: [rectangle with number or nothing]
     mapping: {qsdsan_unit: null, gpsx_unit: null, sumo_unit: null, bsm_unit: null, dexpi_parent: null, iso10628_group: null, kds61_term: null}
     evidence: [B-01, D-01, K-06]
@@ -396,6 +397,7 @@ classes:
     l1: generic
     definition: Any other equipment; label_text is mandatory. Examples - post-aeration cascade, odour scrubber, heat exchanger/boiler, screenings washer, grit classifier, hydrocyclone, chemical make-up tank.
     aliases: []
+    attributes: [l1_hint]
     mapping: {qsdsan_unit: null, gpsx_unit: null, sumo_unit: null, bsm_unit: null, dexpi_parent: null, iso10628_group: null, kds61_term: null}
     evidence: [T-02, D-07]
     expected_freq: low
@@ -434,6 +436,7 @@ attributes:
   is_zone:            {tier: T1, type: bool}
   parent_id:          {tier: T1, type: box_ref, nullable: true}
   graph_id:           {tier: T1, type: int, default: 1}
+  l1_hint:            {tier: T1, values: [preliminary, primary, secondary, tertiary, sludge, sidestream, unknown], applies_to: [process_unit_generic, unknown_equipment], note: "v1.1a (2026-11-17, pilot image 1): a box whose text names a STAGE (e.g. 'Biological Treatment') keeps its L1 for hierarchical evaluation"}
   treatment_line:     {tier: T2, values: [mainstream, sidestream, sludge]}
   zone_role:          {tier: T2, values: [main, selector, contact, reaeration, deoxygenation, degasifier, underflow_anoxic, post_anoxic, stripper, swing], note: swing is provisional (B2-03 unverified)}
   aeration_mode:      {tier: T2, values: [diffused, surface, brush, jet, hpo, membrane, mixer_only, none, unknown]}
@@ -465,7 +468,7 @@ attributes:
   # --- connection-class attributes ---
   tag_kind_text:      {tier: T2, values: [name, volume, depth, equipment_count, hrt, spec, material, capacity, patent_number, other]}
   tag_kind_stream:    {tier: T2, values: [stream_no, flow, fraction, concentration, loading, performance, quality, hydraulic, other]}
-  io_role:            {tier: T1, values: [raw_influent, settled_influent, external_waste_in, effluent, reclaimed_water_out, solids_disposal, biogas_use, off_gas_out, chemical_source, overflow_bypass_out, external_sidestream]}
+  io_role:            {tier: T1, values: [raw_influent, settled_influent, external_waste_in, effluent, reclaimed_water_out, solids_disposal, biogas_use, off_gas_out, chemical_source, overflow_bypass_out, external_sidestream, continuation], note: "continuation = off-page connector ('to tertiary treatment', 'from Fig. 2'); v1.1a"}
   split_type:         {tier: T2, values: [ratio, fraction, pumped, bypass, router_alternating, pacing, unknown]}
   merge_role:         {tier: T2, values: [step_feed_inlet, sidestream_return, chemical_dosing_point, recycle_return, lane_combiner]}
   instrument_role:    {tier: T2, values: [sensor, analyser, controller, setpoint]}
@@ -489,6 +492,8 @@ edge_schema:
   stream_role:          [influent, settled_influent, effluent, reclaimed_water, mixed_liquor, internal_recycle_a, ras_s, r_recycle, effluent_recirculation_qr, was, scum, primary_sludge, thickened_sludge, digested_sludge, dewatered_cake, chemical_sludge, screenings_grit, fermentate, co_substrate, sidestream_return, backwash_return, bypass, overflow, step_feed, biogas, off_gas, air_supply, oxygen, chemical_dose, carbon_source, signal]
   direction_confidence: [arrowhead, inferred, ambiguous]
   line_style:           [solid, dashed, dotted, unknown]
+  optional:             bool   # v1.1a: line drawn as optional / alternative routing ("(Optional)", dashed alternative)
+  label_studio_relation_labels: "medium|direction_confidence (one) + optional extra labels style:dashed, style:dotted, optional, parent_of, evidence_for"
   tier: {src: T1, dst: T1, medium: T1, direction_confidence: T1, stream_role: T2, split_fraction: T2, line_style: T2, evidence: T2, polyline: T3}
   rules:
     - splits and merges always go through a junction node

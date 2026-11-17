@@ -94,6 +94,14 @@ the "parent_of" relation (parent -> zone).
       <Header value="is_zone (구역 박스면 체크)"/>
       <Choice value="zone"/>
     </Choices>
+    <Choices name="l1_hint" toName="img" perRegion="true" showInline="true">
+      <Header value="l1_hint (generic·unknown 박스만: 어느 단계인가)"/>
+      <Choice value="preliminary"/><Choice value="primary"/><Choice value="secondary"/><Choice value="tertiary"/><Choice value="sludge"/><Choice value="sidestream"/><Choice value="unknown"/>
+    </Choices>
+    <Choices name="graph_id" toName="img" perRegion="true" showInline="true">
+      <Header value="graph_id (독립 도면이 둘 이상일 때만)"/>
+      <Choice value="g1"/><Choice value="g2"/><Choice value="g3"/><Choice value="g4"/>
+    </Choices>
   </View>
   <TextArea name="label_text" toName="img" perRegion="true" placeholder="박스 안·옆 원문 텍스트 (번호 포함)" maxSubmissions="1" editable="true"/>
 
@@ -124,7 +132,7 @@ the "parent_of" relation (parent -> zone).
       <Header value="function (부상조)"/><Choice value="primary"/><Choice value="secondary_separation"/><Choice value="tertiary"/><Choice value="thickening"/>
     </Choices>
     <Choices name="io_role" toName="img" perRegion="true" showInline="true">
-      <Header value="io_role (io_terminal)"/><Choice value="raw_influent"/><Choice value="settled_influent"/><Choice value="external_waste_in"/><Choice value="effluent"/><Choice value="reclaimed_water_out"/><Choice value="solids_disposal"/><Choice value="biogas_use"/><Choice value="off_gas_out"/><Choice value="chemical_source"/><Choice value="overflow_bypass_out"/><Choice value="external_sidestream"/>
+      <Header value="io_role (io_terminal)"/><Choice value="raw_influent"/><Choice value="settled_influent"/><Choice value="external_waste_in"/><Choice value="effluent"/><Choice value="reclaimed_water_out"/><Choice value="solids_disposal"/><Choice value="biogas_use"/><Choice value="off_gas_out"/><Choice value="chemical_source"/><Choice value="overflow_bypass_out"/><Choice value="external_sidestream"/><Choice value="continuation"/>
     </Choices>
     <Choices name="stream_role" toName="img" perRegion="true" showInline="true">
       <Header value="stream_role (stream_label)"/><Choice value="influent"/><Choice value="settled_influent"/><Choice value="effluent"/><Choice value="reclaimed_water"/><Choice value="mixed_liquor"/><Choice value="internal_recycle_a"/><Choice value="ras_s"/><Choice value="r_recycle"/><Choice value="effluent_recirculation_qr"/><Choice value="was"/><Choice value="scum"/><Choice value="primary_sludge"/><Choice value="thickened_sludge"/><Choice value="digested_sludge"/><Choice value="dewatered_cake"/><Choice value="chemical_sludge"/><Choice value="screenings_grit"/><Choice value="fermentate"/><Choice value="co_substrate"/><Choice value="sidestream_return"/><Choice value="backwash_return"/><Choice value="bypass"/><Choice value="overflow"/><Choice value="step_feed"/><Choice value="biogas"/><Choice value="off_gas"/><Choice value="air_supply"/><Choice value="oxygen"/><Choice value="chemical_dose"/><Choice value="carbon_source"/><Choice value="signal"/>
@@ -141,7 +149,7 @@ the "parent_of" relation (parent -> zone).
   </View>
   <TextArea name="n_compartments" toName="img" perRegion="true" placeholder="n_compartments / n_parallel_lanes / lane_group_id / panel_phase (예: n=3; lanes=2; lane=1; phase=react)" maxSubmissions="1" editable="true"/>
 
-  <Header value="4. 연결 (엣지): 출발 박스 선택 → r → 도착 박스 클릭 → 관계 라벨 선택"/>
+  <Header value="4. 연결 (엣지): 출발 박스 선택 → r → 도착 박스 클릭 → 관계 라벨: medium|방향 하나 + (점선이면 style:dashed, 선택 경로면 optional)"/>
   <Relations>
     <!-- medium ∥ direction_confidence ; parent_of links a tank to its zone boxes (tank -> zone) -->
     <Relation value="liquid|arrowhead"/>
@@ -160,6 +168,9 @@ the "parent_of" relation (parent -> zone).
     <Relation value="solid|arrowhead"/>
     <Relation value="signal|arrowhead"/>
     <Relation value="signal|inferred"/>
+    <Relation value="style:dashed"/>
+    <Relation value="style:dotted"/>
+    <Relation value="optional"/>
     <Relation value="parent_of"/>
     <Relation value="evidence_for"/>
   </Relations>

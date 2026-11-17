@@ -83,11 +83,12 @@
 12. 캡션·제목의 공정 이름("A2O + MBR", "MLE")은 이미지 속성 `process_configuration`에.
 13. 상자 안 상자(유입펌프장 안 스크린·침사지, 포기조 안 카세트, 반응조 안 침지막): 바깥 = 부모, 안쪽 = 자식(`parent_of`). 자식이 부모와 거의 같은 크기면 자식을 만들지 않는다.
 14. 1차/2차 침전지·조정조/저류조는 **위치**로: 생물반응조 앞 = 1차, 뒤 = 2차; RAS 선이 있으면 2차. 유입 쪽에서 유량을 고르면 조정조, 담아만 두면 저류탱크.
-15. 박스형 도면도 의미 클래스를 단다(`visual_form=box`, `confidence=inferred_from_text`). generic은 글자 없음·번호뿐일 때만.
+15. 박스형 도면도 의미 클래스를 단다(`visual_form=box`, `confidence=inferred_from_text`). generic은 ① 글자 없음·번호뿐, ② 글자가 **단계 이름**("Biological Treatment", "Preliminary Treatment", "Sludge Treatment")이라 장치를 특정할 수 없을 때. generic·unknown 박스에는 **`l1_hint`**(어느 단계인지)를 반드시 고른다: "Biological Treatment" → `l1_hint=secondary`, 번호뿐이면 흐름 위치로 추정하고 모르면 `unknown`. (v1.1a, 파일럿 1번 그림에서 추가)
+15b. `visual_form` 고르기: **symbol**은 모양 자체가 장치 종류를 말해 줄 때(원뿔 바닥 침전지, 막 카세트, 달걀형 소화조). 그냥 원·네모에 글자로 이름이 쓰였으면 모양이 원이라도 **box**.
 16. 부상 농축 = `flotation_unit(function=thickening)`; `thickener`는 중력·기계식만.
 17. P-stripper: RAS를 받으면 `anaerobic_zone(stripper)`, 반류수를 받으면 `sidestream_reactor`.
 18. 선에 붙은 글자: 문자면 `stream_label`, 숫자·ID면 `stream_tag`, 섞였으면 `stream_label` 하나 + tag_kind.
-19. `io_terminal` 범위: 화살표 끝 + 글자.
+19. `io_terminal` 범위: 화살표 끝 + 글자. 다른 그림·다른 단계로 이어지는 끝("to tertiary treatment", "from Fig. 2", "To Solids Processing")은 io_role `continuation`(고형물 반출이 명확하면 `solids_disposal`).
 20. 반류수 반응기: 유일한 공급이 탈수여액·상징수면 `sidestream_reactor`; 본류도 받으면 `*_zone` + 합류점 `sidestream_return`.
 21. 발효조: 발효액이 본류 혐기·무산소조로 가면 `fermenter`; 메탄 소화조로 가면 `digester(acid_phase)`.
 22. 산화구·Carrousel·Orbal: 수로 전체 한 박스 `aerobic_zone(is_loop_reactor)`; 포기기 위치로 구간이 구분돼 있으면 구간마다 자식 구역.
@@ -100,13 +101,15 @@
 - 엣지 끝점은 **가장 작은 단위**(구역이 있으면 구역, 없으면 탱크).
 - 갈라지거나 합쳐지는 곳은 반드시 `junction_split/merge` 박스를 거친다(장치→장치 직결 금지).
 - 인접 구역 사이(혐기→무산소→호기)는 선이 없어도 `mixed_liquor|inferred` 엣지를 넣는다.
+- 관계 라벨은 여러 개를 고를 수 있다: `medium|방향` 하나는 필수, 선이 점선이면 `style:dashed`(일점쇄선·점선 모두), "(Optional)"이나 대안 경로로 그려졌으면 `optional`을 **추가로** 고른다.
 - 부모–자식: 탱크 박스 → 구역 박스로 `parent_of`.
+- 한 이미지에 독립 도면이 둘 이상이면 박스마다 `graph_id`(g1, g2 …)를 고른다. 하나뿐이면 비워 둔다.
 - 스트림 이름·태그·화살촉을 어느 엣지의 근거로 쓸지는 선택(`evidence_for`: 라벨 박스 → 도착 장치). 파일럿에서는 생략 가능.
 
 ## 6. 이미지 속성 (장당 1회)
 
 - `diagram_style`: A_box(사각형+글자) / B_symbol(기호형) / C_pictorial(3D·아이콘) / D_simulator(소프트웨어 화면) / E_page(페이지 통째) / hydraulic_profile
-- `language`: 라벨 글자 언어. `n_panels`: 독립 도면 수(둘 이상이면 박스마다 graph_id를 `label_text` 앞에 "[g2]"로 표시).
+- `language`: 라벨 글자 언어. `n_panels`: 독립 도면 수(둘 이상이면 박스마다 `graph_id` 선택).
 - `process_configuration`: 캡션·제목에 공정 이름이 있으면 원문 그대로.
 
 ## 7. 자주 틀리는 것
