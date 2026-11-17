@@ -16,6 +16,8 @@ label-studio start --port 8080
 
 브라우저에서 http://localhost:8080 → 계정 생성(로컬 전용).
 
+> **주의 (2026-11-17 교훈)**: 서버는 반드시 **사용자 터미널에서 직접** 켠다. Claude 데스크톱 앱 안에서 켜면 앱 샌드박스(`AppData\Local\Packages\Claude_…\LocalCache\Local\label-studio`)에 별도 데이터베이스가 생겨 계정·프로젝트가 갈라진다. 진짜 데이터는 `AppData\Local\label-studio\label-studio`에 있다. 토큰도 진짜 서버에서 발급한 것만 유효하다.
+
 ## 2. 프로젝트 만들기 (어노테이터마다 1개, 총 2개)
 
 같은 설정으로 프로젝트를 **두 개** 만든다(`pilot_A`, `pilot_B`). 한 프로젝트에 두 사람을 넣으면 서로의 라벨을 볼 수 있어 일치도가 오염된다.
