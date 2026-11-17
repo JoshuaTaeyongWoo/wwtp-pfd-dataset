@@ -69,7 +69,7 @@
 
 - **Theisen et al. 2023 (화공 PFD, 47 클래스, 1,005장, 17,411 객체)**. Zhang et al. 2019의 12개 단위조작을 세 규칙으로 분해했다. ① 장비 세부 유형별 분할(valve → 8종), ② 같은 장비의 **그림 양식별 분할**(tank1~4, pump1~3, hex 계열, col/col_aspen), ③ 도면 고유 기호 추가(IO 태그, 화살표, 텍스트, 스트림 태그 strm1~4, 제어기, mixer/splitter, unknown X) [T-01]. 결과: 자주 나오거나 양식이 일정한 클래스(col_aspen 90%, tank_gas 89%, blwr 88%)는 높고, 작은 기호(밸브류 45~65%, mix2 34%, strm3/4 36~41%)와 희귀·다양 클래스(tank 37%, IO 44%, X 46%)는 낮았다 [T-02]. **교훈**: 양식별 분할은 효과가 있지만 인스턴스가 충분할 때만이며, 작은 객체·희귀 클래스는 체계 설계로는 못 구하고 데이터·모델로 풀어야 한다.
 - **P&ID 데이터셋들** [T-04 ~ T-07]: *Dataset-P&ID*(Paliwal 2021)는 합성 500장, 기호 32 클래스(이름 없이 Symbol_1~32); *Kim et al. 2022*는 76 라벨(장비 25 + 배관 33 + 계기 18), ISO 10628-2·PIP PIC001 참조; *PID2Graph*(Stürmer 2025)는 기호 **7 클래스만**(General, Pump/Compressor, Tank/Vessel, Instrumentation, Inlet/Outlet, Valve, Arrow) + 선 2종으로 GraphML 그래프 복원을 평가; *Elyan 2018 / Jamieson 2024*는 클래스 분해가 샘플링 기반 불균형 대응보다 우수함을 보임; *FC_A*(Awal 2011) 흐름도 7 클래스는 박스형 도면 검출의 선례.
-- **2026년 신규 선행(학술 검토에서 추가)** [T-08, T-09]: *Chem. Eng. Res. Des.* 2026의 PFD 파싱 + 시뮬레이션 모델 생성(YOLOv11, 방향 추론 77.6 %)과 Sketch2Simulation(멀티모달 LLM 에이전트 → Aspen HYSYS, 연결 일관성 ≥ 0.93)이 "도면 → 시뮬레이션 구조"를 화공 도메인에서 이미 보였다. 따라서 우리 논문의 신규성 주장은 (i) WWTP 도메인 최초의 공개 벤치마크, (ii) 박스 + 그래프 정답으로 **정량 평가가 가능한** 연결 복원, (iii) ASM/BSM 단위모델 매핑과 WWTP 공정 사전지식으로 좁혀서 쓰고, VLM/LLM 에이전트를 기준 모델에 반드시 포함한다.
+- **2026년 신규 선행(학술 검토에서 추가, 원문 확인)** [T-08, T-09]: Yu & Zheng 2026 (*Chem. Eng. Res. Des.* 234:330) = 화공 PFD → Aspen Plus. 비공개 데이터 300여 장(Google·Baidu 이미지, 7,701 인스턴스), YOLOv11 mAP50 0.916, 선 복원 + 계층 잠금 방향 추론(화살표 → 장치 기하 규칙 → 수지 전파)으로 5장 206 연결 중 77.6 % 방향 결정, 수작업 그래프 정답 173 연결에서 **F1 0.771, 방향 정확도 0.968**; 재순환이 많은 도면은 미해결로 남겨 Aspen 생성은 3건만 성공. Sketch2Simulation(멀티모달 LLM 에이전트 → Aspen HYSYS, 연결 일관성 ≥ 0.93)도 같은 방향. 따라서 "도면 → 시뮬레이션 구조"는 더 이상 새롭지 않다. 우리 논문의 신규성은 (i) WWTP 도메인 최초의 **공개** 벤치마크(그들은 비공개·5장 평가), (ii) 박스 + 그래프 정답으로 재현 가능한 연결 복원 평가, (iii) 장치 기하 규칙이 아닌 **공정 순서·반송 사전지식**(유입 → 1차 → 2차 → 3차, RAS·내부반송·슬러지선 방향)에 의한 방향 추론과 ASM/BSM 단위모델 매핑, (iv) 반송(RAS·MLR·반류수)이 본질인 WWTP가 그들이 실패한 "재순환이 많은 도면"의 체계적 시험대라는 점으로 쓴다. 비교 기준값으로 F1 0.771 / 방향 결정률 77.6 % / 방향 정확도 0.968을 인용하고, VLM/LLM 에이전트를 기준 모델에 반드시 포함한다.
 - **공통점**: 모두 "장치 클래스 + 연결 요소 클래스(선·화살표·텍스트·태그)"의 2계층 구조이고, 연결은 별도 알고리즘(픽셀 탐색 또는 그래프 모델)이 담당한다. P&ID는 ISA-5.1 표준 기호가 있어 기호 = 클래스가 성립하지만 WWTP PFD는 그렇지 않다(2.3).
 
 ### 2.3 기호·어휘 표준 [S-01, S-02, S-05]
@@ -291,7 +291,7 @@ L1 = 기능 단계(preliminary / primary / separation / secondary / sidestream /
 - **선별 편향**: AI 선별(s09/s10)의 precision은 표본 점검으로 ~0.90이지만 **recall은 미추정**이다. 논문 전에 reject 집합에서 무작위 200장을 사람이 재검토해 recall과 95 % CI를 보고하고, 누락 유형(그림형·비영문)을 기록한다.
 - **리스크**: ① 박스형 도면에서 시각 클래스가 무의미 → P1로 대응. ② 특허 도면의 번호 참조(텍스트 없음, "412", "480") → `process_unit_generic` + `label_text`=번호, `confidence=inferred_from_context`. ③ 구역 박스 처리 일관성 → P6 + 판별 규칙 7. ④ 다국어 라벨 → OCR 모델 선택과 `language` 필드. ⑤ 그림형(C) 도면이 train에 섞이면 기호형 AP를 떨어뜨릴 수 있음 → `visual_form`으로 층화 평가. ⑥ 혐기 CSTR·소화조·발효조처럼 기호가 같은 장치 → 공급 스트림 규칙과 `confidence`로 대응 [B-12]. ⑦ 출처 편향: 특허(342장)는 번호 참조 박스형, 한국 지자체(22장)는 그림형에 치우침 → 출처별 층화 보고와 한계 명시. ⑧ 근거 원장의 "미확인" 행은 논문에 인용하지 않는다(확인된 행과 공개 PDF만 인용).
 
-**논문에서 "최초"를 주장할 때의 근거**: 2026-11-16 웹 검색(영문 "wastewater process flow diagram dataset object detection", 한글 "하수처리장 공정도 딥러닝 데이터셋")에서 WWTP 도면을 대상으로 한 공개 검출·그래프 데이터셋은 찾지 못했다. 가장 가까운 선행은 화공 PFD(Theisen 2023, 비공개 [T-01]; 2026 *Chem. Eng. Res. Des.* YOLOv11 기반 PFD 파싱 + 시뮬레이션 모델 생성 [T-08]), P&ID(PID2Graph 공개 [T-04]), 흐름도(hdFlowmind 1,776장, 화살표 머리·꼬리 좌표 포함 [T-07])이다. 논문 제출 전 Scopus/WoS 체계적 검색으로 다시 확인하고 검색식·날짜·건수를 보충자료에 적는다.
+**논문에서 "최초"를 주장할 때의 근거**: 2026-11-16 웹 검색(영문 "wastewater process flow diagram dataset object detection", 한글 "하수처리장 공정도 딥러닝 데이터셋")에서 WWTP 도면을 대상으로 한 공개 검출·그래프 데이터셋은 찾지 못했다. 가장 가까운 선행은 화공 PFD(Theisen 2023, 비공개 [T-01]; Yu & Zheng 2026 CERD, 비공개 300여 장, 그래프 정답 173 연결 F1 0.771 [T-08]), P&ID(PID2Graph 공개 [T-04]), 흐름도(hdFlowmind 1,776장, 화살표 머리·꼬리 좌표 포함 [T-07])이다. 공개 PFD 벤치마크로 그래프 수준 정답을 배포하는 것은 도메인을 불문하고 우리가 처음이 될 수 있으므로, 논문에서는 "WWTP 최초"와 "그래프 정답을 공개한 PFD 벤치마크로서 최초"를 구분해 두 주장 모두 체계적 검색 결과로 뒷받침한다. 논문 제출 전 Scopus/WoS 체계적 검색으로 다시 확인하고 검색식·날짜·건수를 보충자료에 적는다.
 
 ---
 
@@ -304,7 +304,7 @@ L1 = 기능 단계(preliminary / primary / separation / secondary / sidestream /
 - Stürmer et al. 2025, PID2Graph. https://arxiv.org/abs/2411.13929 ; 데이터 https://zenodo.org/records/14803338
 - Elyan et al. 2018 (IJCNN), 2020 (Neural Networks 129:91); Jamieson et al. 2024 (IJDAR). https://rgu-repository.worktribe.com/output/2457618
 - Awal et al. 2011, FC_A 흐름도 데이터셋. https://arxiv.org/pdf/1712.04833 ; Liu et al. 2024, Flowmind2Digital / hdFlowmind. https://arxiv.org/abs/2401.03742 ; FR-DETR (2022) https://www.researchgate.net/publication/363021700
-- 2026, *Chem. Eng. Res. Des.*, Automated process flow diagram parsing and simulation model generation via visual perception and topology reasoning. https://www.sciencedirect.com/science/article/abs/pii/S0263876226006180 (원문 미확인)
+- Yu, Y., Zheng, S., 2026. Automated process flow diagram parsing and simulation model generation via visual perception and topology reasoning. *Chem. Eng. Res. Des.* 234, 330–340. https://doi.org/10.1016/j.cherd.2026.09.022 (로컬 PDF `Ref/[CERD]…pdf`, 2026-11-17 원문 정독)
 - Bahamdan, Pajak, Hedengren, del Rio Chanona 2026, Sketch2Simulation. https://arxiv.org/abs/2603.24629
 
 **표준·어휘**
@@ -330,7 +330,7 @@ L1 = 기능 단계(preliminary / primary / separation / secondary / sidestream /
 - Tchobanoglous, Stensel, Tsuchihashi, Burton (Metcalf & Eddy | AECOM) 2014, *Wastewater Engineering: Treatment and Resource Recovery*, 5th ed., McGraw-Hill. 장 목차: https://www.mheducation.com/highered/product/wastewater-engineering-treatment-resource-recovery-metcalf-eddy-inc/M9780073401188.html
 - Chen, van Loosdrecht, Ekama, Brdjanovic (eds.) 2020, *Biological Wastewater Treatment: Principles, Modelling and Design*, 2nd ed., IWA. 목차: https://bdd.pseau.org/outils/biblio/resume.php?d=8875&l=en ; 연습서(OA) Lopez-Vazquez et al. 2023 https://iwaponline.com/ebooks/book/871/
 - WEF/ASCE 2017, *Design of Water Resource Recovery Facilities*, MOP 8, 6th ed. 목차: https://find.library.upenn.edu/catalog/9979431069503681 ; 7th ed. (2025) https://www.wef.org/?p=2184
-- Grady, Daigger, Love, Filipe 2011, *Biological Wastewater Treatment*, 3rd ed., CRC/IWA. 목차: https://www.perlego.com/book/4364773/biological-wastewater-treatment-pdf ; https://www.routledge.com/product/isbn/9781040061763
+- Grady, Daigger, Love, Filipe 2011, *Biological Wastewater Treatment*, 3rd ed., CRC/IWA. 목차: https://www.perlego.com/book/4364773/biological-wastewater-treatment-pdf ; https://www.routledge.com/product/isbn/9781040061763 ; 1장 미리보기(Table 1.1·1.2 원문) 로컬 `Ref/Grady2011_BWT3e_preview_ch1.pdf`
 - van Haandel & van der Lubbe 2012, *Handbook of Biological Wastewater Treatment*, 2nd ed., IWA. 목차: https://www.perlego.com/book/572008/handbook-of-biological-wastewater-treatment-pdf
 - 환경부 2022, 『하수도설계기준 KDS 61 00 00』(61 45 00 펌프장시설, 61 50 00 수처리시설, 61 55 00 찌꺼기(슬러지)처리시설). 원본 https://www.kcsc.re.kr ; 열람 사본 https://files-scs.pstatic.net/2024/08/30/FEFOlqHQAr/하수도설계기준(2023).pdf
 - 하수도정보시스템 처리공법 분류(A2O·SBR·담체 계열) https://www.hasudoinfo.or.kr/cms/lay1/WS10000231/program.do ; 인천시 하수처리시설 현황(실제 처리공법 표기) https://www.incheon.go.kr/env/ENV030301
@@ -351,6 +351,7 @@ L1 = 기능 단계(preliminary / primary / separation / secondary / sidestream /
 - ~~KDS 61 50 00 / 55 00의 단위공정 소절 제목~~ → 확인 완료 [B2-13, B2-15]; 61 45 00(펌프장: 스크린·침사지) 절 제목은 미추출.
 - ASM 보고서의 ASM1·ASM2 부분(스캔 이미지) [B-31].
 - ~~MOP 8 6판 절 제목~~ → AccessEngineering 공개 목차로 확인 완료 [B2-22]. ~~Grady 3판 표 1.1·1.2~~ → CRC 미리보기 PDF(1장 전문, `Ref/Grady2011_BWT3e_preview_ch1.pdf`)로 확인 완료 [B2-23]. Metcalf & Eddy 5판은 Google Books 차단으로 절 단위 미확인 [B2-21] → 실물 또는 다른 네트워크에서 확인.
+- ~~Yu & Zheng 2026 CERD 원문~~ → 2026-11-17 `Ref/[CERD]…pdf`로 정독 완료 [T-08]; 데이터 비공개, 그래프 정답 173 연결 F1 0.771, 방향 결정률 77.6 %.
 - 환경부 하수도통계 "처리방법별" 공식 분류, 「공공하수처리시설 운영관리 실무지침」 목차 [B2-16, B2-21].
 
 ## 8. 한국 설계 자료 [K] 및 최신·주요 교과서 보강 [B2]
