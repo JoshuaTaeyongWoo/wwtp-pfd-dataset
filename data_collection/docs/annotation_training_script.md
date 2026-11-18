@@ -1,200 +1,198 @@
 # 어노테이터 교육 진행 대본 (2시간 + 연습 5장)
 
 대상: 어노테이터 2명 · 진행: 판정자(연구 책임자) · 절차: 파일럿 v1.1b(쉬운 버전) · 2026-11-18
-준비물: 프로젝터(또는 큰 모니터), Label Studio 실행(`label-studio start --port 8080`), 프로젝트 `practice`(5장)·`pilot_A`·`pilot_B`, 인쇄물 = 요약 카드(각 1장) + 쉬운 버전 매뉴얼(각 1부), 완전판 매뉴얼은 진행자용 1부.
+준비물: 큰 모니터, Label Studio 실행(`label-studio start --port 8080`), 프로젝트 `practice`(5장)·`pilot_A`·`pilot_B`, 인쇄물 = 요약 카드(각 1장) + 쉬운 버전 매뉴얼(각 1부).
 
-원칙: **보여 주고(화면·그림) → 말하고(핵심 한 문장) → 시켜 본다(연습)**. 설명보다 손으로 해 보는 시간이 길어야 한다. 아래 "말하기"는 그대로 읽어도 되는 문장이고, "확인"은 넘어가기 전에 두 사람에게 물어볼 질문이다.
+**이 대본 쓰는 법**: "말하기"는 실제로 입으로 할 말을 적어 둔 것이라 그대로 읽어도 어색하지 않게 썼습니다. 다만 내 말투로 바꿔도 됩니다. 중요한 건 순서와, 각 구간 끝의 "확인" 질문을 빼먹지 않는 것입니다. 설명은 짧게, 해 보는 시간은 길게.
 
 ---
 
-## 0. 시작 전 (10분, 교육 시작 전에 끝낼 것)
+## 0. 시작 전에 (10분, 교육 전에 미리)
 
-- Label Studio가 떠 있고 `practice` 프로젝트 1번이 열리는지 확인. 두 사람 각자 노트북에서 로그인(같은 계정이어도 됨; 연습은 `practice`, 본 작업은 A·B로 나뉨).
-- 요약 카드를 각자 앞에 둔다. 매뉴얼은 펼쳐 두되 교육 중 읽게 하지 않는다.
-- 연습 결과는 버릴 것이므로 "틀려도 된다"를 먼저 말한다.
+- Label Studio가 떠 있고 `practice` 프로젝트 1번이 열리는지 확인. 두 사람 노트북에서 각자 로그인.
+- 요약 카드를 각자 앞에. 매뉴얼은 펼쳐만 두고, 교육 중에 읽게 하지는 않는다.
+- 첫마디: "오늘 연습하는 건 다 버릴 거예요. 틀려도 아무 상관 없으니까 편하게 하세요."
 
-## 1. 왜 이 일을 하는가 (10분)
+## 1. 이게 무슨 일인지 (10분)
 
-**보여 줄 것**: 쉬운 버전 매뉴얼 1쪽 그림 1(다섯 단계), 파일럿 1번 그림(Wet Weather Treatment Train).
-
-**말하기**
-- "하수처리장 공정도 그림을 컴퓨터가 읽을 수 있게 만드는 일입니다. 그림 위의 장치마다 네모를 치고 이름을 붙이고, 장치 사이의 흐름을 선으로 잇습니다."
-- "이 데이터로 '그림을 보면 공정 그래프를 뽑아 주는' 모델을 학습하고, 그 그래프로 시뮬레이션 모델을 자동으로 만듭니다. 그래서 '어떤 장치인가'와 '어디서 어디로 흐르나'가 핵심입니다."
-- "두 분이 같은 60장을 따로 합니다. 목적은 '얼마나 같게 하는가'를 재는 것입니다. 틀린 사람을 찾는 게 아니라 규칙의 빈틈을 찾는 과정입니다. 그래서 작업 중에는 서로 묻지 않고, 애매하면 메모를 남깁니다."
-- "기억할 세 가지: 빠짐없이, 규칙대로 일관되게, 그림에 있는 것만."
-
-**확인**: "한 장에서 하는 다섯 단계를 순서대로 말해 보세요." (장치·구역 박스 → 단자·분기·합류·계측 박스 → 속성 → 선 긋기 → 그림 속성·제출)
-
-## 2. 화면 익히기 (15분, 진행자가 시연)
-
-**보여 줄 것**: `practice` 1번(PMC 산업폐수 그림)을 열어 화면을 함께 본다. 매뉴얼 2절 그림 2.
-
-**시연 순서와 말하기**
-1. "위쪽 색깔 버튼이 장치 이름입니다. 색은 처리 단계 묶음입니다. 숫자 키 1~0으로 자주 쓰는 것을 바로 고릅니다." → 숫자 3을 눌러 `aerobic_zone`이 선택되는 것을 보여 준다.
-2. "버튼을 누른 상태에서 그림 위를 드래그하면 네모가 생깁니다." → 아무 탱크에 하나 그린다.
-3. "네모를 클릭하면 오른쪽 아래에 그 네모의 속성 칸이 나옵니다. visual_form, confidence, is_zone, l1_hint, io_role, label_text 여섯 개뿐입니다." → visual_form=pictorial, confidence=inferred_from_text를 고른다.
-4. "오른쪽 Regions 목록에 지금까지 그린 네모가 쌓입니다. 거기서 클릭하면 다시 선택됩니다."
-5. "잘못 그렸으면 클릭하고 Delete, 되돌리기는 Ctrl+Z." → 방금 네모를 지운다.
-6. "선 긋기: 출발 네모 클릭, 키보드 r, 도착 네모 클릭." → 두 네모를 잇고 Relations 탭을 보여 준다. "기본은 라벨 없음. 점선이면 style:dashed처럼 예외만 고릅니다."
-7. "맨 아래 그림 속성 세 개를 고르고 Submit. 다음 장으로 넘어갑니다. 저장은 Submit 때 됩니다."
-8. 확대: "작은 것은 휠로 확대해서 그립니다. 손바닥 아이콘으로 화면을 옮깁니다."
-
-**확인**: 두 사람이 각자 네모 하나 그리기 → 속성 고르기 → 삭제까지 해 본다.
-
-## 3. 무엇에 네모를 치나 (10분)
-
-**보여 줄 것**: 매뉴얼 1절 표(① ~ ⑤, 쉬운 버전/완전판 열), 요약 카드 ③ "안 치는 것".
+**보여 줄 것**: 쉬운 버전 매뉴얼 1쪽 그림 1, 파일럿 1번 그림.
 
 **말하기**
-- "쉬운 버전(21~60번)에서 치는 것: 장치, 구역, 유입·유출 끝(io_terminal), 갈라짐·합침 지점(junction), 센서 태그(instrument). 안 치는 것: 화살촉, 글자. 1~20번은 화살촉과 글자까지 다 칩니다."
-- "치지 않는 것: 흐름선 자체, 캡션 문장, 범례, 표, 제목, 로고."
-- "같은 장치가 4개 나란히 있으면 4개 다 칩니다. '×4'라고 글자만 있으면 1개."
-- "네모는 장치 윤곽에 꼭 맞게. 여백을 두지 않습니다."
+- "이 그림 보이시죠? 하수처리장 공정도예요. 논문이나 설계 자료에 나오는 그 흐름도요. 우리가 할 일은 이 그림 위에 있는 장치마다 네모를 치고, 이게 무슨 장치인지 이름을 붙이고, 어디서 어디로 흐르는지 선으로 잇는 거예요. 그게 다예요."
+- "이걸 왜 하냐면, 이런 그림을 컴퓨터가 읽게 만들려고요. 그림만 보고 '아, 침사지 다음에 1차 침전지, 그 다음에 포기조구나' 하고 공정 그래프를 뽑아 주는 모델을 만들 거예요. 그래서 우리한테 중요한 건 딱 두 가지예요. 이게 무슨 장치냐, 그리고 어디서 어디로 가냐."
+- "두 분이 같은 그림 60장을 따로따로 하실 거예요. 왜 따로 하냐면, 두 사람이 얼마나 똑같이 하는지를 재야 하거든요. 누가 틀렸나 보려는 게 아니에요. 두 분이 다르게 했다면 그건 규칙이 애매했다는 뜻이고, 그 규칙을 고치는 게 목적이에요. 그래서 작업하실 때는 서로 안 물어보시는 게 좋아요. 애매하면 메모 칸에 한 줄 적어 주세요."
+- "딱 세 가지만 기억하세요. 하나, 빠짐없이. 그림에 있는 건 다 표시해요. 둘, 규칙대로 똑같이. 맞고 틀리고보다 같은 상황에서 같은 선택을 하는 게 중요해요. 셋, 그림에 있는 것만. '이 공장은 분명 MBR일 거야' 같은 건 넣지 마세요. 모르면 모른다고 표시하는 칸이 항상 있어요."
 
-**확인**: 파일럿 1번 그림을 보여 주고 "여기서 쉬운 버전으로 치는 네모는 몇 개?"(장치 8 + 단자 1 + 분기 2 + 합침 2 = 13)
+**확인**: "한 장에서 하는 일을 순서대로 말해 볼까요?" (장치·구역 네모 → 단자·분기·합류·계측 네모 → 속성 → 선 긋기 → 그림 속성, 제출)
+
+## 2. 화면 익히기 (15분, 내가 직접 해 보이면서)
+
+**보여 줄 것**: `practice` 1번(산업폐수 3D 그림)을 열고 같이 본다. 매뉴얼 2절 그림 2.
+
+**말하기 (하면서)**
+1. "위에 색깔 버튼들 보이시죠. 이게 장치 이름이에요. 색은 단계별로 묶은 거고요. 자주 쓰는 건 숫자 키로 바로 돼요. 3 눌러 볼게요." → `aerobic_zone`이 켜지는 걸 보여 준다. "이게 포기조예요."
+2. "이 상태에서 그림 위를 드래그하면 네모가 생겨요." → 아무 탱크에 하나 그린다. "장치에 딱 맞게 치세요. 여유 두지 말고요."
+3. "네모를 클릭하면 오른쪽 아래에 이 네모에 대한 질문이 나와요. 여섯 개밖에 없어요." → visual_form=pictorial, confidence=inferred_from_text를 고른다. "이건 3D 그림이니까 pictorial, 이름은 글자 읽고 알았으니까 inferred_from_text."
+4. "오른쪽에 Regions라고 지금까지 친 네모 목록이 쌓여요. 여기서 클릭하면 다시 골라져요."
+5. "잘못 그렸으면 클릭하고 Delete. 되돌리기는 Ctrl+Z." → 방금 네모를 지운다.
+6. "선 긋기는 이렇게요. 출발 네모 클릭, 키보드 r, 도착 네모 클릭." → 두 네모를 잇는다. "오른쪽 Relations 탭에 생겼죠. 보통은 라벨 안 고르셔도 돼요. 점선이거나 특이할 때만 골라요. 그건 이따가."
+7. "맨 아래 내려가면 그림 전체에 대한 질문 세 개. 고르고 Submit 누르면 저장되고 다음 장으로 넘어가요. Submit 전에는 저장 안 되니까 꼭 누르세요."
+8. "작은 건 휠로 확대해서 그리세요. 손바닥 아이콘으로 화면 옮기고요."
+
+**확인**: "자, 각자 네모 하나 그리고, 속성 고르고, 지워 보세요." (둘 다 될 때까지)
+
+## 3. 어디에 네모를 치나 (10분)
+
+**보여 줄 것**: 매뉴얼 1절 표, 요약 카드 "안 치는 것".
+
+**말하기**
+- "쉬운 버전에서 치는 건 다섯 종류예요. 장치, 탱크 안의 구역, 들어오고 나가는 끝(유입·방류 같은 거), 선이 갈라지거나 합쳐지는 점, 그리고 센서 태그. 이것만요."
+- "안 치는 건, 화살촉이랑 글자예요. 21번부터 60번까지는 안 쳐요. 1번부터 20번까지만 화살촉이랑 글자까지 다 쳐요. 번호 꼭 보세요."
+- "그리고 이런 건 절대 안 쳐요. 선 자체, 그림 밑에 캡션, 범례 상자, 표, 제목, 로고."
+- "같은 장치가 네 개 나란히 있으면 네 개 다 치세요. '×4'라고 글자로만 써 있으면 하나만."
+
+**확인**: 파일럿 1번 그림을 보여 주며 "쉬운 버전으로 하면 여기 네모 몇 개?" (장치 8, 단자 1, 분기 2, 합침 2 = 13개)
 
 ## 4. 이름 고르기 (25분)
 
-**보여 줄 것**: 매뉴얼 3절 표와 그림 3(라벨 버튼), 그림 4(box/symbol/pictorial), 요약 카드 ①.
+**보여 줄 것**: 매뉴얼 3절 표, 그림 3, 그림 4, 요약 카드.
 
-**말하기 — 가장 자주 쓰는 여섯 개부터**
-- "기포·산기관이 있는 생물 탱크 = aerobic_zone(3). 포기조, 폭기조, aeration tank, oxic 전부 이것입니다."
-- "교반기만 있고 질산염 반송이나 RAS가 들어오면 anoxic_zone(4). 교반기만 있고 유입수를 가장 먼저 받으면 anaerobic_zone(5)."
-- "침전지는 모양이 같습니다. 생물반응조 앞이면 primary_clarifier(2), 뒤이면 secondary_clarifier(6). 반송선이 있으면 무조건 2차."
-- "여과(7), 소독(8), 농축조(9), 소화조(0)."
+**말하기 — 제일 많이 나오는 것부터**
+- "제일 많이 나오는 게 포기조예요. 공기방울이나 산기관이 그려진 생물 탱크. 포기조, 폭기조, aeration tank, oxic, 다 같은 거예요. 3번."
+- "교반기만 있고 공기는 없는 탱크가 있어요. 거기에 질산염 반송이나 RAS가 들어오면 무산소조, 4번. 교반기만 있는데 유입수를 제일 먼저 받으면 혐기조, 5번."
+- "침전지는 1차랑 2차가 모양이 똑같아요. 그래서 위치로 봐요. 생물반응조 앞에 있으면 1차, 2번. 뒤에 있으면 2차, 6번. 밑에서 반송선이 나가면 무조건 2차예요."
+- "여과는 7, 소독은 8, 농축조 9, 소화조 0."
 
-**말하기 — 헷갈리는 쌍**
-- "막: 혼합액을 받고 슬러지를 돌려보내면 mbr_unit, 처리수를 받으면 membrane_unit."
-- "생물막 반응기와 혐기성 폐수 반응기는 반드시 슬래시 뒤 세부형까지. 살수여상/회전원판/침지여재/담체/유동상/MABR, UASB류/여상/접촉/CSTR/ABR/AnMBR."
-- "슬러지 라인: 소화조 앞 원뿔 탱크나 벨트는 농축조, 소화조 뒤 원심·벨트·프레스는 탈수기. 달걀·돔형에 슬러지가 들어가면 소화조."
-- "약품은 장치가 아니라 선입니다. 응집 탱크가 그려졌을 때만 chemical_treatment_unit."
+**말하기 — 헷갈리는 것들**
+- "막은 두 가지예요. 반응조 혼합액을 받아서 슬러지를 다시 돌려보내면 mbr_unit. 이미 처리된 물을 받으면 membrane_unit. 뭘 받느냐로 보세요."
+- "생물막 반응기랑 혐기성 폐수 반응기는 이름 뒤에 슬래시가 있어요. 꼭 그 뒤까지 고르세요. 살수여상인지 회전원판인지 담체인지. UASB인지 여상인지."
+- "슬러지 쪽은 소화조를 기준으로 보세요. 소화조 앞에 있는 원뿔 탱크나 벨트는 농축조. 소화조 뒤에 있는 원심·벨트·프레스는 탈수기. 달걀 모양이나 돔 모양에 슬러지가 들어가면 소화조."
+- "약품은 장치가 아니에요. 그냥 화살표예요. 응집 탱크가 진짜 탱크로 그려져 있을 때만 chemical_treatment_unit이고요."
 
-**말하기 — 종류 미상**
-- "글자가 없거나 번호뿐이거나, 글자가 'Biological Treatment'처럼 단계 이름이면 process_unit_generic. 이때 l1_hint로 어느 단계인지 고르고, 글자를 label_text에 그대로 적습니다."
-- "목록에 없는 장치(후포기, 탈취, 열교환기, 소각로 주변 설비)는 unknown_equipment. 역시 l1_hint와 글자."
+**말하기 — 뭔지 모를 때**
+- "글자가 없거나 번호만 있거나, 글자가 'Biological Treatment'처럼 단계 이름이면 process_unit_generic이에요. 생물 처리라고만 써 있으면 포기조인지 MBR인지 모르잖아요. 그럴 땐 아는 척하지 말고 generic 고르고, l1_hint에서 '생물 단계' 골라 주고, 글자는 그대로 적어 주세요."
+- "목록에 아예 없는 장치, 예를 들어 후포기 시설이나 탈취 설비, 열교환기 같은 건 unknown_equipment. 역시 l1_hint랑 글자."
 
-**말하기 — visual_form**
-- "글자로만 종류를 알면 box, 모양 자체가 말해 주면 symbol(원뿔 바닥 침전지, 달걀형 소화조, 막 카세트), 3D·아이콘이면 pictorial. 동그라미에 'Primary Clarifier'라고 쓰였으면 box입니다."
-- "confidence: 모양으로 확실하면 certain, 글자를 읽고 알았으면 inferred_from_text, 흐름 위치로 짐작했으면 inferred_from_context."
+**말하기 — 모양 질문(visual_form)**
+- "이건 '이 장치를 어떻게 그렸냐'예요. 글자가 없으면 뭔지 모르겠다, 그러면 box. 모양만 봐도 알겠다, 원뿔 바닥 침전지나 달걀형 소화조 같은 거, 그러면 symbol. 3D 그림이나 아이콘이면 pictorial. 동그라미에 'Primary Clarifier'라고 써 있는 건 box예요. 동그라미만 보고는 모르니까."
+- "confidence는 '어떻게 알았냐'예요. 모양 보고 확실하면 certain, 글자 읽고 알았으면 inferred_from_text, 앞뒤 흐름 보고 짐작했으면 inferred_from_context."
 
-**확인**: 요약 카드를 보며 "교반기만 있는 탱크가 유입수 바로 다음에 있고 그 뒤에 또 교반 탱크, 그 뒤 포기조. 첫 탱크는?"(anaerobic_zone) "그 그림에서 두 번째 교반 탱크는?"(anoxic_zone)
+**확인**: "교반기만 있는 탱크가 유입수 바로 다음에 있고, 그 다음에 또 교반 탱크, 그 다음에 포기조. 첫 번째 탱크는 뭘까요?" (혐기조) "두 번째는?" (무산소조)
 
-## 5. 구역과 판별 흐름도 (10분)
+## 5. 구역 (10분)
 
-**보여 줄 것**: 매뉴얼 4절 그림 5(세 구역), 그림 6(판별 흐름도).
-
-**말하기**
-- "한 탱크에 혐기·무산소·호기가 나뉘어 있으면 구역마다 네모를 치고 is_zone을 체크합니다. 탱크 윤곽이 그려져 있으면 탱크에도 네모를 치고, 탱크 네모 → 각 구역으로 parent_of 관계를 긋습니다. 탱크 네모의 이름은 process_unit_generic + l1_hint=secondary."
-- "구역 이름이 안 적혀 있으면 흐름도: 호기조 앞에 교반만 하는 구역이 몇 개인지 세고 반송이 어디로 들어오는지 봅니다. 그래도 모르면 generic + is_zone."
-- "산화구(길쭉한 트랙 모양)는 한 네모로 aerobic_zone."
-
-**확인**: 그림 6을 가리키며 "교반 구역 2개, 두 번째에 RAS와 내부 반송이 들어오고 두 번째에서 첫 번째로 반송선이 있다. 각각?"(혐기, 무산소 — UCT)
-
-## 6. 선 긋기 (15분, 시연 + 따라 하기)
-
-**보여 줄 것**: 매뉴얼 6절, 그림 8(파일럿 1번 엣지), 요약 카드 ③.
+**보여 줄 것**: 매뉴얼 4절 그림 5, 그림 6.
 
 **말하기**
-- "출발 클릭 → r → 도착 클릭. 화살표 방향이 흐름 방향이니 출발을 먼저 클릭합니다."
-- "라벨은 예외만: 화살촉이 없는 선은 no_arrow, 방향을 모르면 direction_unknown, 점선은 style:dashed, '(Optional)'이면 optional, 탱크→구역은 parent_of."
-- "물인지 슬러지인지는 고르지 않습니다. 양쪽 장치를 보면 컴퓨터가 압니다."
-- "갈라지거나 합쳐지는 곳은 반드시 junction 네모를 거칩니다. 침전지 바닥에서 반송과 잉여 슬러지가 갈라지면 그 지점에 junction_split, 거기서 반응조로 하나, 농축조로 하나."
-- "인접 구역 사이(혐기 → 무산소 → 호기)는 선이 안 그려져 있어도 연결하고 no_arrow."
-- "약품 화살표: 시작점에 io_terminal(chemical_source), 들어가는 지점에 junction_merge, 둘을 잇습니다."
+- "한 탱크를 칸막이로 나눠서 혐기·무산소·호기를 둔 경우가 많아요. 그럴 땐 칸마다 네모를 치고 is_zone을 체크해요. 탱크 테두리도 그려져 있으면 탱크에도 네모 하나 치고요. 그 탱크 네모에서 r 눌러서 각 칸으로 parent_of 연결. 탱크 네모 이름은 generic에 l1_hint 생물 단계."
+- "칸에 혐기·무산소·호기 글자가 없으면 이 흐름도로 정해요. 포기조 앞에 교반만 하는 칸이 몇 개인지 세고, 반송이 어디로 들어오는지 보는 거예요. 그래도 모르겠으면 generic에 is_zone 체크. 괜찮아요."
+- "산화구, 그 길쭉한 트랙 모양은 통째로 하나, aerobic_zone."
 
-**따라 하기**: `practice` 1번에서 진행자가 유입 → 첫 탱크 → 다음 탱크 세 개를 이어 보이고, 두 사람이 같은 것을 각자 해 본다.
+**확인**: 그림 6을 가리키며 "교반 칸이 두 개, 두 번째 칸에 RAS랑 내부 반송이 들어오고, 두 번째에서 첫 번째로 돌아가는 선이 있어요. 각각 뭘까요?" (첫 번째 혐기, 두 번째 무산소 — UCT)
 
-## 7. 연습 5장 (40분, 두 사람이 각자 하고 장마다 멈춰서 맞춰 본다)
+## 6. 선 긋기 (15분, 해 보이고 따라 하기)
 
-장마다 "각자 5~7분 → 화면을 나란히 띄우고 다른 점 찾기 → 규칙으로 정리" 순서. 아래는 장별로 **나올 질문과 답**이다.
+**보여 줄 것**: 매뉴얼 6절, 그림 8, 요약 카드.
 
-### 연습 1 — PMC, 산업폐수 처리장 3D 그림 (pictorial)
+**말하기**
+- "출발 클릭, r, 도착 클릭. 화살표가 흐름 방향이니까 출발을 먼저 클릭하세요."
+- "라벨은 보통 안 골라요. 특이할 때만요. 선은 있는데 화살촉이 없다, no_arrow. 어디로 가는지 모르겠다, direction_unknown. 점선이다, style:dashed. '(Optional)'이라고 써 있다, optional. 탱크에서 칸으로, parent_of. 이 다섯 개뿐이에요."
+- "물인지 슬러지인지는 안 고르셔도 돼요. 양쪽 장치를 보면 컴퓨터가 알아요. 침전지에서 반응조로 가면 반송 슬러지, 반응조에서 침전지로 가면 혼합액, 이런 식으로요."
+- "한 가지만 꼭 지켜 주세요. 선이 갈라지거나 합쳐지는 곳은 반드시 junction 네모를 거쳐요. 침전지 바닥에서 반송이랑 잉여슬러지가 갈라지면, 거기에 junction_split 하나 치고, 거기서 반응조로 하나, 농축조로 하나. 침전지에서 바로 두 군데로 긋지 마세요."
+- "칸끼리는, 혐기에서 무산소로 무산소에서 호기로, 선이 안 그려져 있어도 연결하고 no_arrow 골라 주세요."
+- "약품 화살표는요, 화살표 시작점에 io_terminal 치고 chemical_source 고르고, 들어가는 지점에 junction_merge 치고, 둘을 이어요."
 
-- 무엇이 보이나: 폐수 집수조(Collection Tank 1), NaOH·HCl 약품 탱크, 중화조(Neutralization), Precoat 탱크, Kelly Filter(여과기), RO, 투과수 집수조(Collection Tank 2), 재이용(Reuse), 펌프 여러 개, Perlite 투입.
-- 예상 질문과 답:
-  - "약품 탱크(50% NaOH)는 장치인가?" → 그림에 탱크로 그려져 있으니 `storage_tank`(약품 저류). 거기서 나가는 선은 chemical 매체로 자동 채워짐. 탱크가 없고 화살표만 있으면 io_terminal(chemical_source).
-  - "Neutralization은?" → 응집·중화 탱크 = `chemical_treatment_unit`. visual_form=pictorial.
-  - "Kelly Filter는?" → `filtration_unit`(여과기). 이름이 낯설어도 '필터'면 여과.
-  - "RO는?" → 처리수를 받는 막 = `membrane_unit`.
-  - "Collection Tank 1·2는?" → `storage_tank`(처리 기능 없는 저류) 또는 유량을 고르는 역할이 명시되면 `equalization_tank`. 글자가 'Collection'이면 저류로.
-  - "Perlite(여과 보조제) 투입은?" → 선: io_terminal(chemical_source) → junction_merge.
-  - "펌프는 전부 치나?" → 쉬운 버전에서도 `pump`는 장치이므로 친다.
-  - "Waste Water Boehmite/Alumina/Boiler Feed 세 줄은?" → 유입 단자 3개 `io_terminal(raw_influent)`, 'Drinking Water'는 external 공급 → io_terminal(continuation 또는 raw_influent 중 '외부 공급수'라 적고 메모).
-- 정리 한마디: "산업폐수 그림은 모르는 장치가 많습니다. 모르면 unknown_equipment + 글자, 하지만 필터·막·탱크·펌프처럼 범주가 분명하면 그 클래스."
+**따라 하기**: `practice` 1번에서 내가 유입 → 첫 탱크 → 다음 탱크를 이어 보인 다음, 두 사람이 똑같이 해 본다.
 
-### 연습 2 — 미국 특허 FIG. 3 (세로로 돌아간 박스 도면, 번호 참조)
+## 7. 연습 5장 (40분)
 
-- 무엇이 보이나: 0.12" Screen → Inflow → 640 gal Mixed Anoxic Tank → 1105 gal Aerobic Tank → Return flow / Gravity flow → 165 gal Membrane Tank(A-30) → Permeate. Sludge Return, Sewer Lift Station, 펌프 P 3개, 참조 번호(70~132).
-- 예상 질문과 답:
-  - "글자가 세로로 돌아가 있다" → 그대로 친다. 필요하면 머리를 기울여 읽는다. 회전 기능은 쓰지 않는다.
-  - "Mixed Anoxic Tank / Aerobic Tank는?" → `anoxic_zone` / `aerobic_zone`. 별도 탱크로 그려졌으니 parent_of 없이 구역 둘만(is_zone은 체크).
-  - "Membrane Tank는?" → 혼합액을 받고 Return flow로 돌려보냄 = `mbr_unit`. Permeate는 effluent 단자.
-  - "Sewer Lift Station은?" → `pump_station`.
-  - "0.12" Screen은?" → `screen`.
-  - "참조 번호 76, 78 …은 글자 박스를 치나?" → 쉬운 버전에서는 글자 박스 없음. 1~20번 완전판이라면 번호는 `text_label`(tag_kind=patent_number).
-  - "'PROCESS FLOW DIAGRAM' 세로 글자 박스는?" → 제목이므로 치지 않는다.
-  - "Return flow와 Sludge Return 두 선" → 둘 다 엣지로. 매체는 자동(반응조로 돌아가면 반송 슬러지).
-  - "번호 104, 132 작은 네모(글자 없음)는?" → `process_unit_generic` + l1_hint=unknown + label_text에 번호.
-- 정리 한마디: "특허는 글자 대신 번호를 씁니다. 번호는 label_text에 그대로, 클래스는 generic. 단, 'Aerobic Tank'처럼 이름이 있으면 그 클래스."
+장마다 "각자 5~7분 → 두 화면 나란히 놓고 다른 데 찾기 → 규칙으로 정리". 아래는 장마다 나올 법한 질문과, 그때 할 대답.
 
-### 연습 3 — EPA, 다단 소각로 흐름도 (슬러지 라인·가스 라인)
+### 연습 1 — 산업폐수 처리장 3D 그림 (PMC, pictorial)
 
-- 무엇이 보이나: Sludge Feed → Multiple Hearth Furnace → Furnace Exhaust → Heat Recovery Boiler → Precooler and Venturi → Wet Scrubber → Induced Draft Fan → Gas Exhaust; Ash; 팬 3개(Shaft Cooling Air, Combustion Air, Scrubber Water 펌프); Supplemental Fuel, Connected Power 등 외부 입력.
-- 예상 질문과 답:
-  - "소각로는?" → `drying_incineration_unit`(소각). visual_form=box(글자로 앎).
-  - "Heat Recovery Boiler, Precooler/Venturi, Wet Scrubber는?" → 목록에 없는 장치 = `unknown_equipment` + l1_hint=sludge + 글자. (탈취·배기 처리 설비는 예비 클래스라 지금은 unknown.)
-  - "팬(Induced Draft Fan, 공기 공급 팬)은?" → `blower`.
-  - "Sludge Feed, Gas Exhaust, Ash, Supplemental Fuel, Connected Power, Scrubber Water, Drain은?" → 모두 플랜트 경계의 끝 = `io_terminal`. 역할: Sludge Feed = external_sidestream(다른 그림에서 옴) 또는 continuation, Gas Exhaust = off_gas_out, Ash = solids_disposal, Supplemental Fuel·Power·Scrubber Water = chemical_source에 가장 가까움(메모 남김), Drain = effluent.
-  - "'Radiation', 'Recoverable Heat' 화살표는?" → 에너지 흐름. 장치가 아니고 물질 흐름도 아니므로 치지 않고 메모. (규칙에 없는 경우 → annotator_note.)
-- 정리 한마디: "우리 목록은 수처리·슬러지 장치 중심이라 소각·배기 설비는 대부분 unknown_equipment입니다. 괜찮습니다. 글자만 정확히 적으면 나중에 분류합니다. 단자 역할이 애매하면 가장 가까운 것 + 메모."
+보이는 것: 집수조(Collection Tank 1), NaOH·HCl 약품 탱크, 중화조, Precoat 탱크, Kelly Filter, RO, 투과수 집수조, 재이용, 펌프 여러 개, Perlite 투입.
 
-### 연습 4 — 한국 지자체 제2하수처리장 공정도 (그림형, 병렬 2계열, 범례)
+- "약품 탱크도 장치예요?" → "네, 탱크로 그려져 있으니까요. storage_tank. 거기서 나가는 선은 약품이라는 걸 컴퓨터가 알아요. 탱크 없이 화살표만 있으면 그때는 io_terminal에 chemical_source."
+- "Neutralization은요?" → "중화, 응집 같은 약품 처리 탱크니까 chemical_treatment_unit. 3D니까 pictorial."
+- "Kelly Filter가 뭔지 모르겠어요." → "몰라도 돼요. 이름에 필터가 있으면 여과예요. filtration_unit."
+- "RO는?" → "처리된 물을 받는 막이니까 membrane_unit."
+- "Collection Tank는?" → "모아 두는 탱크. storage_tank. 유량을 고르는 역할이라고 써 있었으면 equalization_tank인데, 여긴 그냥 collection이니까 저류."
+- "Perlite 넣는 건?" → "약품이랑 똑같이. 시작점 io_terminal(chemical_source), 들어가는 데 junction_merge, 연결."
+- "펌프 다 쳐요?" → "네. 펌프는 쉬운 버전에서도 쳐요."
+- "위에 폐수 세 줄 들어오는 건?" → "유입 단자 세 개. 각각 io_terminal에 raw_influent. Drinking Water 들어오는 건 외부에서 주는 물이니까 continuation 고르고 메모 한 줄."
+- 정리: "산업폐수는 모르는 장치가 많아요. 필터·막·탱크·펌프처럼 범주가 분명하면 그걸로, 정말 모르면 unknown에 글자."
 
-- 무엇이 보이나: 원수 → 침사지 및 유입펌프장 → 1단계(최초침전지 → 생물반응조 A2O(개량): 혐기조·무산소조·호기조, 내부반송 → 최종침전지) / 2단계(최초침전지 → 생물반응조 MLE: 탈질조·생물반응조 → 최종침전지) → 응집침전지 → 여과시설 → 소독시설 → 방류. 약품(PAC, NaOH, Alum, 음이온폴리머) 주황 화살표. 반류수처리시설, 연계처리시설, 드럼형농축기, 원심농축기, 소화조, 탈수시설 → 처분. 범례: 수처리계통(실선), 반류수계통(점선), 슬러지계통(일점쇄선).
-- 예상 질문과 답:
-  - "침사지 및 유입펌프장이 한 그림이다" → 바깥 전체를 `pump_station`, 안의 침사지 부분을 `grit_chamber` 자식으로(parent_of). 스크린이 보이면 `screen`도 자식.
-  - "생물반응조 안 혐기조·무산소조·호기조" → 구역 셋(is_zone) + 생물반응조 전체 네모(process_unit_generic, l1_hint=secondary) + parent_of. 2단계 MLE의 탈질조 = anoxic_zone, 생물반응조 = aerobic_zone.
-  - "1단계·2단계 두 계열" → 각각 전부 친다. 그림 속성 process_configuration에 "1단계 A2O(개량), 2단계 MLE"라고 원문을 적는다.
-  - "응집침전지는?" → `secondary_clarifier`에 clarifier_stage=chemical…인데 쉬운 버전에는 그 칸이 없음 → 클래스 `secondary_clarifier`로 치고 label_text에 '응집침전지'. 앞의 응집 탱크가 그려져 있으면 `chemical_treatment_unit`.
-  - "PAC·NaOH·Alum 주황 화살표" → 선: io_terminal(chemical_source) → 들어가는 지점 junction_merge. 탱크가 아니므로 장치 아님.
-  - "반류수처리시설" → `sidestream_reactor`(반류수만 받음). "연계처리시설"(분뇨 등 반입) → 들어오는 끝 = io_terminal(external_waste_in)이고 시설 자체가 그려졌으면 unknown_equipment + 메모.
-  - "드럼형농축기·원심농축기·소화조·탈수시설" → thickener(2개), digester, dewatering_unit. "처분" → io_terminal(solids_disposal).
-  - "점선(반류수)과 일점쇄선(슬러지)" → 엣지에 style:dashed. 매체는 자동.
-  - "범례 상자" → 치지 않는다.
-  - "여과시설·소독시설" → filtration_unit, disinfection_unit. visual_form=pictorial.
-- 정리 한마디: "한국 지자체 그림은 한 장에 다 들어 있어 길지만 규칙은 같습니다. 계열이 둘이면 둘 다, 약품은 선, 반류수는 sidestream_reactor."
+### 연습 2 — 미국 특허 FIG. 3 (세로로 누운 박스 도면, 번호)
 
-### 연습 5 — OpenAlex, 유동상 반응기 파일럿 (단순 기호형)
+보이는 것: Screen → Inflow → Mixed Anoxic Tank → Aerobic Tank → Membrane Tank → Permeate. Return flow, Sludge Return, Sewer Lift Station, 펌프 P 세 개, 번호 70~132.
 
-- 무엇이 보이나: Influent → Oxygenation 박스 → Fluidized bed reactor(탑, 점 무늬 = 담체) → Biomass separation(원뿔 침전지) → Final effluent; Sludge; Recycled effluent가 Oxygenation으로.
-- 예상 질문과 답:
-  - "Fluidized bed reactor는?" → `biofilm_reactor/fluidized_expanded_bed`. 공기선(Oxygenation)이 있으니 호기(redox는 쉬운 버전 칸에 없음 → 메모 불필요).
-  - "Oxygenation 박스는?" → 산소를 녹이는 장치. 목록에 없음 → `unknown_equipment` + l1_hint=secondary + 글자 'Oxygenation'. (aerator_mixer_symbol은 탱크 안 기호일 때만.)
-  - "Biomass separation 원뿔은?" → 생물 반응기 뒤 침전지 = `secondary_clarifier`, visual_form=symbol(원뿔 모양), confidence=certain.
-  - "Recycled effluent 선" → 침전지 → Oxygenation → 반응기로 이어지는 엣지 두 개. 매체 자동(처리수 순환).
-  - "Sludge 화살표 끝" → io_terminal(solids_disposal).
-  - "그림 속성" → B_symbol, en, 1.
-- 정리 한마디: "파일럿 장치 그림은 단순하지만 세부형(L3)을 꼭 고르고, 목록에 없는 보조 장치는 unknown으로."
+- "글자가 누워 있어요." → "그냥 고개 기울여서 읽으세요. 회전은 안 써요."
+- "Mixed Anoxic Tank, Aerobic Tank는?" → "무산소조, 포기조. 각각 따로 그려져 있으니까 parent_of 없이 칸 두 개만. is_zone은 체크."
+- "Membrane Tank는?" → "혼합액 받아서 Return flow로 돌려보내죠. mbr_unit. Permeate 나가는 끝은 effluent 단자."
+- "Sewer Lift Station은?" → "pump_station."
+- "번호들 글자 네모 쳐요?" → "쉬운 버전에선 글자 안 치니까 아니요. 1~20번 완전판이면 쳐요, text_label."
+- "PROCESS FLOW DIAGRAM 세로 글자는?" → "제목이에요. 안 쳐요."
+- "Return flow랑 Sludge Return 두 선은?" → "둘 다 선으로 이으세요. 종류는 컴퓨터가 채워요."
+- "104, 132 글자 없는 작은 네모는?" → "generic, l1_hint는 unknown, label_text에 번호."
+- 정리: "특허는 이름 대신 번호를 써요. 번호는 label_text에 그대로, 클래스는 generic. 근데 Aerobic Tank처럼 이름이 있으면 그 클래스."
+
+### 연습 3 — 다단 소각로 흐름도 (EPA, 슬러지·가스 라인)
+
+보이는 것: Sludge Feed → Multiple Hearth Furnace → Furnace Exhaust → Heat Recovery Boiler → Precooler/Venturi → Wet Scrubber → Induced Draft Fan → Gas Exhaust. Ash, 팬 셋, Supplemental Fuel, Connected Power, Scrubber Water, Drain.
+
+- "소각로는?" → "drying_incineration_unit. 글자 보고 알았으니 box."
+- "보일러, 벤투리, 스크러버는 뭐예요?" → "우리 목록에 없어요. unknown_equipment, l1_hint 슬러지, 글자 그대로."
+- "팬은?" → "blower."
+- "Sludge Feed, Gas Exhaust, Ash 같은 건?" → "다 그림 밖으로 들어오고 나가는 끝이니까 io_terminal. 역할은 가장 가까운 걸로. Gas Exhaust는 off_gas_out, Ash는 solids_disposal, Sludge Feed는 다른 그림에서 오는 거니까 continuation. Fuel이나 Power, Scrubber Water는 chemical_source가 제일 가깝고, 메모 한 줄."
+- "Radiation, Recoverable Heat 화살표는?" → "열이에요. 물질이 아니니까 안 쳐요. 메모만."
+- 정리: "우리 목록은 수처리·슬러지 장치 위주라 소각 쪽은 거의 unknown이에요. 괜찮아요. 글자만 정확히 적어 주면 나중에 분류해요."
+
+### 연습 4 — 한국 지자체 공정도 (그림형, 두 계열, 범례)
+
+보이는 것: 원수 → 침사지 및 유입펌프장 → 1단계(최초침전지 → 생물반응조 A2O: 혐기·무산소·호기, 내부반송 → 최종침전지) / 2단계(최초침전지 → MLE: 탈질조·생물반응조 → 최종침전지) → 응집침전지 → 여과 → 소독 → 방류. 약품 주황 화살표(PAC, NaOH, Alum, 폴리머). 반류수처리시설, 연계처리시설, 드럼농축기, 원심농축기, 소화조, 탈수 → 처분. 범례.
+
+- "침사지랑 유입펌프장이 한 덩어리예요." → "바깥 전체를 pump_station, 안에 침사지 부분을 grit_chamber로 자식. 스크린 보이면 screen도 자식. 부모에서 자식으로 parent_of."
+- "생물반응조 안에 혐기·무산소·호기" → "칸 세 개 is_zone, 생물반응조 전체 네모는 generic에 l1_hint 생물, parent_of. 2단계 MLE는 탈질조가 무산소, 생물반응조가 포기조."
+- "1단계, 2단계 두 줄인데 둘 다 해요?" → "네, 둘 다. 그리고 맨 아래 process_configuration 칸에 '1단계 A2O(개량), 2단계 MLE' 원문 그대로 적어 주세요."
+- "응집침전지는?" → "secondary_clarifier. label_text에 응집침전지. 앞에 응집 탱크가 그려져 있으면 그건 chemical_treatment_unit."
+- "PAC, NaOH 주황 화살표는?" → "장치 아니에요. 시작점 io_terminal(chemical_source), 들어가는 데 junction_merge, 연결."
+- "반류수처리시설은?" → "sidestream_reactor. 반류수만 받으니까요." "연계처리시설은?" → "분뇨 같은 걸 받는 거죠. 들어오는 끝은 io_terminal에 external_waste_in. 시설 자체가 그려져 있으면 unknown_equipment에 메모."
+- "드럼농축기, 원심농축기, 소화조, 탈수시설" → "thickener 둘, digester, dewatering_unit. 처분은 solids_disposal 단자."
+- "점선이랑 일점쇄선은?" → "선 긋고 style:dashed. 종류는 컴퓨터가."
+- "범례 상자는?" → "안 쳐요."
+- 정리: "지자체 그림은 한 장에 다 들어 있어서 길어요. 근데 규칙은 똑같아요. 계열 둘이면 둘 다, 약품은 선, 반류수는 sidestream_reactor."
+
+### 연습 5 — 유동상 반응기 파일럿 (OpenAlex, 기호형)
+
+보이는 것: Influent → Oxygenation → Fluidized bed reactor(탑, 점 무늬) → Biomass separation(원뿔) → Final effluent. Sludge. Recycled effluent가 Oxygenation으로.
+
+- "Fluidized bed reactor는?" → "biofilm_reactor 중에 fluidized_expanded_bed. 슬래시 뒤까지요."
+- "Oxygenation 박스는?" → "산소 녹이는 장치. 목록에 없으니 unknown_equipment, l1_hint 생물, 글자 Oxygenation. 탱크 안에 그려진 산기 기호였으면 aerator_mixer_symbol인데, 이건 별도 박스니까요."
+- "원뿔은?" → "생물 반응기 뒤 침전지. secondary_clarifier. 원뿔 모양 보고 알았으니 symbol에 certain."
+- "Recycled effluent 선은?" → "침전지에서 Oxygenation으로, Oxygenation에서 반응기로. 선 두 개."
+- "Sludge 화살표 끝은?" → "io_terminal, solids_disposal."
+- "그림 속성은?" → "B_symbol, en, 1."
+- 정리: "파일럿 장치 그림은 단순한데, 슬래시 뒤 세부형을 꼭 고르고, 보조 장치는 unknown으로."
 
 ## 8. 마무리 (10분)
 
 **말하기**
-- "본 작업: A는 pilot_A, B는 pilot_B. 1번부터 순서대로. 1~20번은 화살촉·글자까지, 21~60번은 쉬운 버전. 번호를 꼭 확인하세요."
-- "하루 30장 정도가 적당합니다. 피곤하면 멈추고 다음 날 이어서. Submit한 장은 저장돼 있습니다."
-- "작업 중 서로 묻지 않습니다. 애매하면 annotator_note에 '몇 번 네모, 무엇이 애매'를 한 줄. 모아서 제가 봅니다."
-- "끝나면 알려 주세요. Export는 제가 합니다."
+- "본 작업은 A님은 pilot_A, B님은 pilot_B. 1번부터 순서대로요. 1번부터 20번까지는 화살촉이랑 글자까지, 21번부터는 쉬운 버전. 번호 꼭 확인하세요."
+- "하루에 30장 정도가 적당해요. 피곤하면 멈추세요. Submit한 건 저장돼 있으니까 내일 이어서 하시면 돼요."
+- "작업 중에는 서로 묻지 마세요. 애매하면 맨 아래 메모 칸에 '몇 번 네모가 뭐가 애매'라고 한 줄만. 제가 모아서 볼게요."
+- "다 끝나면 저한테 알려 주세요. 내보내기는 제가 할게요."
 
-**확인(마지막 퀴즈 5개, 요약 카드 보고 답해도 됨)**
-1. 침전지 하부에서 반송과 잉여 슬러지가 갈라진다. 무엇을 치나? → junction_split + 엣지 2개.
-2. 'Biological Treatment' 네모 → process_unit_generic, l1_hint=secondary, label_text.
-3. 약품 화살표 → io_terminal(chemical_source) → junction_merge, 장치 아님.
-4. 살수여상 → biofilm_reactor/trickling_filter(세부형 필수).
-5. 점선 반류수 선 → 엣지 + style:dashed, 매체는 안 고름.
+**확인 (퀴즈 다섯 개, 카드 봐도 됨)**
+1. "침전지 바닥에서 반송이랑 잉여슬러지가 갈라져요. 뭘 치죠?" → junction_split 하나, 선 둘.
+2. "'Biological Treatment' 네모는?" → generic, l1_hint 생물, 글자.
+3. "약품 화살표는?" → io_terminal(chemical_source) → junction_merge. 장치 아님.
+4. "살수여상은?" → biofilm_reactor/trickling_filter. 슬래시 뒤까지.
+5. "점선 반류수 선은?" → 선 긋고 style:dashed. 종류는 안 고름.
 
-## 9. 진행자 메모: 자주 나오는 질문에 대한 답 원칙
+## 9. 진행자 메모: 자주 나오는 질문에 답하는 원칙
 
-- "규칙에 없다" → 가장 가까운 것 + annotator_note. 진행자도 즉석에서 새 규칙을 만들지 않는다(두 사람이 다르게 들을 수 있다). 모아서 v2에 반영.
-- "이 장치가 뭔지 모르겠다" → 알 수 있는 범주(필터·막·탱크·펌프)면 그 클래스, 아니면 unknown_equipment + 글자. 추측으로 생물반응조 종류를 정하지 않는다.
-- "그림이 너무 작다/흐리다" → 확대해서 보이는 만큼. 전혀 안 보이면 메모하고 넘어간다.
-- "한 장에 도면이 둘" → graph_id로 g1, g2 구분.
-- 연습 중 두 사람의 차이가 난 항목은 진행자가 표로 적어 둔다(장 번호, 네모, A의 선택, B의 선택, 규칙 번호). 파일럿 뒤 가이드라인 v2의 첫 재료가 된다.
+- "규칙에 없는데요" → 가장 가까운 걸로 하고 메모. 진행자도 그 자리에서 새 규칙을 만들지 않는다. 두 사람이 다르게 들을 수 있다. 모아서 v2에 반영.
+- "이 장치가 뭔지 모르겠어요" → 필터·막·탱크·펌프처럼 범주를 알면 그 클래스, 모르면 unknown에 글자. 생물반응조 종류를 짐작으로 정하지 않는다.
+- "그림이 너무 작아요" → 확대해서 보이는 만큼. 전혀 안 보이면 메모하고 넘어간다.
+- "한 장에 그림이 둘인데요" → graph_id로 g1, g2.
+- 연습 중 두 사람이 다르게 한 항목은 진행자가 표로 적어 둔다(장 번호, 네모, A 선택, B 선택, 관련 규칙). 파일럿 뒤 가이드라인 v2의 첫 재료.
