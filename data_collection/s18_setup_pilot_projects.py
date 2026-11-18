@@ -59,13 +59,15 @@ def main():
     ap.add_argument("--names", default="pilot_A,pilot_B")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--config", default=str(CONFIG), help="labeling config XML (default: full config; use label_studio_config_lite.xml for pilot-lite)")
+    ap.add_argument("--images", default=str(IMAGES), help="image folder to upload (default: data/pilot/images)")
     a = ap.parse_args()
+    images_dir = Path(a.images)
     base = a.base.rstrip("/")
     h = {"Authorization": f"Bearer {access_token(base)}"}
     if "." in h["Authorization"].split()[1] and h["Authorization"].count(".") < 2:
         h = {"Authorization": "Token " + h["Authorization"].split()[1]}
     config = Path(a.config).read_text(encoding="utf-8")
-    files = sorted(IMAGES.iterdir(), key=lambda p: int(re.match(r"pilot_(\d+)", p.name).group(1)))
+    files = sorted(images_dir.iterdir(), key=lambda p: int(re.match(r"[a-z]+_(\d+)", p.name).group(1)))
     print(f"{len(files)} images, config {len(config)} chars")
     existing = {p["title"]: p["id"] for p in requests.get(f"{base}/api/projects?page_size=100", headers=h, timeout=30).json().get("results", [])}
     for name in a.names.split(","):
