@@ -95,6 +95,20 @@ python data_collection/s23_eval_graph.py --gt data/pilot/gt --pred <모델 출�
 - s23 지표(계획서 §6): AP50·AP[.5:.95]를 L2와 L1(접기)에서, LVIS 구간(rare ≤ 10장 / common ≤ 100 / frequent), `visual_form`·diagram_style·출처·언어 층화; 박스형 정답의 L2 매핑 정확도; 노드 매칭(IoU ≥ 0.5, 클래스 요구/비요구) 뒤 엣지 P/R/F1, 방향 정확도(화살촉 근거 / 전체), 추론 엣지 재현율, 정규화 그래프 편집 거리.
 - 자기 검사: 같은 폴더를 `--gt`와 `--pred`로 주면 모든 지표가 1.0(편집 거리 0)이어야 한다. 예행연습 출력 `data/pilot/exports/eval_dryrun_A_vs_B.md`.
 
+## 5c. VLM 제로샷 기준선 (사람 라벨 0장)
+
+```bash
+pip install anthropic            # 한 번
+$env:ANTHROPIC_API_KEY = '...'   # 사용자 터미널에서; 저장소에 적지 않는다
+python data_collection/s24_vlm_baseline.py --images data/pilot/images --out data/pilot/vlm_opus55 --overlay [--limit 3]
+python data_collection/s23_eval_graph.py --gt data/pilot/gt --pred data/pilot/vlm_opus55 --out data/pilot/eval_vlm_opus55.md
+```
+
+- 그림 한 장당 요청 한 번. 시스템 프롬프트에 분류 체계(`classes.yaml`의 33 L2 + 필수 L3 + 연결 4종 = 47개 선택지, 정의·별칭)와 규칙 10개를 넣고, 구조화 출력(JSON 스키마, 클래스는 enum)으로 노드·엣지·부모 관계·그림 속성을 받는다. 좌표는 모델에 보낸 이미지 픽셀(긴 변 1568 이하로 축소)이며 원본 크기로 되돌려 저장한다.
+- 출력은 s23 예측 형식 `graphs/*.graph.json` + `_raw/`(응답 원문·usage) + `_summary.csv`(장당 노드·엣지·시간·토큰·추정 비용) + `_run.json`(날짜·모델·effort·프롬프트·스키마, 논문 재현용) + `--overlay`면 `overlays/*.png`.
+- 기본 모델 `claude-opus-5-5`, effort high, 거부 시 서버측 대체 모델(`fallbacks="default"`); `_summary.csv`의 `model_served`로 실제 응답 모델을 확인한다. 다시 실행하면 이미 있는 그림은 건너뛴다(재개).
+- 이 수치는 "사람 라벨 없이 얻을 수 있는 성능"이다. 사람 라벨로 학습한 모델과 같은 시험 세트·같은 s23 지표로 비교하는 것이 §6 기준선 비교의 한 축이다. 사람 라벨을 프롬프트에 예시로 넣는 few-shot 변형은 `--examples`로 추후 추가.
+
 ## 6. 판정(adjudication)과 v2
 
 - 판정자는 두 결과를 나란히 보고(Label Studio에서 두 프로젝트를 열거나 `agreement.md`의 불일치 목록) 불일치를 유형별(클래스 경계 / 박스 범위 / 구역 분할 / 누락)로 분류한다.

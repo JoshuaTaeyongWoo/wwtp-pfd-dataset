@@ -492,4 +492,5 @@ main의 약 1/4(EPA 64, OpenAlex 109; 크기 h > 1400 px, 종횡비 1.25~1.5)은
 - `s20_practice_set.py`: 연습용 5장(출처별 1장, 파일럿과 겹치지 않음) → `data/pilot/practice/`.
 - `s22_export_to_gt.py`: Label Studio 내보내기 → 벤치마크 정답(`coco.json` L2 + 속성, `graphs/*.graph.json`, `manifest.csv`, 문서 단위 `splits.json`).
 - `s23_eval_graph.py`: 계획서 §6 지표(AP L2/L1·LVIS 구간·층화, 박스형 L2 매핑 정확도, 노드 매칭 후 엣지 P/R/F1·방향 정확도·정규화 GED). 모델 출력은 `graphs/*.graph.json` 또는 COCO results.
+- `s24_vlm_baseline.py`: VLM 제로샷 기준선(Claude, 구조화 출력, 체계 v1.1 enum). 그림당 1요청 → s23 예측 형식. `--dry-run`, `--limit`, `--keys`, `--overlay`, 재개 지원(README_pilot §5c).
 - `s21_dryrun_synthetic.py`: 실제 결과 전 파이프라인 예행연습. 버리는 프로젝트 `dryrun_A`·`dryrun_B`에 합성 라벨(B는 일부러 다르게)을 API로 넣고 내보내 s17·s19를 끝까지 돌린다(README_pilot §5).

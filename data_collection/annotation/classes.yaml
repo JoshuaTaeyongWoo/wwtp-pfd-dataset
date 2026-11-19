@@ -168,7 +168,7 @@ classes:
   sbr_tank:
     ko: 연속회분식 반응조
     l1: secondary
-    definition: Sequencing batch reactor (fill/react/settle/decant in one tank). Multi-panel phase drawings: one unit per panel with panel_phase. Granular (Nereda-type) SBR uses biomass_form=granular.
+    definition: "Sequencing batch reactor (fill/react/settle/decant in one tank). Multi-panel phase drawings: one unit per panel with panel_phase. Granular (Nereda-type) SBR uses biomass_form=granular."
     aliases: [sequencing batch reactor, SBR, 연속회분식반응조, 회분식 반응조, SBR조]
     attributes: [operation_mode, panel_phase, biomass_form]
     cues: [water-level marks, decanter]
