@@ -81,6 +81,20 @@ python data_collection/s19_infer_edge_medium.py --export data/pilot/exports/pilo
 
 **예행연습(2026-11-19, 실제 결과 전에 파이프라인 검증)**: `s21_dryrun_synthetic.py`가 버리는 프로젝트 `dryrun_A`·`dryrun_B`(파일럿 1·2·3·21·22·23번 6장)에 합성 라벨(B는 일부러 다르게: 박스 이동·누락·추가, 클래스 바꿈, 엣지 누락·역방향, 관계 라벨 차이)을 넣고 내보내 위 명령을 끝까지 돌림. 이때 고친 것: ① Label Studio가 업로드 파일명 앞에 붙이는 8자리 해시(`3e304446-pilot_01__…`) 때문에 두 내보내기의 같은 그림이 다른 키가 되고 번호 인식이 실패하던 문제(s17·s19 키 정규화), ② 작은 박스 보조 매칭, ③ 중복 관계 제거(s19), ④ 규칙 32·33 추가(전처리→본류 = influent, 2차 침전지→3차 = effluent; 전에는 unknown_role). 출력 예: `data/pilot/exports/dryrun_agreement.md`, `dryrun_disagreements.csv`, `graphs_dryrun_*`. 실제 결과가 오면 파일 경로만 바꿔 같은 명령을 돌린다.
 
+## 5b. 정답 변환과 모델 평가 (파일럿 뒤·본 작업 공통)
+
+판정이 끝난 내보내기(또는 한 어노테이터의 내보내기)를 벤치마크 정답으로 바꾸고, 어떤 모델이든 같은 형식으로 출력하면 같은 지표로 평가한다.
+
+```bash
+python data_collection/s22_export_to_gt.py --export data/pilot/exports/pilot_adjudicated.json --out data/pilot/gt --split 0.7,0.15,0.15
+python data_collection/s23_eval_graph.py --gt data/pilot/gt --pred <모델 출력 폴더> [--pred-coco results.json] --out data/pilot/eval_model.md
+```
+
+- s22 출력: `coco.json`(L2 41 범주, supercategory = L1, 박스마다 속성), `graphs/*.graph.json`(§4.6, s19 규칙으로 매체 채움), `manifest.csv`(그림별 출처·언어·diagram_style), `splits.json`(문서 단위, 출처별 층화, 시드 고정).
+- 모델 출력 형식: `graphs/<key>.graph.json`(노드 bbox px + `semantic_class`/`l2` + `score`, 엣지 src/dst). 검출만 하는 모델은 COCO results JSON을 `--pred-coco`로.
+- s23 지표(계획서 §6): AP50·AP[.5:.95]를 L2와 L1(접기)에서, LVIS 구간(rare ≤ 10장 / common ≤ 100 / frequent), `visual_form`·diagram_style·출처·언어 층화; 박스형 정답의 L2 매핑 정확도; 노드 매칭(IoU ≥ 0.5, 클래스 요구/비요구) 뒤 엣지 P/R/F1, 방향 정확도(화살촉 근거 / 전체), 추론 엣지 재현율, 정규화 그래프 편집 거리.
+- 자기 검사: 같은 폴더를 `--gt`와 `--pred`로 주면 모든 지표가 1.0(편집 거리 0)이어야 한다. 예행연습 출력 `data/pilot/exports/eval_dryrun_A_vs_B.md`.
+
 ## 6. 판정(adjudication)과 v2
 
 - 판정자는 두 결과를 나란히 보고(Label Studio에서 두 프로젝트를 열거나 `agreement.md`의 불일치 목록) 불일치를 유형별(클래스 경계 / 박스 범위 / 구역 분할 / 누락)로 분류한다.
