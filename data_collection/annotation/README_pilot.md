@@ -33,6 +33,26 @@ label-studio start --port 8080
 3. Labeling Setup → Custom template → Code → `annotation/label_studio_config.xml` 내용을 붙여넣기 → Save.
 4. 같은 과정으로 `pilot_B`.
 
+## 2b. 원격 접속 (판정자 네덜란드, 어노테이터 한국; 2026-11-19 설정)
+
+서버는 판정자 노트북에서 돌고, **Cloudflare 임시 터널**로 공개 주소를 받아 한국에서 접속한다. 어노테이터는 아무것도 설치하지 않고 브라우저로 접속해 **판정자 계정으로 로그인**한다(파일럿 한정; 본 작업은 개인 계정). 작업 구분은 계정이 아니라 프로젝트(pilot_A / pilot_B)로 한다.
+
+- 서버 켜기 (판정자, **윈도우에서 직접 연 PowerShell**; Claude 앱 안 터미널은 AppData가 가상화되어 빈 DB를 봄):
+  ```powershell
+  $env:CSRF_TRUSTED_ORIGINS='https://*.trycloudflare.com'; $env:DISABLE_SIGNUP_WITHOUT_LINK='1'; label-studio start --port 8080
+  ```
+  `CSRF_TRUSTED_ORIGINS`가 없으면 공개 주소에서 로그인 POST가 403으로 막힌다. `DISABLE_SIGNUP_WITHOUT_LINK=1`은 초대 링크 없는 가입 차단.
+- 터널 켜기 (다른 PowerShell 창; `winget install Cloudflare.cloudflared`로 설치됨, `C:\Program Files (x86)\cloudflared\`):
+  ```powershell
+  cloudflared tunnel --url http://localhost:8080
+  ```
+  출력의 `https://<임의단어>.trycloudflare.com`이 접속 주소. **터널을 다시 켤 때마다 주소가 바뀌므로** 그때마다 어노테이터에게 다시 알린다. 계정 없이 쓰는 임시 터널이라 SLA가 없다; 끊기면 재실행.
+- 노트북 절전 끄기(한국 낮 = 네덜란드 밤에 켜져 있어야 함): `powercfg /change standby-timeout-ac 0; powercfg /change hibernate-timeout-ac 0`
+- 확인(2026-11-19): 공개 주소에서 로그인 페이지 200, 더미 로그인 POST가 CSRF 403 없이 처리됨, `/user/signup/` 차단, API로 pilot_A(60)·pilot_B(60)·practice(5) 조회됨.
+- 어노테이터에게 보낼 것: 접속 주소, 판정자 계정 이메일·**임시 비밀번호**(파일럿 전 변경, 끝나면 다시 변경), "A는 pilot_A, B는 pilot_B만 연다", Settings·삭제·Account & Settings(토큰)는 건드리지 않는다.
+- 백업: DB는 `C:\Users\<user>\AppData\Local\label-studio\label-studio\label_studio.sqlite3` 한 파일. 시작 전과 매일 한 번 `data/pilot/ls_backup/label_studio_YYYYMMDD_HHMM.sqlite3`로 복사(git 제외). 되돌리려면 서버를 끄고 파일을 덮어쓴다.
+- 대안(검토함): Tailscale Funnel은 랩 테일넷에서 관리자가 허용하지 않아 불가(허용되면 고정 주소 `https://taeyong.tail18d6e9.ts.net`). 본 작업(수천 장)은 한국 랩 리눅스 서버(테일넷 `26-pf-10-*`)에 설치하는 쪽이 맞다.
+
 ## 3. 어노테이터 교육 (2시간 + 연습 5장)
 
 진행 대본: **`docs/annotation_training_script.md`** (PDF `manual/WWTP_training_script.pdf`, 9쪽: 시간표, 보여 줄 것·말할 것·확인 질문, 연습 5장의 예상 질문과 답). 연습 이미지 5장은 `s20_practice_set.py`가 골라 `data/pilot/practice/`에 두고 Label Studio 프로젝트 `practice`(id 3)에 올려 둠(파일럿 60장과 겹치지 않음).
