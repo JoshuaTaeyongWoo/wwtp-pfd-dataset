@@ -487,4 +487,7 @@ main의 약 1/4(EPA 64, OpenAlex 109; 크기 h > 1400 px, 종횡비 1.25~1.5)은
 - `docs/annotation_guideline_v1.md`: 어노테이터 규칙서(클래스 표, 판별 규칙 22개, 엣지 기록법, 자주 틀리는 것).
 - `annotation/README_pilot.md`: 설치·프로젝트 생성·교육·내보내기·일치도 계산 절차.
 - `s18_setup_pilot_projects.py`: 로컬 Label Studio에 `pilot_A`·`pilot_B` 프로젝트를 만들고 라벨 설정과 60장을 업로드(토큰은 `data/pilot/.ls_token`, git 제외). 2026-11-17 실행: 각 60 task.
-- `s17_pilot_agreement.py`: 두 어노테이터의 Label Studio 내보내기에서 κ(L2/L1)·IoU·누락·엣지 F1·클래스별 κ·부트스트랩 CI를 계산.
+- `s17_pilot_agreement.py`: 두 어노테이터의 Label Studio 내보내기에서 κ(L2/L1)·IoU·누락·엣지 F1·클래스별 κ·부트스트랩 CI를 계산. `--full-subset 20`(21번부터는 화살촉·글자 클래스 제외), `--disagreements x.csv`(판정자용 불일치 표). 작은 박스는 중심 거리로 보조 매칭.
+- `s19_infer_edge_medium.py`: 쉬운 버전 엣지에 매체·스트림 역할을 규칙표(`annotation/edge_medium_rules.md`, 33규칙)로 채워 §4.6 graph.json을 만든다. 중복 관계 제거, 통과 노드(분기·합류·펌프·밸브·저류조) 체인 추적.
+- `s20_practice_set.py`: 연습용 5장(출처별 1장, 파일럿과 겹치지 않음) → `data/pilot/practice/`.
+- `s21_dryrun_synthetic.py`: 실제 결과 전 파이프라인 예행연습. 버리는 프로젝트 `dryrun_A`·`dryrun_B`에 합성 라벨(B는 일부러 다르게)을 API로 넣고 내보내 s17·s19를 끝까지 돌린다(README_pilot §5).

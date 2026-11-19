@@ -45,12 +45,20 @@ L1_OF = {
 
 
 # ----------------------------------------------------------------------------- loading
+def image_key(task: dict) -> str:
+    """Label Studio prefixes uploaded files with an 8-hex upload id ('/data/upload/4/3e304446-pilot_01__x.png');
+    strip it so the same image gets the same key in both annotators' exports."""
+    import re
+    name = Path(task["data"].get("image", str(task.get("id")))).name
+    return re.sub(r"^[0-9a-f]{8}-", "", name)
+
+
 def load_label_studio(path: Path) -> dict[str, dict]:
     """-> {image_key: {"boxes": [{id, cls, l2, bbox[x0,y0,x1,y1] in px, attrs}], "edges": [(src,dst,label)]}}"""
     data = json.loads(Path(path).read_text(encoding="utf-8"))
     out = {}
     for task in data:
-        key = Path(task["data"].get("image", str(task.get("id")))).name
+        key = image_key(task)
         ann = (task.get("annotations") or [{}])[0]
         boxes, edges, per_region = [], [], defaultdict(dict)
         for r in ann.get("result", []):
@@ -61,14 +69,17 @@ def load_label_studio(path: Path) -> dict[str, dict]:
                 x0, y0 = v["x"] / 100 * w, v["y"] / 100 * h
                 x1, y1 = x0 + v["width"] / 100 * w, y0 + v["height"] / 100 * h
                 cls = v["rectanglelabels"][0]
-                boxes.append({"id": r["id"], "cls": cls, "l2": cls.split("/")[0], "bbox": [x0, y0, x1, y1], "attrs": {}})
+                boxes.append({"id": r["id"], "cls": cls, "l2": cls.split("/")[0], "bbox": [x0, y0, x1, y1], "attrs": {},
+                              "small": (x1 - x0) * (y1 - y0) < SMALL_FRAC * w * h})
             elif t == "relation":
                 edges.append((r["from_id"], r["to_id"], (r.get("labels") or [""])[0]))
             elif t in ("choices", "textarea") and r.get("id"):
-                per_region[r["id"]][r["from_name"]] = r["value"].get("choices") or r["value"].get("text")
+                val = r["value"].get("choices") or r["value"].get("text")
+                per_region[r["id"]][r["from_name"]] = val[0] if isinstance(val, list) and len(val) == 1 else val
         for b in boxes:
             b["attrs"] = per_region.get(b["id"], {})
-        out[key] = {"boxes": boxes, "edges": edges}
+        image_attrs = {k: v for rid, d in per_region.items() if rid not in {b["id"] for b in boxes} for k, v in d.items()}
+        out[key] = {"boxes": boxes, "edges": edges, "image_attrs": image_attrs}
     return out
 
 
@@ -91,7 +102,19 @@ def iou(a, b) -> float:
     return inter / ua if ua > 0 else 0.0
 
 
+SMALL_FRAC = 0.002  # boxes under 0.2 % of the image area (junctions, arrowheads, valves): a few px of jitter already breaks IoU 0.5
+
+
+def center_close(a, b) -> bool:
+    """small-box fallback: centres closer than the larger box's longest side."""
+    ca = ((a[0] + a[2]) / 2, (a[1] + a[3]) / 2); cb = ((b[0] + b[2]) / 2, (b[1] + b[3]) / 2)
+    tol = max(a[2] - a[0], a[3] - a[1], b[2] - b[0], b[3] - b[1])
+    return abs(ca[0] - cb[0]) <= tol and abs(ca[1] - cb[1]) <= tol
+
+
 def match(boxes_a, boxes_b, thr=0.5):
+    """greedy IoU >= thr; then, for pairs of SMALL boxes left over, centre proximity (plan §4.6 note).
+    Returns (matched [(i, j, iou, by_iou)], unmatched_a, unmatched_b)."""
     pairs = sorted(((iou(a["bbox"], b["bbox"]), i, j) for i, a in enumerate(boxes_a) for j, b in enumerate(boxes_b)), reverse=True)
     used_a, used_b, matched = set(), set(), []
     for v, i, j in pairs:
@@ -99,7 +122,12 @@ def match(boxes_a, boxes_b, thr=0.5):
             break
         if i in used_a or j in used_b:
             continue
-        used_a.add(i); used_b.add(j); matched.append((i, j, v))
+        used_a.add(i); used_b.add(j); matched.append((i, j, v, True))
+    for v, i, j in pairs:
+        if i in used_a or j in used_b or v >= thr:
+            continue
+        if boxes_a[i].get("small") and boxes_b[j].get("small") and center_close(boxes_a[i]["bbox"], boxes_b[j]["bbox"]):
+            used_a.add(i); used_b.add(j); matched.append((i, j, v, False))
     return matched, [i for i in range(len(boxes_a)) if i not in used_a], [j for j in range(len(boxes_b)) if j not in used_b]
 
 
@@ -118,8 +146,66 @@ FULL_ONLY = {"arrowhead", "text_label", "stream_tag", "stream_label"}
 
 def pilot_no(key: str) -> int:
     import re
-    m = re.match(r"pilot_(\d+)", key)
+    m = re.search(r"pilot_(\d+)", key)
     return int(m.group(1)) if m else 0
+
+
+ATTRS_T1 = ["visual_form", "confidence", "is_zone", "l1_hint", "io_role", "graph_id"]
+
+
+def disagreements(A: dict, B: dict, key: str, full_subset: int = 20) -> list[dict]:
+    """Rows for the adjudicator: every place A and B differ on this image (class, box, attribute, edge, image field)."""
+    a, b = A.get(key, {"boxes": [], "edges": []}), B.get(key, {"boxes": [], "edges": []})
+    lite = bool(full_subset) and pilot_no(key) > full_subset
+    ba = [x for x in a["boxes"] if not (lite and x["l2"] in FULL_ONLY)]
+    bb = [x for x in b["boxes"] if not (lite and x["l2"] in FULL_ONLY)]
+    matched, miss_a, miss_b = match(ba, bb)
+    rows = []
+
+    def row(kind, item, va, vb, hint=""):
+        rows.append({"image": key, "pilot_no": pilot_no(key), "kind": kind, "item": item, "A": va, "B": vb, "hint": hint, "decision": ""})
+
+    for i, j, v, by_iou in matched:
+        x, y = ba[i], bb[j]
+        if x["cls"] != y["cls"]:
+            row("class", f"{x['id']}~{y['id']}", x["cls"], y["cls"], "rule 1-22 / l1_hint")
+        elif by_iou and v < 0.7:
+            row("box_iou<0.7", f"{x['id']}~{y['id']}", f"{x['cls']} iou={v:.2f}", f"{y['cls']}", "box extent (rule P2)")
+        for k in ATTRS_T1:
+            va, vb = x["attrs"].get(k), y["attrs"].get(k)
+            if (va or vb) and va != vb:
+                row(f"attr:{k}", f"{x['id']}~{y['id']} ({x['cls']})", va, vb, "rule 15b" if k == "visual_form" else "")
+        if x["l2"] in ("process_unit_generic", "unknown_equipment") and (x["attrs"].get("label_text") or "") != (y["attrs"].get("label_text") or ""):
+            row("attr:label_text", f"{x['id']}~{y['id']} ({x['cls']})", x["attrs"].get("label_text"), y["attrs"].get("label_text"))
+    def near(x, others):  # same-class unmatched box on the other side that overlaps: same object, different extent
+        best = max(((iou(x["bbox"], o["bbox"]), o) for o in others if o["cls"] == x["cls"]), default=(0, None), key=lambda t: t[0])
+        return f"same object as {best[1]['id']}? iou={best[0]:.2f}" if best[1] is not None and best[0] > 0 else ""
+
+    for i in miss_a:
+        row("box_only_A", ba[i]["id"], ba[i]["cls"], "", near(ba[i], [bb[j] for j in miss_b]) or "missed by B or extra in A")
+    for j in miss_b:
+        row("box_only_B", bb[j]["id"], "", bb[j]["cls"], near(bb[j], [ba[i] for i in miss_a]) or "missed by A or extra in B")
+    b2a = {bb[j]["id"]: ba[i]["id"] for i, j, _, _ in matched}
+    def name(_, i):  # A node id, or '?<B id>' for a B node that has no A counterpart
+        if i.startswith("?"):
+            return "[B-only] " + next((x["cls"] for x in bb if x["id"] == i[1:]), "?")
+        return next((x["cls"] for x in ba if x["id"] == i), "?")
+    ea = {(s, d): l for s, d, l in a["edges"] if "parent_of" not in (l or "")}
+    eb = {(b2a.get(s, f"?{s}"), b2a.get(d, f"?{d}")): l for s, d, l in b["edges"] if "parent_of" not in (l or "")}
+    for e in sorted(set(ea) | set(eb)):
+        la, lb = ea.get(e), eb.get(e)
+        desc = f"{name(ba, e[0])} -> {name(ba, e[1])}"
+        if e in ea and e not in eb:
+            row("edge_only_A", desc, f"edge {la or 'flow'}", "", "reversed?" if (e[1], e[0]) in eb else "missed by B")
+        elif e in eb and e not in ea:
+            row("edge_only_B", desc, "", f"edge {lb or 'flow'}", "reversed?" if (e[1], e[0]) in ea else "missed by A")
+        elif (la or "") != (lb or ""):
+            row("edge_label", desc, la or "flow", lb or "flow", "no_arrow / dashed / optional")
+    for k in ("diagram_style", "language", "n_panels", "process_configuration"):
+        va, vb = a.get("image_attrs", {}).get(k), b.get("image_attrs", {}).get(k)
+        if (va or vb) and va != vb:
+            row(f"image:{k}", "", va, vb)
+    return rows
 
 
 def per_image_stats(A: dict, B: dict, key: str, full_subset: int = 20) -> dict:
@@ -130,11 +216,11 @@ def per_image_stats(A: dict, B: dict, key: str, full_subset: int = 20) -> dict:
     a["edges"] = [e for e in a["edges"] if "parent_of" not in (e[2] or "")]
     b["edges"] = [e for e in b["edges"] if "parent_of" not in (e[2] or "")]
     matched, miss_a, miss_b = match(a["boxes"], b["boxes"])
-    cls_pairs = [(a["boxes"][i]["l2"], b["boxes"][j]["l2"]) for i, j, _ in matched]
+    cls_pairs = [(a["boxes"][i]["l2"], b["boxes"][j]["l2"]) for i, j, _, _ in matched]
     l1_pairs = [(L1_OF.get(x, x), L1_OF.get(y, y)) for x, y in cls_pairs]
-    ious = [v for _, _, v in matched]
+    ious = [v for _, _, v, by_iou in matched if by_iou]  # small boxes matched by centre are not scored on IoU
     # edges: map B node ids onto A node ids through the matching
-    b2a = {b["boxes"][j]["id"]: a["boxes"][i]["id"] for i, j, _ in matched}
+    b2a = {b["boxes"][j]["id"]: a["boxes"][i]["id"] for i, j, _, _ in matched}
     ea = {(s, d) for s, d, _ in a["edges"]}
     eb = {(b2a.get(s, f"?{s}"), b2a.get(d, f"?{d}")) for s, d, _ in b["edges"]}
     tp = len(ea & eb)
@@ -239,6 +325,7 @@ def main():
     ap.add_argument("--out", default="")
     ap.add_argument("--expand-cvat", default="")
     ap.add_argument("--full-subset", type=int, default=20, help="pilot numbers <= N were annotated in full (arrowheads, text); 0 = all full")
+    ap.add_argument("--disagreements", default="", help="CSV of every A/B difference for the adjudicator (decision column left blank)")
     args = ap.parse_args()
     if args.expand_cvat:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -259,6 +346,13 @@ def main():
               "| class (>= 20 matched) | n | kappa |", "|---|---|---|"]
     for c, n, k in per_class_kappa(stats):
         lines.append(f"| {c} | {n} | {k:.3f} |")
+    if args.disagreements:
+        import csv
+        rows = [r for k in keys for r in disagreements(A, B, k, args.full_subset)]
+        with open(args.disagreements, "w", newline="", encoding="utf-8-sig") as f:
+            w = csv.DictWriter(f, fieldnames=["image", "pilot_no", "kind", "item", "A", "B", "hint", "decision"]); w.writeheader(); w.writerows(rows)
+        kinds = Counter(r["kind"].split(":")[0] for r in rows)
+        lines += ["", f"disagreements for adjudication: {len(rows)} rows -> {args.disagreements} ({dict(kinds)})"]
     text = "\n".join(lines)
     if args.out:
         Path(args.out).write_text(text, encoding="utf-8")

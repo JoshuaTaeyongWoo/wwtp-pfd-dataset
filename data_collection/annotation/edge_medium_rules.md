@@ -43,3 +43,8 @@
 통과 노드 체인(junction → pump → junction …)은 상류 매체를 그대로 잇되, `junction_split` 뒤 가지는 가지마다 도착 노드로 규칙을 다시 적용한다(예: 침전지 하부 분기 → 반응조 = ras_s, → 농축조 = was).
 
 | 31 | 분기 앞 / 합류 뒤 줄기 엣지 | — | 가지들이 공유하는 매체 | split_or_merge_trunk | 2차 패스: 모든 가지의 매체가 같을 때만; 다르면 ambiguous |
+
+2026-11-19 예행연습(s21 dry run)에서 추가 — 규칙 28보다 먼저 검사:
+
+| 32 | `screen`·`grit_chamber`·`equalization_tank`·`pump_station` | 본류 단위 | liquid | influent | 전처리 뒤 유입수 (예: 스크린 → 1차 침전지) |
+| 33 | `secondary_clarifier`·`mbr_unit` | `filtration_unit`·`membrane_unit`·`disinfection_unit`·`chemical_treatment_unit` | liquid | effluent | 2차 처리수 → 3차 처리 |

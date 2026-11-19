@@ -71,10 +71,15 @@ label-studio start --port 8080
 각 프로젝트에서 Export → JSON → `data/pilot/exports/pilot_A.json`, `pilot_B.json`.
 
 ```bash
-python data_collection/s17_pilot_agreement.py --a data/pilot/exports/pilot_A.json --b data/pilot/exports/pilot_B.json --out data/pilot/agreement.md
+python data_collection/s17_pilot_agreement.py --a data/pilot/exports/pilot_A.json --b data/pilot/exports/pilot_B.json --full-subset 20 --out data/pilot/agreement.md --disagreements data/pilot/disagreements.csv
+python data_collection/s19_infer_edge_medium.py --export data/pilot/exports/pilot_A.json --out data/pilot/graphs_A
+python data_collection/s19_infer_edge_medium.py --export data/pilot/exports/pilot_B.json --out data/pilot/graphs_B
 ```
 
-출력: L2/L1 κ, IoU ≥ 0.7 비율, 누락·추가 비율, 엣지 P/R/F1, 클래스별 κ(매칭 ≥ 20), 부트스트랩 95 % CI. 목표 κ ≥ 0.8.
+출력: L2/L1 κ, IoU ≥ 0.7 비율, 누락·추가 비율, 엣지 P/R/F1, 클래스별 κ(매칭 ≥ 20), 부트스트랩 95 % CI. 목표 κ ≥ 0.8. `--disagreements`는 판정자용 표(§6): 그림·종류(class / attr / box_only / edge_only / edge_label / image)·A값·B값·힌트·빈 decision 열.
+매칭: IoU ≥ 0.5 탐욕 매칭 뒤, 둘 다 작은 박스(이미지 면적 0.2 % 미만: 분기·합류·화살촉·밸브)는 중심 거리로 보조 매칭(작은 박스는 몇 px 흔들림에도 IoU 0.5가 깨짐; 보조 매칭된 쌍은 IoU 통계에서 제외).
+
+**예행연습(2026-11-19, 실제 결과 전에 파이프라인 검증)**: `s21_dryrun_synthetic.py`가 버리는 프로젝트 `dryrun_A`·`dryrun_B`(파일럿 1·2·3·21·22·23번 6장)에 합성 라벨(B는 일부러 다르게: 박스 이동·누락·추가, 클래스 바꿈, 엣지 누락·역방향, 관계 라벨 차이)을 넣고 내보내 위 명령을 끝까지 돌림. 이때 고친 것: ① Label Studio가 업로드 파일명 앞에 붙이는 8자리 해시(`3e304446-pilot_01__…`) 때문에 두 내보내기의 같은 그림이 다른 키가 되고 번호 인식이 실패하던 문제(s17·s19 키 정규화), ② 작은 박스 보조 매칭, ③ 중복 관계 제거(s19), ④ 규칙 32·33 추가(전처리→본류 = influent, 2차 침전지→3차 = effluent; 전에는 unknown_role). 출력 예: `data/pilot/exports/dryrun_agreement.md`, `dryrun_disagreements.csv`, `graphs_dryrun_*`. 실제 결과가 오면 파일 경로만 바꿔 같은 명령을 돌린다.
 
 ## 6. 판정(adjudication)과 v2
 

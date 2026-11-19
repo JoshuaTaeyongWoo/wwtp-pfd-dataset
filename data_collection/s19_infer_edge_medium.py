@@ -23,6 +23,8 @@ PASS = {"junction_split", "junction_merge", "pump", "valve", "storage_tank"}
 BIO = {"aerobic_zone", "anoxic_zone", "anaerobic_zone", "sbr_tank", "biofilm_reactor", "mbr_unit", "anaerobic_wastewater_reactor", "pond_lagoon_wetland"}
 ZONES = {"aerobic_zone", "anoxic_zone", "anaerobic_zone", "sbr_tank"}
 SLUDGE = {"thickener", "digester", "dewatering_unit", "fermenter", "drying_incineration_unit", "biogas_unit"}
+PRELIM = {"screen", "grit_chamber", "equalization_tank", "pump_station"}
+TERTIARY = {"filtration_unit", "membrane_unit", "disinfection_unit", "chemical_treatment_unit"}
 MAIN = {"screen", "grit_chamber", "equalization_tank", "pump_station", "primary_clarifier", "flotation_unit", "chemical_treatment_unit",
         "secondary_clarifier", "filtration_unit", "membrane_unit", "disinfection_unit"} | BIO
 
@@ -108,6 +110,10 @@ def infer(src: dict, dst: dict, src_text: str = "") -> tuple[str, str, int]:
         return ("liquid", "overflow", 26)
     if sc == "instrument" or dc == "instrument":
         return ("signal", "signal", 27)
+    if sc in PRELIM and dc in MAIN:
+        return ("liquid", "influent", 32)
+    if sc in ("secondary_clarifier", "mbr_unit") and dc in TERTIARY:
+        return ("liquid", "effluent", 33)
     if sc in MAIN and dc in MAIN:
         return ("liquid", "liquid_unknown_role", 28)
     if sc in SLUDGE or dc in SLUDGE or s_hint == "sludge" or d_hint == "sludge":
@@ -133,7 +139,9 @@ def load_tasks(path: Path):
                 per_region[r["id"]][r["from_name"]] = val[0] if isinstance(val, list) and len(val) == 1 else val
         for nid, n in nodes.items():
             n["attrs"] = per_region.get(nid, {})
-        yield Path(task["data"].get("image", str(task.get("id")))).name, nodes, rels
+        import re
+        name = Path(task["data"].get("image", str(task.get("id")))).name
+        yield re.sub(r"^[0-9a-f]{8}-", "", name), nodes, rels  # strip Label Studio's upload-id prefix
 
 
 def build_graph(image: str, nodes: dict, rels: list) -> dict:
@@ -149,6 +157,8 @@ def build_graph(image: str, nodes: dict, rels: list) -> dict:
         direction = r.get("direction", "right")
         if direction == "left":
             a, b = b, a
+        if any(e["src"] == a and e["dst"] == b for e in edges):
+            continue  # duplicate relation drawn twice: keep the first
         edges.append({"id": f"e{len(edges) + 1}", "src": a, "dst": b,
                       "direction_confidence": "ambiguous" if (direction == "bi" or "direction_unknown" in labels) else ("inferred" if "no_arrow" in labels else "arrowhead"),
                       "line_style": "dashed" if "style:dashed" in labels else "solid", "optional": "optional" in labels})
