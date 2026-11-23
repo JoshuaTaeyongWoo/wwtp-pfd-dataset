@@ -33,3 +33,4 @@ Thumbs.db
 
 # --- manual render checks ---
 data_collection/annotation/manual/_render/
+meeting/_render/
