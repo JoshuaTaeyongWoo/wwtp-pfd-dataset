@@ -125,13 +125,18 @@ def apply_swaps(chosen: list[dict], pool: pd.DataFrame, swaps: pd.DataFrame, rng
             print(f"swap: {rid} is not in the current draw, skipped")
             continue
         r = chosen[idx]
-        base = pool[(pool["source"] == r["source"]) & (~pool["record_id"].isin(used_ids)) & (~pool["doc_id"].isin(used_docs))]
+        src_pool = pool[(pool["source"] == r["source"]) & (~pool["record_id"].isin(used_ids))]
+        base = src_pool[~src_pool["doc_id"].isin(used_docs)]
+        relax = ""
+        if not len(base):  # source has no unused document left (EPA manuals): allow an already-drawn document
+            base, relax = src_pool, " (same document allowed: no unused document left)"
         same = base[(base["category"] == r["category"]) & (base["lang_proxy"] == r["lang_proxy"])]
         cand_pool = same if len(same) else base
         if not len(cand_pool):
             print(f"swap: no replacement left for {rid} in {r['source']}, kept")
             continue
         new = cand_pool.sample(n=1, random_state=rng.randint(0, 2**31 - 1)).iloc[0].to_dict()
+        reason = reason + relax
         new["test_no"] = r["test_no"]
         used_docs.add(new["doc_id"]); used_ids.add(new["record_id"])
         chosen[idx] = new
@@ -141,10 +146,23 @@ def apply_swaps(chosen: list[dict], pool: pd.DataFrame, swaps: pd.DataFrame, rng
     return chosen
 
 
-def make_sheets(rows: list[dict], font) -> None:
+def flat_image(path: Path) -> Image.Image | None:
+    """Load any catalog image (SVG rendered, WebP decoded) and flatten transparency onto white.
+    PDF-extracted PNGs sometimes carry an alpha layer whose RGB underneath is black, so a plain
+    convert('RGB') would bury black lines; compositing on white keeps them."""
+    im = load_image(path)
+    if im is None:
+        return None
+    if "A" in im.getbands():
+        bg = Image.new("RGB", im.size, "white")
+        bg.paste(im, mask=im.getchannel("A"))
+        return bg
+    return im.convert("RGB")
+
+
+def make_sheets(rows: list[dict], font, out: Path, prefix: str = "test") -> None:
     cols, nrows, cell = 5, 4, 360
     per = cols * nrows
-    out = SPLITS / "sheets_test"
     if out.exists():
         shutil.rmtree(out)
     out.mkdir(parents=True)
@@ -154,7 +172,7 @@ def make_sheets(rows: list[dict], font) -> None:
         sheet = Image.new("RGB", (cols * cell, nrows * cell), "white")
         d = ImageDraw.Draw(sheet)
         for i, r in enumerate(chunk):
-            im = load_image(ROOT / r["image_path"])
+            im = flat_image(ROOT / r["image_path"])
             x, y = (i % cols) * cell, (i // cols) * cell
             if im is not None:
                 im.thumbnail((cell - 8, cell - 8))
@@ -163,10 +181,26 @@ def make_sheets(rows: list[dict], font) -> None:
             d.text((x + 5, y + 2), f"{r['test_no']:03d}", fill="white", font=font)
             d.text((x + 78, y + 2), r["source"][:14], fill="black", font=font)
             d.rectangle([x, y, x + cell - 1, y + cell - 1], outline="#cccccc")
-        name = f"test_{k // per:03d}.jpg"
+        name = f"{prefix}_{k // per:03d}.jpg"
         sheet.save(out / name, "JPEG", quality=85)
         mapping[name] = [r["test_no"] for r in chunk]
     (out / "sheets.json").write_text(json.dumps(mapping, indent=1), encoding="utf-8")
+
+
+def load_base(path: Path, main_df: pd.DataFrame) -> list[dict]:
+    """Re-create the drawn list from an earlier test_fixed.csv so that --swap only replaces the
+    listed items and every other item (and its test_no) stays exactly as reviewed."""
+    base = pd.read_csv(path, dtype=str, encoding="utf-8-sig").fillna("")
+    by_id = main_df.set_index("record_id")
+    chosen = []
+    for _, b in base.iterrows():
+        if b["record_id"] not in by_id.index:
+            raise SystemExit(f"--base item {b['record_id']} is no longer in main")
+        r = by_id.loc[b["record_id"]].to_dict()
+        r["record_id"] = b["record_id"]
+        r["test_no"] = int(b["test_no"])
+        chosen.append(r)
+    return chosen
 
 
 def main():
@@ -177,7 +211,8 @@ def main():
     ap.add_argument("--alloc", choices=["proportional", "sqrt"], default="proportional")
     ap.add_argument("--exclude", default="", help="text file of record_ids to leave out of the pool")
     ap.add_argument("--swap", default="", help="CSV record_id,reason: replace these drawn items (same source/lang/category)")
-    ap.add_argument("--copy-images", action="store_true", help="copy the drawn images to data/splits/test_images/")
+    ap.add_argument("--copy-images", action="store_true", help="copy the drawn images to data/splits/test_images/ (SVG rasterised, alpha flattened)")
+    ap.add_argument("--base", default="", help="existing test_fixed.csv: keep its items and numbering, apply --swap only (no new draw)")
     a = ap.parse_args()
     rng = random.Random(a.seed)
     SPLITS.mkdir(parents=True, exist_ok=True)
@@ -193,23 +228,33 @@ def main():
 
     chosen: list[dict] = []
     topped_up: dict[str, int] = {}
-    for s in SOURCE_ORDER:
-        got = draw_source(pool[pool["source"] == s], alloc[s], rng)
-        if len(got) < alloc[s]:  # source has fewer documents than its quota (EPA manuals, Korean municipal)
-            extra = top_up_same_doc(got, pool[pool["source"] == s], alloc[s], rng)
-            topped_up[s] = len(extra)
-            got += extra
-        chosen += got
-    rng.shuffle(chosen)  # numbering must not reveal the source order
-    for i, r in enumerate(chosen, 1):
-        r["test_no"] = i
+    if a.base:
+        main_all = df[df["split"] == "main"].copy()
+        main_all["lang_proxy"] = main_all.apply(lang_proxy, axis=1)
+        chosen = load_base(Path(a.base), main_all)
+        print(f"base: {len(chosen)} items kept from {a.base}")
+    else:
+        for s in SOURCE_ORDER:
+            got = draw_source(pool[pool["source"] == s], alloc[s], rng)
+            if len(got) < alloc[s]:  # source has fewer documents than its quota (EPA manuals, Korean municipal)
+                extra = top_up_same_doc(got, pool[pool["source"] == s], alloc[s], rng)
+                topped_up[s] = len(extra)
+                got += extra
+            chosen += got
+        rng.shuffle(chosen)  # numbering must not reveal the source order
+        for i, r in enumerate(chosen, 1):
+            r["test_no"] = i
 
+    swapped_nos: list[int] = []
     if a.swap:
-        chosen = apply_swaps(chosen, pool, pd.read_csv(a.swap, dtype=str).fillna(""), rng)
+        before = {r["test_no"]: r["record_id"] for r in chosen}
+        chosen = apply_swaps(chosen, pool, pd.read_csv(a.swap, dtype=str, encoding="utf-8-sig").fillna(""), rng)
+        swapped_nos = [r["test_no"] for r in chosen if before[r["test_no"]] != r["record_id"]]
 
     assert len({r["record_id"] for r in chosen}) == len(chosen), "duplicate record"
     n_docs = len({r["doc_id"] for r in chosen})
-    assert n_docs == len(chosen) - sum(topped_up.values()), "unexpected document repeat outside the top-up"
+    if not a.base:
+        assert n_docs == len(chosen) - sum(topped_up.values()), "unexpected document repeat outside the top-up"
 
     cols = ["test_no", "record_id", "source", "lang_proxy", "category", "tier", "doc_id", "image_path", "caption"]
     out = pd.DataFrame(chosen)[cols].copy()
@@ -228,13 +273,24 @@ def main():
         img_dir.mkdir()
         for r in chosen:
             src = ROOT / r["image_path"]
-            shutil.copy2(src, img_dir / f"test_{r['test_no']:03d}__{src.stem[:60]}{src.suffix.lower()}")
+            dst = img_dir / f"test_{r['test_no']:03d}__{src.stem[:60]}"
+            im = Image.open(src) if src.suffix.lower() in (".png", ".jpg", ".jpeg") else None
+            if im is not None and "A" not in im.getbands() and src.suffix.lower() != ".webp":
+                shutil.copy2(src, dst.with_suffix(src.suffix.lower()))   # plain raster: byte-for-byte copy
+            else:  # SVG, WebP or alpha PNG -> flattened PNG (Label Studio shows these reliably)
+                flat = flat_image(src)
+                if flat is None:
+                    raise SystemExit(f"cannot load {src}")
+                flat.save(dst.with_suffix(".png"))
 
     try:
         font = ImageFont.truetype("arial.ttf", 20)
     except Exception:
         font = ImageFont.load_default()
-    make_sheets(sorted(chosen, key=lambda r: r["test_no"]), font)
+    make_sheets(sorted(chosen, key=lambda r: r["test_no"]), font, SPLITS / "sheets_test")
+    if swapped_nos:
+        make_sheets(sorted((r for r in chosen if r["test_no"] in swapped_nos), key=lambda r: r["test_no"]),
+                    font, SPLITS / "sheets_swapped", prefix="swapped")
 
     lines = [f"# Fixed test set allocation (seed {a.seed}, n = {len(chosen)}, alloc = {a.alloc}, floor = {a.min_per_source}, drawn {pd.Timestamp.now():%Y-%m-%d})", "",
              f"Pool: main {notes['main']} - pilot images {notes['pilot_images']} (of 60; the rest moved to crop_pending by s16, their documents still excluded)"
