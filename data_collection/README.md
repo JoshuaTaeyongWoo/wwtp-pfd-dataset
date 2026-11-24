@@ -335,6 +335,10 @@ unsure 19는 유지했다(렌더 실패 14장 포함 33장이 manual_review에 �
 
 그림·표의 수치는 이 표를 기준으로 갱신했다(`Fig_pipeline_styles.pptx`, `Fig1_pipeline_v2.*`, `Algorithms_v4.docx`).
 
+### 6.8 2차 중복 제거 (`s26`, 2026-11-24)
+
+s16 페이지 렌더 크롭 124장이 main에 더해진 뒤(§6.7 이후 합계 3,273행, main 993), 테스트셋 양식 검토에서 **같은 페이지의 내장 그림과 크롭이 같은 그림**인 쌍이 발견됐다(해상도·여백이 달라 s07의 pHash ≤ 6을 통과). `s26_dedup_pass.py`로 main만 다시 훑었다: ① 같은 문서·같은 페이지의 크롭–내장 쌍 69(h ≤ 12는 확정, 30쌍은 사람이 나란히 비교), ② main 전체 pHash ≤ 8 근접 쌍 26(특허 패밀리 간 같은 도면, 요약도(D00)와 FIG.1이 같은 경우; SVG는 렌더해 해시) + Wikimedia 같은 이름의 SVG/PNG/JPG 변형 2, ③ 투명 PNG 배경 손실 의심 6(색 박스가 살아 있는 5장은 유지, 선이 사라진 1장 제외), ④ 라틴 문자 비영어 캡션 4(영향 작음). 남기는 쪽: 고정 테스트셋·파일럿 구성원이 항상 우선, 그다음 내장 그림(크롭 면적의 50 % 미만이면 크롭), 내장 그림 둘 이상과 겹치는 크롭은 합성 크롭이라 크롭 유지; 한 쌍에서 탈락한 그림이 다른 쌍의 승자면 패자를 유일본으로 남긴다. 사람 판정에서 **다른 그림으로 확인해 둘 다 남긴 쌍 14**(FIG.4 vs FIG.5, 구역 구성을 바꿔 가며 그린 특허 도면 시리즈, Figure 2 vs 2A, 1913년 책의 입면·평면 페이지 등). 결과 **main 993 → 910**(크롭–내장 64, 근접 16, Wikimedia 변형 2, 파손 1 제외; `split=excluded`, `duplicate_of`·`note`에 사유 기록, 백업 `data/triage_final_before_s26.csv`). 출처별 main: 특허 330 · PMC 325 · OpenAlex 125 · EPA 75 · Wikimedia 33 · 한국 지자체 22; tier A 722 / B 188; 문서 599. 테스트셋 150장과 파일럿 59장은 그대로이며, 교훈: 페이지 렌더에서 자른 그림은 내장 그림과 항상 대조해야 한다.
+
 ## 7. 한계와 후속 작업
 - 캡션 기반 필터는 캡션 없이 본문에만 설명된 그림, 캡션이 모호한 그림("Schematic of the system")을 놓친다. 재현율
   보완을 위해 선행 연구처럼 **flowsheet 분류 CNN**(Balhorn et al., 2022)을 후보 전체 그림에 적용하는 2차 필터를 둘 수 있다
@@ -494,4 +498,5 @@ main의 약 1/4(EPA 64, OpenAlex 109; 크기 h > 1400 px, 종횡비 1.25~1.5)은
 - `s23_eval_graph.py`: 계획서 §6 지표(AP L2/L1·LVIS 구간·층화, 박스형 L2 매핑 정확도, 노드 매칭 후 엣지 P/R/F1·방향 정확도·정규화 GED). 모델 출력은 `graphs/*.graph.json` 또는 COCO results.
 - `s24_vlm_baseline.py`: VLM 제로샷 기준선(Claude, 구조화 출력, 체계 v1.1 enum). 그림당 1요청 → s23 예측 형식. `--dry-run`, `--limit`, `--keys`, `--overlay`, 재개 지원(README_pilot §5c).
 - `s25_test_split.py`: 점진 학습용 **고정 테스트셋** 추출(설계안 §5 4b). main에서 파일럿 60장과 같은 문서의 그림, 크롭 대기 페이지 렌더를 뺀 775장(534 문서)에서 출처 비례 배분(출처별 최소 8장) + 문서당 1장(EPA·한국 지자체는 문서가 모자라 2장 허용, 보고) + 비영문·카테고리 분산으로 150장을 뽑는다(seed 20261123, 147 문서). 산출물 `data/splits/test_fixed.csv`, `val_pilot60.csv`, `test_fixed_allocation.md`, 접촉 시트 `sheets_test/`; `--copy-images`로 s18 업로드용 폴더(SVG·WebP·투명 PNG는 흰 배경 PNG로 평탄화), `--base`(기존 목록과 번호 고정) + `--swap record_id,reason`(같은 출처·언어·카테고리의 새 문서로 교체, 교체분 시트 `sheets_swapped/`) + `--exclude ids.txt`(풀에서 뺄 record_id)로 양식 점검 후 교체. 이 150장이 본 어노테이션 첫 배치(두 어노테이터 + 판정)이며 이후 학습·검증·사전 라벨링에 쓰지 않는다. 2026-11-23 추출, 11-24 양식 검토로 19장 교체(설계안 §5 4b; 최종 A 55 / B 49 / C 38 / S 7 / D 1, 기록 `test_review_final.csv`).
+- `s26_dedup_pass.py`: main 2차 중복·품질 점검(§6.8). 보고 모드는 `data/dedup/`에 twins/near/alpha/lang CSV와 쌍 비교 시트(`check_*.jpg` 사람 판정용, `sure_*.jpg`)를 만들고, `--apply --decisions check_decisions.csv`(열 a,b,decision[dup|keep|broken],keep 덮어쓰기)로 triage_final.csv에 반영한다(백업 자동). 2026-11-24 적용: main 993 → 910.
 - `s21_dryrun_synthetic.py`: 실제 결과 전 파이프라인 예행연습. 버리는 프로젝트 `dryrun_A`·`dryrun_B`에 합성 라벨(B는 일부러 다르게)을 API로 넣고 내보내 s17·s19를 끝까지 돌린다(README_pilot §5).
