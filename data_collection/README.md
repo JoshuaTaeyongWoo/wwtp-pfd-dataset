@@ -493,4 +493,5 @@ main의 약 1/4(EPA 64, OpenAlex 109; 크기 h > 1400 px, 종횡비 1.25~1.5)은
 - `s22_export_to_gt.py`: Label Studio 내보내기 → 벤치마크 정답(`coco.json` L2 + 속성, `graphs/*.graph.json`, `manifest.csv`, 문서 단위 `splits.json`).
 - `s23_eval_graph.py`: 계획서 §6 지표(AP L2/L1·LVIS 구간·층화, 박스형 L2 매핑 정확도, 노드 매칭 후 엣지 P/R/F1·방향 정확도·정규화 GED). 모델 출력은 `graphs/*.graph.json` 또는 COCO results.
 - `s24_vlm_baseline.py`: VLM 제로샷 기준선(Claude, 구조화 출력, 체계 v1.1 enum). 그림당 1요청 → s23 예측 형식. `--dry-run`, `--limit`, `--keys`, `--overlay`, 재개 지원(README_pilot §5c).
+- `s25_test_split.py`: 점진 학습용 **고정 테스트셋** 추출(설계안 §5 4b). main에서 파일럿 60장과 같은 문서의 그림, 크롭 대기 페이지 렌더를 뺀 775장(534 문서)에서 출처 비례 배분(출처별 최소 8장) + 문서당 1장(EPA·한국 지자체는 문서가 모자라 2장 허용, 보고) + 비영문·카테고리 분산으로 150장을 뽑는다(seed 20261123, 147 문서). 산출물 `data/splits/test_fixed.csv`, `val_pilot60.csv`, `test_fixed_allocation.md`, 접촉 시트 `sheets_test/`; `--copy-images`로 s18 업로드용 폴더, `--swap`으로 양식 점검 후 교체. 이 150장이 본 어노테이션 첫 배치(두 어노테이터 + 판정)이며 이후 학습·검증·사전 라벨링에 쓰지 않는다. 2026-11-23 실행.
 - `s21_dryrun_synthetic.py`: 실제 결과 전 파이프라인 예행연습. 버리는 프로젝트 `dryrun_A`·`dryrun_B`에 합성 라벨(B는 일부러 다르게)을 API로 넣고 내보내 s17·s19를 끝까지 돌린다(README_pilot §5).
