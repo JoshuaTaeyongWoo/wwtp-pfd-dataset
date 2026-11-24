@@ -492,6 +492,7 @@ main의 약 1/4(EPA 64, OpenAlex 109; 크기 h > 1400 px, 종횡비 1.25~1.5)은
 - `annotation/README_pilot.md`: 설치·프로젝트 생성·교육·내보내기·일치도 계산 절차.
 - `s18_setup_pilot_projects.py`: 로컬 Label Studio에 `pilot_A`·`pilot_B` 프로젝트를 만들고 라벨 설정과 60장을 업로드(토큰은 `data/pilot/.ls_token`, git 제외). 2026-11-17 실행: 각 60 task.
 - `s17_pilot_agreement.py`: 두 어노테이터의 Label Studio 내보내기에서 κ(L2/L1)·IoU·누락·엣지 F1·클래스별 κ·부트스트랩 CI를 계산. `--full-subset 20`(21번부터는 화살촉·글자 클래스 제외), `--disagreements x.csv`(판정자용 불일치 표). 작은 박스는 중심 거리로 보조 매칭.
+- `s27_export_from_db.py`: Label Studio **SQLite DB를 직접 읽어** 진행 상황(`--status`: 프로젝트별 task·어노테이션·소요 시간·마지막 제출), JSON 내보내기(`--export pilot_A,pilot_B`, s17/s19/s22가 읽는 형식), 백업(`--backup`)을 서버·토큰 없이 처리. 기본 `--db`는 루프백 공유 `\\localhost\C$\…` 경로로 Claude 앱 샌드박스의 AppData 가상화를 우회(README_pilot §5). 2026-11-24 검증: dryrun 내보내기로 s17 수치가 API 내보내기와 일치. 같은 날 파일럿 진행 확인: pilot_A·pilot_B 어노테이션 0건.
 - `s19_infer_edge_medium.py`: 쉬운 버전 엣지에 매체·스트림 역할을 규칙표(`annotation/edge_medium_rules.md`, 33규칙)로 채워 §4.6 graph.json을 만든다. 중복 관계 제거, 통과 노드(분기·합류·펌프·밸브·저류조) 체인 추적.
 - `s20_practice_set.py`: 연습용 5장(출처별 1장, 파일럿과 겹치지 않음) → `data/pilot/practice/`.
 - `s22_export_to_gt.py`: Label Studio 내보내기 → 벤치마크 정답(`coco.json` L2 + 속성, `graphs/*.graph.json`, `manifest.csv`, 문서 단위 `splits.json`).

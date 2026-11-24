@@ -50,7 +50,7 @@ label-studio start --port 8080
 - 노트북 절전 끄기(한국 낮 = 네덜란드 밤에 켜져 있어야 함): `powercfg /change standby-timeout-ac 0; powercfg /change hibernate-timeout-ac 0`
 - 확인(2026-11-19): 공개 주소에서 로그인 페이지 200, 더미 로그인 POST가 CSRF 403 없이 처리됨, `/user/signup/` 차단, API로 pilot_A(60)·pilot_B(60)·practice(5) 조회됨.
 - 어노테이터에게 보낼 것: 접속 주소, 판정자 계정 이메일·**임시 비밀번호**(파일럿 전 변경, 끝나면 다시 변경), "A는 pilot_A, B는 pilot_B만 연다", Settings·삭제·Account & Settings(토큰)는 건드리지 않는다.
-- 백업: DB는 `C:\Users\<user>\AppData\Local\label-studio\label-studio\label_studio.sqlite3` 한 파일. 시작 전과 매일 한 번 `data/pilot/ls_backup/label_studio_YYYYMMDD_HHMM.sqlite3`로 복사(git 제외). 되돌리려면 서버를 끄고 파일을 덮어쓴다.
+- 백업: DB는 `C:\Users\<user>\AppData\Local\label-studio\label-studio\label_studio.sqlite3` 한 파일. 시작 전과 매일 한 번 `python data_collection/s27_export_from_db.py --backup`(→ `data/pilot/ls_backup/label_studio_YYYYMMDD_HHMM.sqlite3`, git 제외; 앱 안에서도 진짜 DB를 복사한다, §5 참고). 되돌리려면 서버를 끄고 파일을 덮어쓴다.
 - 대안(검토함): Tailscale Funnel은 랩 테일넷에서 관리자가 허용하지 않아 불가(허용되면 고정 주소 `https://taeyong.tail18d6e9.ts.net`). 본 작업(수천 장)은 한국 랩 리눅스 서버(테일넷 `26-pf-10-*`)에 설치하는 쪽이 맞다.
 
 ## 3. 어노테이터 교육 (2시간 + 연습 5장)
@@ -68,7 +68,15 @@ label-studio start --port 8080
 
 ## 5. 내보내기와 일치도
 
-각 프로젝트에서 Export → JSON → `data/pilot/exports/pilot_A.json`, `pilot_B.json`.
+각 프로젝트에서 Export → JSON → `data/pilot/exports/pilot_A.json`, `pilot_B.json`. 서버가 꺼져 있어도 DB 파일에서 바로 뽑을 수 있다(2026-11-24, `s27_export_from_db.py`; 진행 상황 확인·백업도 같은 스크립트):
+
+```bash
+python data_collection/s27_export_from_db.py --status                                  # 프로젝트별 task·어노테이션 수, 소요 시간, 마지막 제출 시각
+python data_collection/s27_export_from_db.py --export pilot_A,pilot_B --out data/pilot/exports
+python data_collection/s27_export_from_db.py --backup                                  # data/pilot/ls_backup/label_studio_YYYYMMDD_HHMM.sqlite3
+```
+
+> **Claude 앱 안에서 DB를 읽을 때 (2026-11-24 교훈)**: 앱 샌드박스는 `AppData\Local`을 가상화하므로 `C:\Users\<u>\AppData\Local\label-studio\…`는 11-17의 빈 복사본(어노테이션 0, 옛 설정)으로 보인다. 11-19에 만든 백업 두 개도 이 빈 복사본이었다(`ls_backup/_sandbox_copies_invalid/`로 옮김). 루프백 관리 공유 `\\localhost\C$\Users\<u>\AppData\Local\…`는 가상화를 우회해 진짜 파일을 보여 주며, s27의 기본 `--db`가 이 경로다. 검증: dryrun_A·B를 s27로 뽑아 s17을 돌리면 11-19 API 내보내기 결과와 수치가 같다(κ_L2 0.930, 불일치 117행). 2026-11-24 `--status`: pilot_A·pilot_B 어노테이션 0건(서버 마지막 활동 11-19 18:03).
 
 ```bash
 python data_collection/s17_pilot_agreement.py --a data/pilot/exports/pilot_A.json --b data/pilot/exports/pilot_B.json --full-subset 20 --out data/pilot/agreement.md --disagreements data/pilot/disagreements.csv
