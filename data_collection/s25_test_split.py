@@ -199,6 +199,7 @@ def load_base(path: Path, main_df: pd.DataFrame) -> list[dict]:
         r = by_id.loc[b["record_id"]].to_dict()
         r["record_id"] = b["record_id"]
         r["test_no"] = int(b["test_no"])
+        r["visual_form_prelim"] = b.get("visual_form_prelim", "")   # carried over from the reviewed list
         chosen.append(r)
     return chosen
 
@@ -259,7 +260,7 @@ def main():
     cols = ["test_no", "record_id", "source", "lang_proxy", "category", "tier", "doc_id", "image_path", "caption"]
     out = pd.DataFrame(chosen)[cols].copy()
     out["caption"] = out["caption"].str.slice(0, 200)
-    out["visual_form_prelim"] = ""
+    out["visual_form_prelim"] = [r.get("visual_form_prelim", "") for r in chosen]
     out = out.sort_values("test_no")
     out.to_csv(SPLITS / "test_fixed.csv", index=False, encoding="utf-8-sig")
 
