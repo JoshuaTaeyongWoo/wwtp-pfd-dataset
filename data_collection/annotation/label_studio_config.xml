@@ -14,7 +14,7 @@ the "parent_of" relation (parent -> zone).
     .hdr { font-weight: 700; margin: 6px 0 2px; }
   </Style>
 
-  <Header value="1. 라벨 버튼을 먼저 누르고 그림 위에서 드래그 (숫자키 1~0 = 자주 쓰는 클래스, r = 연결)"/>
+  <Header value="1. 라벨 버튼을 먼저 누르고 그림 위에서 드래그 (숫자키 1~0 = 자주 쓰는 클래스, Alt+R = 연결)"/>
   <RectangleLabels name="unit" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
     <!-- preliminary -->
     <Label value="screen" background="#1f77b4" hotkey="1"/>
@@ -149,7 +149,7 @@ the "parent_of" relation (parent -> zone).
   </View>
   <TextArea name="n_compartments" toName="img" perRegion="true" placeholder="n_compartments / n_parallel_lanes / lane_group_id / panel_phase (예: n=3; lanes=2; lane=1; phase=react)" maxSubmissions="1" editable="true"/>
 
-  <Header value="4. 연결 (엣지): 출발 박스 선택 → r → 도착 박스 클릭 → 관계 라벨: medium|방향 하나 + (점선이면 style:dashed, 선택 경로면 optional)"/>
+  <Header value="4. 연결 (엣지): 출발 박스 선택 → Alt+R → 도착 박스 클릭 → 관계 라벨: medium|방향 하나 + (점선이면 style:dashed, 선택 경로면 optional)"/>
   <Relations>
     <!-- medium ∥ direction_confidence ; parent_of links a tank to its zone boxes (tank -> zone) -->
     <Relation value="liquid|arrowhead"/>

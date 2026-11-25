@@ -1,103 +1,176 @@
 <!--
-PILOT-LITE labeling config (taxonomy v1.1a, pilot protocol v1.1b, 2026-11-18).
-Same classes as the full config; fewer per-box fields; relations default to "flow".
-  * tasks 1-20  : FULL  (also arrowhead boxes and every text box)
+PILOT-LITE labeling config v2 (taxonomy v1.1a, pilot protocol v1.1b; layout revised 2026-11-25, compacted the same evening: groups flow inline and wrap, small titles, tight buttons so the label area and the diagram fit one screen).
+Same classes, same per-box fields and relations as label_studio_config_lite.xml. Only the label-button
+area changed: classes are grouped by treatment stage in separate rows with a group title, rare groups
+(anaerobic wastewater reactor sub-types; full-subset-only classes) sit in collapsible panels, and hotkeys
+are reduced to the ten most frequent units (digits) plus six very frequent helpers; every other label AND every Choice carries hotkey=" " (a space), which is the only way to stop Label Studio from auto-assigning letters (it otherwise gives choices keys like v b y o a k n m that collide with tool keys) (letters that do not
+collide with Label Studio's own tool keys: b e h k m o p r u v w are reserved by the tool).
+Exports are unchanged: every box is still a "rectanglelabels" result; s17/s19/s22 do not depend on the
+tag name (from_name differs per group).
+  * tasks 1-20  : FULL  (also arrowhead boxes and every text box -> open the last panel)
   * tasks 21-60 : LITE  (units, zones, io terminals, junctions, instruments; text boxes only for generic/unknown)
-Stream medium / stream_role are filled afterwards by s19_infer_edge_medium.py (rule table in
-annotation/edge_medium_rules.md) and checked by the adjudicator on tasks 1-20.
 -->
 <View>
-  <Style>.ls-root { font-family: "Noto Sans KR", sans-serif; }</Style>
+  <Style>
+    .ls-root { font-family: "Noto Sans KR", sans-serif; }
+    .lsf-labels, .lsf-labels__list { padding: 0 !important; margin: 0 !important; }
+    .lsf-label { margin: 1px 2px !important; padding: 1px 6px !important; font-size: 12px !important; line-height: 18px !important; }
+    .lsf-label__hotkey { font-size: 10px !important; }
+    .lsf-collapse .ant-collapse-header, .ant-collapse-header { padding: 2px 8px !important; font-size: 11px !important; }
+    .ant-collapse-content-box { padding: 2px 6px !important; }
+    .attrs sup { display: none !important; }   /* hides the empty "[ ]" left by hotkey=" " on choices */
+  </Style>
 
-  <Header value="1~20번 = 완전판(화살촉·글자 박스까지) · 21~60번 = 쉬운 버전(장치·구역·단자·분기·합류·계측만). 버튼 → 드래그. 숫자키 1~0 = 자주 쓰는 클래스, r = 연결"/>
+  <Header style="font-size:11px; font-weight:normal; color:#546e7a; margin:0 0 2px 0" value="버튼 → 그림 위 드래그 · 숫자 1~0 = 자주 쓰는 장치 · i j l = 단자·분기·합류 · x z = 모를 때 · a = 펌프 · 연결 = 출발 클릭 → Alt+R → 도착 클릭 · 1~20번은 접힌 '완전판' 줄도 사용"/>
 
-  <RectangleLabels name="unit" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
-    <Label value="screen" background="#1f77b4" hotkey="1"/>
-    <Label value="grit_chamber" background="#1f77b4"/>
-    <Label value="equalization_tank" background="#1f77b4"/>
-    <Label value="pump_station" background="#1f77b4"/>
-    <Label value="primary_clarifier" background="#8c564b" hotkey="2"/>
-    <Label value="flotation_unit" background="#8c564b"/>
-    <Label value="chemical_treatment_unit" background="#8c564b"/>
-    <Label value="aerobic_zone" background="#2ca02c" hotkey="3"/>
-    <Label value="anoxic_zone" background="#2ca02c" hotkey="4"/>
-    <Label value="anaerobic_zone" background="#2ca02c" hotkey="5"/>
-    <Label value="secondary_clarifier" background="#2ca02c" hotkey="6"/>
-    <Label value="mbr_unit" background="#2ca02c"/>
-    <Label value="sbr_tank" background="#2ca02c"/>
-    <Label value="biofilm_reactor/trickling_filter" background="#17becf"/>
-    <Label value="biofilm_reactor/rbc" background="#17becf"/>
-    <Label value="biofilm_reactor/submerged_biofilter" background="#17becf"/>
-    <Label value="biofilm_reactor/mbbr_ifas" background="#17becf"/>
-    <Label value="biofilm_reactor/fluidized_expanded_bed" background="#17becf"/>
-    <Label value="biofilm_reactor/mabr" background="#17becf"/>
-    <Label value="anaerobic_wastewater_reactor/uasb_egsb_ic" background="#9467bd"/>
-    <Label value="anaerobic_wastewater_reactor/anaerobic_filter" background="#9467bd"/>
-    <Label value="anaerobic_wastewater_reactor/anaerobic_contact" background="#9467bd"/>
-    <Label value="anaerobic_wastewater_reactor/anaerobic_cstr" background="#9467bd"/>
-    <Label value="anaerobic_wastewater_reactor/abr" background="#9467bd"/>
-    <Label value="anaerobic_wastewater_reactor/anaerobic_mbr" background="#9467bd"/>
-    <Label value="pond_lagoon_wetland" background="#bcbd22"/>
-    <Label value="sidestream_reactor" background="#e377c2"/>
-    <Label value="filtration_unit" background="#ff7f0e" hotkey="7"/>
-    <Label value="membrane_unit" background="#ff7f0e"/>
-    <Label value="disinfection_unit" background="#ff7f0e" hotkey="8"/>
-    <Label value="fermenter" background="#7f7f7f"/>
-    <Label value="thickener" background="#7f7f7f" hotkey="9"/>
-    <Label value="digester" background="#7f7f7f" hotkey="0"/>
-    <Label value="dewatering_unit" background="#7f7f7f"/>
-    <Label value="drying_incineration_unit" background="#7f7f7f"/>
-    <Label value="biogas_unit" background="#7f7f7f"/>
-    <Label value="pump" background="#d62728"/>
-    <Label value="blower" background="#d62728"/>
-    <Label value="storage_tank" background="#d62728"/>
-    <Label value="valve" background="#d62728"/>
-    <Label value="aerator_mixer_symbol" background="#d62728"/>
-    <Label value="process_unit_generic" background="#000000"/>
-    <Label value="unknown_equipment" background="#000000"/>
-    <Label value="io_terminal" background="#ff9896"/>
-    <Label value="junction_split" background="#ff9896"/>
-    <Label value="junction_merge" background="#ff9896"/>
-    <Label value="instrument" background="#c5b0d5"/>
-    <!-- full-subset only (tasks 1-20) -->
-    <Label value="arrowhead" background="#ffbb78"/>
-    <Label value="text_label" background="#aec7e8"/>
-    <Label value="stream_tag" background="#aec7e8"/>
-    <Label value="stream_label" background="#aec7e8"/>
-  </RectangleLabels>
+  <View style="display:flex; flex-wrap:wrap; align-items:center; row-gap:2px; padding:2px 0 4px 0; border-bottom:1px solid #eceff1">
+  <View style="display:flex; align-items:center; gap:4px; margin:0 14px 0 0">
+    <Header style="font-size:11px; font-weight:bold; color:#37474f; margin:0; white-space:nowrap" value="전처리"/>
+    <RectangleLabels name="g1_pre" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
+      <Label value="screen" background="#1f77b4" hotkey="1"/>
+      <Label value="grit_chamber" background="#1f77b4" hotkey=" "/>
+      <Label value="equalization_tank" background="#1f77b4" hotkey=" "/>
+      <Label value="pump_station" background="#1f77b4" hotkey=" "/>
+    </RectangleLabels>
+  </View>
+
+  <View style="display:flex; align-items:center; gap:4px; margin:0 14px 0 0">
+    <Header style="font-size:11px; font-weight:bold; color:#37474f; margin:0; white-space:nowrap" value="침전·물리화학"/>
+    <RectangleLabels name="g2_settle" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
+      <Label value="primary_clarifier" background="#8c564b" hotkey="2"/>
+      <Label value="secondary_clarifier" background="#8c564b" hotkey="6"/>
+      <Label value="chemical_treatment_unit" background="#8c564b" hotkey=" "/>
+      <Label value="flotation_unit" background="#8c564b" hotkey=" "/>
+    </RectangleLabels>
+  </View>
+
+  <View style="display:flex; align-items:center; gap:4px; margin:0 14px 0 0">
+    <Header style="font-size:11px; font-weight:bold; color:#37474f; margin:0; white-space:nowrap" value="생물 반응 (구역)"/>
+    <RectangleLabels name="g3_bio" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
+      <Label value="aerobic_zone" background="#2ca02c" hotkey="3"/>
+      <Label value="anoxic_zone" background="#2ca02c" hotkey="4"/>
+      <Label value="anaerobic_zone" background="#2ca02c" hotkey="5"/>
+      <Label value="mbr_unit" background="#2ca02c" hotkey=" "/>
+      <Label value="sbr_tank" background="#2ca02c" hotkey=" "/>
+      <Label value="pond_lagoon_wetland" background="#bcbd22" hotkey=" "/>
+      <Label value="sidestream_reactor" background="#e377c2" hotkey=" "/>
+    </RectangleLabels>
+  </View>
+
+  <View style="display:flex; align-items:center; gap:4px; margin:0 14px 0 0">
+    <Header style="font-size:11px; font-weight:bold; color:#37474f; margin:0; white-space:nowrap" value="생물막 반응기"/>
+    <RectangleLabels name="g4_biofilm" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
+      <Label value="biofilm_reactor/trickling_filter" background="#17becf" hotkey=" "/>
+      <Label value="biofilm_reactor/rbc" background="#17becf" hotkey=" "/>
+      <Label value="biofilm_reactor/submerged_biofilter" background="#17becf" hotkey=" "/>
+      <Label value="biofilm_reactor/mbbr_ifas" background="#17becf" hotkey=" "/>
+      <Label value="biofilm_reactor/fluidized_expanded_bed" background="#17becf" hotkey=" "/>
+      <Label value="biofilm_reactor/mabr" background="#17becf" hotkey=" "/>
+    </RectangleLabels>
+  </View>
+
+  <View style="display:flex; align-items:center; gap:4px; margin:0 14px 0 0">
+    <Header style="font-size:11px; font-weight:bold; color:#37474f; margin:0; white-space:nowrap" value="3차·소독"/>
+    <RectangleLabels name="g5_tertiary" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
+      <Label value="filtration_unit" background="#ff7f0e" hotkey="7"/>
+      <Label value="membrane_unit" background="#ff7f0e" hotkey=" "/>
+      <Label value="disinfection_unit" background="#ff7f0e" hotkey="8"/>
+    </RectangleLabels>
+  </View>
+
+  <View style="display:flex; align-items:center; gap:4px; margin:0 14px 0 0">
+    <Header style="font-size:11px; font-weight:bold; color:#37474f; margin:0; white-space:nowrap" value="슬러지"/>
+    <RectangleLabels name="g6_sludge" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
+      <Label value="thickener" background="#7f7f7f" hotkey="9"/>
+      <Label value="digester" background="#7f7f7f" hotkey="0"/>
+      <Label value="dewatering_unit" background="#7f7f7f" hotkey=" "/>
+      <Label value="fermenter" background="#7f7f7f" hotkey=" "/>
+      <Label value="drying_incineration_unit" background="#7f7f7f" hotkey=" "/>
+      <Label value="biogas_unit" background="#7f7f7f" hotkey=" "/>
+    </RectangleLabels>
+  </View>
+
+  <View style="display:flex; align-items:center; gap:4px; margin:0 14px 0 0">
+    <Header style="font-size:11px; font-weight:bold; color:#37474f; margin:0; white-space:nowrap" value="보조 장치·계측"/>
+    <RectangleLabels name="g7_aux" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
+      <Label value="pump" background="#d62728" hotkey="a"/>
+      <Label value="blower" background="#d62728" hotkey=" "/>
+      <Label value="storage_tank" background="#d62728" hotkey=" "/>
+      <Label value="valve" background="#d62728" hotkey=" "/>
+      <Label value="aerator_mixer_symbol" background="#d62728" hotkey=" "/>
+      <Label value="instrument" background="#c5b0d5" hotkey=" "/>
+    </RectangleLabels>
+  </View>
+
+  <View style="display:flex; align-items:center; gap:4px; margin:0 14px 0 0">
+    <Header style="font-size:11px; font-weight:bold; color:#37474f; margin:0; white-space:nowrap" value="모를 때"/>
+    <RectangleLabels name="g8_generic" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
+      <Label value="process_unit_generic" background="#000000" hotkey="x"/>
+      <Label value="unknown_equipment" background="#000000" hotkey="z"/>
+    </RectangleLabels>
+  </View>
+
+  <View style="display:flex; align-items:center; gap:4px; margin:0 14px 0 0">
+    <Header style="font-size:11px; font-weight:bold; color:#37474f; margin:0; white-space:nowrap" value="연결 요소"/>
+    <RectangleLabels name="g9_conn" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
+      <Label value="io_terminal" background="#ff9896" hotkey="i"/>
+      <Label value="junction_split" background="#ff9896" hotkey="j"/>
+      <Label value="junction_merge" background="#ff9896" hotkey="l"/>
+    </RectangleLabels>
+  </View>
+
+  </View>
+  <Collapse bordered="true">
+    <Panel value="드물게 쓰는 것: 혐기 폐수 반응기 (anaerobic_wastewater_reactor/…) — 폐수가 들어가는 혐기 반응기만; 슬러지면 digester">
+      <RectangleLabels name="g10_anaerobic" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
+        <Label value="anaerobic_wastewater_reactor/uasb_egsb_ic" background="#9467bd" hotkey=" "/>
+        <Label value="anaerobic_wastewater_reactor/anaerobic_filter" background="#9467bd" hotkey=" "/>
+        <Label value="anaerobic_wastewater_reactor/anaerobic_contact" background="#9467bd" hotkey=" "/>
+        <Label value="anaerobic_wastewater_reactor/anaerobic_cstr" background="#9467bd" hotkey=" "/>
+        <Label value="anaerobic_wastewater_reactor/abr" background="#9467bd" hotkey=" "/>
+        <Label value="anaerobic_wastewater_reactor/anaerobic_mbr" background="#9467bd" hotkey=" "/>
+      </RectangleLabels>
+    </Panel>
+    <Panel value="1~20번 완전판에서만: 화살촉·글자 박스">
+      <RectangleLabels name="g11_full" toName="img" showInline="true" strokeWidth="2" opacity="0.15">
+        <Label value="arrowhead" background="#ffbb78" hotkey=" "/>
+        <Label value="text_label" background="#aec7e8" hotkey=" "/>
+        <Label value="stream_tag" background="#aec7e8" hotkey=" "/>
+        <Label value="stream_label" background="#aec7e8" hotkey=" "/>
+      </RectangleLabels>
+    </Panel>
+  </Collapse>
 
   <Image name="img" value="$image" zoom="true" zoomControl="true" rotateControl="false" brightnessControl="true"/>
 
-  <Header value="2. 박스를 선택하면 나오는 칸 (필수 5개)"/>
-  <View style="display:flex; gap:12px; flex-wrap:wrap">
+  <View className="attrs" style="display:flex; gap:12px; flex-wrap:wrap">
     <Choices name="visual_form" toName="img" perRegion="true" showInline="true">
       <Header value="visual_form"/>
-      <Choice value="symbol"/><Choice value="box"/><Choice value="pictorial"/><Choice value="simulator_icon"/><Choice value="section_view"/>
+      <Choice value="symbol" hotkey=" "/><Choice value="box" hotkey=" "/><Choice value="pictorial" hotkey=" "/><Choice value="simulator_icon" hotkey=" "/><Choice value="section_view" hotkey=" "/>
     </Choices>
     <Choices name="confidence" toName="img" perRegion="true" showInline="true">
       <Header value="confidence"/>
-      <Choice value="certain"/><Choice value="inferred_from_text"/><Choice value="inferred_from_context"/>
+      <Choice value="certain" hotkey=" "/><Choice value="inferred_from_text" hotkey=" "/><Choice value="inferred_from_context" hotkey=" "/>
     </Choices>
     <Choices name="is_zone" toName="img" perRegion="true" showInline="true">
       <Header value="is_zone (구역 박스면 체크)"/>
-      <Choice value="zone"/>
+      <Choice value="zone" hotkey=" "/>
     </Choices>
     <Choices name="l1_hint" toName="img" perRegion="true" showInline="true">
       <Header value="l1_hint (generic·unknown 박스만)"/>
-      <Choice value="preliminary"/><Choice value="primary"/><Choice value="secondary"/><Choice value="tertiary"/><Choice value="sludge"/><Choice value="sidestream"/><Choice value="unknown"/>
+      <Choice value="preliminary" hotkey=" "/><Choice value="primary" hotkey=" "/><Choice value="secondary" hotkey=" "/><Choice value="tertiary" hotkey=" "/><Choice value="sludge" hotkey=" "/><Choice value="sidestream" hotkey=" "/><Choice value="unknown" hotkey=" "/>
     </Choices>
     <Choices name="io_role" toName="img" perRegion="true" showInline="true">
       <Header value="io_role (io_terminal만)"/>
-      <Choice value="raw_influent"/><Choice value="settled_influent"/><Choice value="external_waste_in"/><Choice value="effluent"/><Choice value="reclaimed_water_out"/><Choice value="solids_disposal"/><Choice value="biogas_use"/><Choice value="off_gas_out"/><Choice value="chemical_source"/><Choice value="overflow_bypass_out"/><Choice value="external_sidestream"/><Choice value="continuation"/>
+      <Choice value="raw_influent" hotkey=" "/><Choice value="settled_influent" hotkey=" "/><Choice value="external_waste_in" hotkey=" "/><Choice value="effluent" hotkey=" "/><Choice value="reclaimed_water_out" hotkey=" "/><Choice value="solids_disposal" hotkey=" "/><Choice value="biogas_use" hotkey=" "/><Choice value="off_gas_out" hotkey=" "/><Choice value="chemical_source" hotkey=" "/><Choice value="overflow_bypass_out" hotkey=" "/><Choice value="external_sidestream" hotkey=" "/><Choice value="continuation" hotkey=" "/>
     </Choices>
     <Choices name="graph_id" toName="img" perRegion="true" showInline="true">
       <Header value="graph_id (독립 도면이 둘 이상일 때만)"/>
-      <Choice value="g1"/><Choice value="g2"/><Choice value="g3"/><Choice value="g4"/>
+      <Choice value="g1" hotkey=" "/><Choice value="g2" hotkey=" "/><Choice value="g3" hotkey=" "/><Choice value="g4" hotkey=" "/>
     </Choices>
   </View>
   <TextArea name="label_text" toName="img" perRegion="true" placeholder="label_text — generic·unknown 박스는 필수(원문 그대로), 그 외는 선택" maxSubmissions="1" editable="true"/>
 
-  <Header value="3. 연결: 출발 박스 선택 → r → 도착 박스 클릭. 기본은 '흐름'(라벨 없음). 예외만 라벨: 화살촉 없음 / 방향 불명 / 점선 / 선택 경로 / 부모→구역"/>
   <Relations>
     <Relation value="no_arrow"/>
     <Relation value="direction_unknown"/>
@@ -106,13 +179,13 @@ annotation/edge_medium_rules.md) and checked by the adjudicator on tasks 1-20.
     <Relation value="parent_of"/>
   </Relations>
 
-  <Header value="4. 그림 전체 (장당 1회)"/>
-  <View style="display:flex; gap:12px; flex-wrap:wrap">
+  <Header style="font-size:12px; margin:6px 0 0 0; color:#546e7a" value="▼ 여기부터는 박스가 아니라 이 그림 한 장에 대한 질문 (한 장에 한 번만 답함)"/>
+  <View className="attrs" style="display:flex; gap:12px; flex-wrap:wrap">
     <Choices name="diagram_style" toName="img" showInline="true" required="true">
-      <Header value="diagram_style"/><Choice value="A_box"/><Choice value="B_symbol"/><Choice value="C_pictorial"/><Choice value="D_simulator"/><Choice value="E_page"/><Choice value="hydraulic_profile"/>
+      <Header value="diagram_style"/><Choice value="A_box" hotkey=" "/><Choice value="B_symbol" hotkey=" "/><Choice value="C_pictorial" hotkey=" "/><Choice value="D_simulator" hotkey=" "/><Choice value="E_page" hotkey=" "/><Choice value="hydraulic_profile" hotkey=" "/>
     </Choices>
     <Choices name="language" toName="img" showInline="true" required="true">
-      <Header value="language"/><Choice value="en"/><Choice value="ko"/><Choice value="zh"/><Choice value="ja"/><Choice value="other"/><Choice value="mixed"/>
+      <Header value="language"/><Choice value="en" hotkey=" "/><Choice value="ko" hotkey=" "/><Choice value="zh" hotkey=" "/><Choice value="ja" hotkey=" "/><Choice value="other" hotkey=" "/><Choice value="mixed" hotkey=" "/>
     </Choices>
     <Number name="n_panels" toName="img" min="1" max="12" defaultValue="1" hint="독립 도면 수"/>
   </View>

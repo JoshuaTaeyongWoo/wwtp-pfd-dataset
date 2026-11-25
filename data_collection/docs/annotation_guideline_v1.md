@@ -95,7 +95,7 @@
 
 ## 5. 엣지(흐름) 기록 — Label Studio 관계
 
-- 출발 박스 선택 → `r` → 도착 박스 클릭 → 관계 라벨 `medium|direction_confidence` 선택.
+- 출발 박스 선택 → `Alt+R` → 도착 박스 클릭 → 관계 라벨 `medium|direction_confidence` 선택.
   - medium: liquid(처리수·유입수) / mixed_liquor(반응조 사이) / sludge / gas(바이오가스·배기) / air(송풍) / chemical / solid(케이크·협잡물) / signal(점선 신호선)
   - direction_confidence: `arrowhead` = 화살촉이 그려짐, `inferred` = 선은 있지만 방향 표시 없음(공정 순서로 추정), `ambiguous` = 방향을 알 수 없음
 - 엣지 끝점은 **가장 작은 단위**(구역이 있으면 구역, 없으면 탱크).

@@ -1,6 +1,6 @@
 # 파일럿 어노테이션 실행 안내 (60장, 어노테이터 2명 + 판정자 1명)
 
-> **현재 절차 = 쉬운 버전 v1.1b (2026-11-18)**: 1~20번 완전판, 21~60번 쉬운 버전(화살촉·글자 박스 생략, 엣지는 방향만). 적용 설정 `annotation/label_studio_config_lite.xml`(두 프로젝트에 반영됨). 매뉴얼 `manual/WWTP_annotation_manual_v1_lite.pdf`(9쪽) + `manual/WWTP_cheat_sheet.pdf`(1쪽). 매체·역할은 내보낸 뒤 `python data_collection/s19_infer_edge_medium.py --export … --out …` 로 채운다(규칙표 `annotation/edge_medium_rules.md`). 완전판 매뉴얼(17쪽)은 본 작업용.
+> **현재 절차 = 쉬운 버전 v1.1b (2026-11-18)**: 1~20번 완전판, 21~60번 쉬운 버전(화살촉·글자 박스 생략, 엣지는 방향만). 적용 설정 `annotation/label_studio_config_lite.xml`(v2 그룹 배치, 2026-11-25; pilot_A·pilot_B·practice에 반영됨). 매뉴얼 `manual/WWTP_annotation_manual_v1_lite.pdf`(9쪽) + `manual/WWTP_cheat_sheet.pdf`(1쪽). 매체·역할은 내보낸 뒤 `python data_collection/s19_infer_edge_medium.py --export … --out …` 로 채운다(규칙표 `annotation/edge_medium_rules.md`). 완전판 매뉴얼(17쪽)은 본 작업용.
 
 체계 동결: 태그 `taxonomy-v1.1` (커밋 03f3d10). 표본: `data/pilot/images/` 60장 (`data/pilot/pilot60.csv`).
 도구: **Label Studio** (로컬, pip 설치, 관계(엣지) 라벨 지원). CVAT는 엣지를 못 담으므로 보조.
@@ -47,6 +47,22 @@ label-studio start --port 8080
   cloudflared tunnel --url http://localhost:8080
   ```
   출력의 `https://<임의단어>.trycloudflare.com`이 접속 주소. **터널을 다시 켤 때마다 주소가 바뀌므로** 그때마다 어노테이터에게 다시 알린다. 계정 없이 쓰는 임시 터널이라 SLA가 없다; 끊기면 재실행.
+- **터널 끊김 (2026-11-25 교훈)**: 임시 터널은 노트북이 잠들거나 네트워크가 바뀌어 잠시 끊기면 Cloudflare 쪽에서 삭제되고, cloudflared는 `Unauthorized: Tunnel not found`만 반복하며 복구되지 않는다(11-19 터널과 11-25 첫 터널 모두 이렇게 죽음). 그래서 `annotation/run_tunnel.ps1`을 사용자 PowerShell에서 띄워 둔다: 이 오류가 보이거나 프로세스가 죽으면 자동 재시작하고, 현재 주소를 화면과 `data/pilot/tunnel_url.txt`에 쓴다. 주소는 재시작마다 바뀌므로 그때마다 어노테이터에게 알린다. 고정 주소가 필요하면 ngrok 무료 계정의 고정 도메인(계정 가입 필요) 또는 Cloudflare 계정 + 보유 도메인의 named tunnel을 쓴다.
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File data_collectionnnotation
+un_tunnel.ps1
+  ```
+- **고정 주소 확정 (2026-11-26 00시경)**: `https://decent-reopen-curable.ngrok-free.dev` (ngrok 무료 dev domain, 재시작해도 동일). 어노테이터에게 이 주소를 보낸다. 노트북에서 켜 둘 것 두 가지(둘 다 Claude 앱 밖 PowerShell):
+  ```powershell
+  $env:CSRF_TRUSTED_ORIGINS='https://*.trycloudflare.com,https://decent-reopen-curable.ngrok-free.dev'; $env:DISABLE_SIGNUP_WITHOUT_LINK='1'; label-studio start --port 8080
+  ```
+  ```powershell
+  ngrok http --url=decent-reopen-curable.ngrok-free.dev 8080
+  ```
+  설치 교훈: `winget install ngrok.ngrok`은 3.3.1(2023)을 설치하는데 무료 계정은 에이전트 3.30 이상을 요구해 `ERR_NGROK_121`로 거부되고 `--url`도 모른다 → `ngrok update`로 3.39로 올린 뒤 정상. 토큰은 `ngrok config add-authtoken …`(사용자 실행, `%LOCALAPPDATA%
+grok
+grok.yml`). 검증(2026-11-26): 로그인 페이지 200, 로그인 POST 200(CSRF 통과), 가입 POST 403, API 무토큰 401. Cloudflare 임시 터널과 `run_tunnel.ps1`은 예비용으로만 남김.
+- **고정 주소 (ngrok, 2026-11-25 안내)**: 임시 터널 대신 ngrok 무료 계정의 개발 도메인(계정당 1개, 재시작해도 같은 주소, `https://<이름>.ngrok-free.app`)을 쓰면 어노테이터에게 주소를 한 번만 알리면 된다. 무료 한도: 월 1 GB 송신, 월 2만 요청, 동시 엔드포인트 3개(파일럿 규모면 충분). 브라우저로 처음 열면 'ngrok가 제공하는 사이트' 경고 페이지가 한 번 뜨며 Visit을 누르면 7일간 안 뜬다. 절차(계정·토큰은 사용자가 직접): ① https://dashboard.ngrok.com 가입(무료) → ② Setup & Installation의 Windows 안내대로 설치(`winget install ngrok.ngrok`) → ③ 대시보드 'Your Authtoken'의 명령 `ngrok config add-authtoken …`을 PowerShell에서 실행(토큰은 Claude에 주지 않는다) → ④ 대시보드 Domains에서 할당된 개발 도메인 확인 → ⑤ 서버를 켤 때 `CSRF_TRUSTED_ORIGINS`에 그 도메인을 추가: `$env:CSRF_TRUSTED_ORIGINS='https://*.trycloudflare.com,https://<이름>.ngrok-free.app'` → ⑥ 다른 PowerShell에서 `ngrok http --url=<이름>.ngrok-free.app 8080`. 확인은 Cloudflare 때와 같이 로그인 POST 200, 가입 403.
 - 노트북 절전 끄기(한국 낮 = 네덜란드 밤에 켜져 있어야 함): `powercfg /change standby-timeout-ac 0; powercfg /change hibernate-timeout-ac 0`
 - 확인(2026-11-19): 공개 주소에서 로그인 페이지 200, 더미 로그인 POST가 CSRF 403 없이 처리됨, `/user/signup/` 차단, API로 pilot_A(60)·pilot_B(60)·practice(5) 조회됨.
 - 어노테이터에게 보낼 것: 접속 주소, 판정자 계정 이메일·**임시 비밀번호**(파일럿 전 변경, 끝나면 다시 변경), "A는 pilot_A, B는 pilot_B만 연다", Settings·삭제·Account & Settings(토큰)는 건드리지 않는다.
@@ -57,9 +73,10 @@ label-studio start --port 8080
 
 진행 대본: **`docs/annotation_training_script.md`** (PDF `manual/WWTP_training_script.pdf`, 9쪽: 시간표, 보여 줄 것·말할 것·확인 질문, 연습 5장의 예상 질문과 답). 연습 이미지 5장은 `s20_practice_set.py`가 골라 `data/pilot/practice/`에 두고 Label Studio 프로젝트 `practice`(id 3)에 올려 둠(파일럿 60장과 겹치지 않음).
 
+- **따라하기 설명서 (2026-11-25)**: `annotation/manual/WWTP_annotation_tutorial_v1.pdf` (Word 원본 `.docx`, 생성 `build_tutorial.py` + 그림 `make_tutorial_figures.py` → `figures_tutorial/`). 처음 하는 사람이 혼자 읽고 따라 하도록 접속 → 화면 → 첫 박스 → 이름 고르기(실제 그림 조각 갤러리 9장) → 구역 → 연결 요소 → 선 긋기 → 제출 → 1번 그림 전 과정 → 연습 5장 정답 → 체크리스트 순으로, 단계마다 실제 Label Studio 화면 캡처(`figures_tutorial/U*.png`, 15장)를 넣었다. 캡처 방법: Claude 앱 안에서는 브라우저 패널을 PrintWindow로 창 단위 캡처하고(가려져도 됨, 최소화만 아니면), 박스 드래그는 Chrome_RenderWidgetHostHWND 자식 창에 마우스 메시지를 직접 보내서 했다(스크립트는 세션 scratchpad `win.ps1`/`shot.sh`; 재캡처가 필요하면 같은 방법). 캡처는 설정 v2(압축 배치) 기준으로 11-25 저녁에 전부 다시 찍었고(U01~U15), 쉬운 버전 매뉴얼 그림 2도 같은 캡처로 다시 그렸다(`make_manual_figures.f2_ui_callouts`). **단축키 정정**: 이 Label Studio(1.23) 버전에서 관계 만들기는 `Alt+R`이다(`R` 단독 = 사각형 도구). 설정 XML·매뉴얼·치트시트·대본·규칙서의 'r' 표기를 모두 고치고 세 프로젝트 설정을 s18로 갱신했다(2026-11-25). PDF 변환: `python annotation/manual/make_pdf.py A.docx B.docx …` (Word COM).
 - 읽을 것: **`annotation/manual/WWTP_annotation_manual_v1.pdf`** (그림 포함 초보자용 매뉴얼 17쪽; Word 원본 `.docx`, 생성 스크립트 `manual/build_manual.py`·`make_manual_figures.py`). 규칙 원문은 `docs/annotation_guideline_v1.md`.
 - 연습: `data/pilot/images/`가 아닌 main의 다른 5장(판정자가 고름)으로 연습하고, 판정자와 함께 맞춰 본다. 연습 결과는 버린다.
-- 단축키: 숫자 1~0 = 자주 쓰는 클래스, `r` = 관계, `Ctrl+Enter` = 제출.
+- 단축키(설정 v2, 2026-11-25): 숫자 1~0 = 자주 쓰는 장치 10개, `a` = pump, `x`/`z` = generic/unknown, `i`/`j`/`l` = io_terminal/junction_split/junction_merge, `Alt+R` = 관계(연결; `R` 단독은 사각형 도구). 나머지 라벨은 단축키 없음(`hotkey=" "`로 자동 배정을 막음; 빈 문자열은 소용없음), `Ctrl+Enter` = 제출.
 
 ## 4. 라벨링
 
