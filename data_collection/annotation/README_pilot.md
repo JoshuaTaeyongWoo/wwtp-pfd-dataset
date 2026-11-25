@@ -59,9 +59,8 @@ un_tunnel.ps1
   ```powershell
   ngrok http --url=decent-reopen-curable.ngrok-free.dev 8080
   ```
-  설치 교훈: `winget install ngrok.ngrok`은 3.3.1(2023)을 설치하는데 무료 계정은 에이전트 3.30 이상을 요구해 `ERR_NGROK_121`로 거부되고 `--url`도 모른다 → `ngrok update`로 3.39로 올린 뒤 정상. 토큰은 `ngrok config add-authtoken …`(사용자 실행, `%LOCALAPPDATA%
-grok
-grok.yml`). 검증(2026-11-26): 로그인 페이지 200, 로그인 POST 200(CSRF 통과), 가입 POST 403, API 무토큰 401. Cloudflare 임시 터널과 `run_tunnel.ps1`은 예비용으로만 남김.
+  위 두 명령을 한 번에 하는 스크립트: `powershell -ExecutionPolicy Bypass -File data_collection\annotation\start_pilot.ps1` (서버·ngrok이 이미 돌고 있으면 건너뛰고, 마지막에 공개 주소 응답을 확인). 노트북이 잠들었다 깨어난 경우에는 아무것도 할 필요 없다(프로세스 유지, ngrok 자동 재접속); 재부팅·창 닫힘 때만 실행.
+  설치 교훈: `winget install ngrok.ngrok`은 3.3.1(2023)을 설치하는데 무료 계정은 에이전트 3.30 이상을 요구해 `ERR_NGROK_121`로 거부되고 `--url`도 모른다 → `ngrok update`로 3.39로 올린 뒤 정상. 토큰은 `ngrok config add-authtoken …`(사용자 실행, `%LOCALAPPDATA%\ngrok\ngrok.yml`). 검증(2026-11-26): 로그인 페이지 200, 로그인 POST 200(CSRF 통과), 가입 POST 403, API 무토큰 401. Cloudflare 임시 터널과 `run_tunnel.ps1`은 예비용으로만 남김.
 - **고정 주소 (ngrok, 2026-11-25 안내)**: 임시 터널 대신 ngrok 무료 계정의 개발 도메인(계정당 1개, 재시작해도 같은 주소, `https://<이름>.ngrok-free.app`)을 쓰면 어노테이터에게 주소를 한 번만 알리면 된다. 무료 한도: 월 1 GB 송신, 월 2만 요청, 동시 엔드포인트 3개(파일럿 규모면 충분). 브라우저로 처음 열면 'ngrok가 제공하는 사이트' 경고 페이지가 한 번 뜨며 Visit을 누르면 7일간 안 뜬다. 절차(계정·토큰은 사용자가 직접): ① https://dashboard.ngrok.com 가입(무료) → ② Setup & Installation의 Windows 안내대로 설치(`winget install ngrok.ngrok`) → ③ 대시보드 'Your Authtoken'의 명령 `ngrok config add-authtoken …`을 PowerShell에서 실행(토큰은 Claude에 주지 않는다) → ④ 대시보드 Domains에서 할당된 개발 도메인 확인 → ⑤ 서버를 켤 때 `CSRF_TRUSTED_ORIGINS`에 그 도메인을 추가: `$env:CSRF_TRUSTED_ORIGINS='https://*.trycloudflare.com,https://<이름>.ngrok-free.app'` → ⑥ 다른 PowerShell에서 `ngrok http --url=<이름>.ngrok-free.app 8080`. 확인은 Cloudflare 때와 같이 로그인 POST 200, 가입 403.
 - 노트북 절전 끄기(한국 낮 = 네덜란드 밤에 켜져 있어야 함): `powercfg /change standby-timeout-ac 0; powercfg /change hibernate-timeout-ac 0`
 - 확인(2026-11-19): 공개 주소에서 로그인 페이지 200, 더미 로그인 POST가 CSRF 403 없이 처리됨, `/user/signup/` 차단, API로 pilot_A(60)·pilot_B(60)·practice(5) 조회됨.

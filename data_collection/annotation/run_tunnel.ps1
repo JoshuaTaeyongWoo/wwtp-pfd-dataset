@@ -1,4 +1,4 @@
-# run_tunnel.ps1 — keep a Cloudflare quick tunnel to the local Label Studio alive (README_pilot §2b).
+﻿# run_tunnel.ps1 - keep a Cloudflare quick tunnel to the local Label Studio alive (README_pilot section 2b).
 #
 # Why: a quick tunnel (trycloudflare.com) is deleted on the Cloudflare side as soon as the laptop loses
 # network for a while (sleep, Wi-Fi switch). cloudflared then loops on "Unauthorized: Tunnel not found"
@@ -7,7 +7,7 @@
 #
 # Run in a normal PowerShell window (not inside the Claude app) and leave it open:
 #   powershell -ExecutionPolicy Bypass -File data_collection\annotation\run_tunnel.ps1
-# The address changes on every restart — tell the annotators the new one (tunnel_url.txt).
+# The address changes on every restart - tell the annotators the new one (tunnel_url.txt).
 # Also keep the laptop awake: powercfg /change standby-timeout-ac 0
 
 param([int]$Port = 8080)
