@@ -1,6 +1,6 @@
 # 파일럿 어노테이션 실행 안내 (60장, 어노테이터 2명 + 판정자 1명)
 
-> **현재 절차 = 쉬운 버전 v1.1b (2026-11-18)**: 1~20번 완전판, 21~60번 쉬운 버전(화살촉·글자 박스 생략, 엣지는 방향만). 적용 설정 `annotation/label_studio_config_lite.xml`(v2 그룹 배치, 2026-11-25; pilot_A·pilot_B·practice에 반영됨). 매뉴얼 `manual/WWTP_annotation_manual_v1_lite.pdf`(9쪽) + `manual/WWTP_cheat_sheet.pdf`(1쪽). 매체·역할은 내보낸 뒤 `python data_collection/s19_infer_edge_medium.py --export … --out …` 로 채운다(규칙표 `annotation/edge_medium_rules.md`). 완전판 매뉴얼(17쪽)은 본 작업용.
+> **현재 절차 = 쉬운 버전 v1.1b (2026-11-18)**: 1~20번 완전판, 21~60번 쉬운 버전(화살촉·글자 박스 생략, 엣지는 방향만). 적용 설정 `annotation/label_studio_config_lite.xml`(v2 그룹 배치, 2026-11-25; pilot_A·pilot_B·practice에 반영됨). 매뉴얼 `manual/WWTP_annotation_manual_v1_lite.pdf`(9쪽) + `manual/WWTP_cheat_sheet.pdf`(2쪽, v2 2026-11-26: 앞면은 Label Studio 버튼을 같은 순서·색·단축키로 그린 표, 뒷면은 판별·속성·선·제출; `build_cheat_sheet.py`가 설정 XML에서 버튼 목록을 읽어 생성). 매체·역할은 내보낸 뒤 `python data_collection/s19_infer_edge_medium.py --export … --out …` 로 채운다(규칙표 `annotation/edge_medium_rules.md`). 완전판 매뉴얼(17쪽)은 본 작업용.
 
 체계 동결: 태그 `taxonomy-v1.1` (커밋 03f3d10). 표본: `data/pilot/images/` 60장 (`data/pilot/pilot60.csv`).
 도구: **Label Studio** (로컬, pip 설치, 관계(엣지) 라벨 지원). CVAT는 엣지를 못 담으므로 보조.

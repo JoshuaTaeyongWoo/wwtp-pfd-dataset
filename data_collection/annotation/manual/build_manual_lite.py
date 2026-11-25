@@ -110,56 +110,5 @@ def build_lite():
     print("saved", OUT)
 
 
-def build_card():
-    D = Doc()
-    sec = D.d.sections[0]
-    sec.orientation = WD_ORIENT.LANDSCAPE; sec.page_width, sec.page_height = Cm(29.7), Cm(21.0)
-    for side in ("left_margin", "right_margin", "top_margin", "bottom_margin"):
-        setattr(sec, side, Cm(1.2))
-    D.p("어노테이션 요약 카드 (쉬운 버전 v1.1b) — 1~20번 완전판 · 21~60번 쉬운 버전", 13, True, ACCENT)
-    t = D.d.add_table(rows=1, cols=3)
-    cells = t.rows[0].cells
-    for c, w in zip(cells, (9.2, 9.2, 9.0)):
-        c.width = Cm(w)
-
-    def block(cell, title, lines, size=8.6):
-        cell.paragraphs[0].text = ""
-        set_font(cell.paragraphs[0].add_run(title), 10, True, ACCENT)
-        for ln in lines:
-            para = cell.add_paragraph(); D._runs(para, ln, size); para.paragraph_format.space_after = Pt(1); para.paragraph_format.line_spacing = 1.1
-
-    block(cells[0], "① 순서", ["1. 장치·구역 박스  2. 단자·분기·합류·계측 박스  3. 속성 5개  4. 선 긋기(r)  5. 그림 속성 → Submit",
-                              "", "**클래스 고르기**",
-                              "기포·산기 → `aerobic_zone` (숫자 3)", "교반만 + a/RAS 들어옴 → `anoxic_zone` (4)", "교반만 + 유입수 첫 구역 → `anaerobic_zone` (5)",
-                              "생물 뒤 침전지(RAS) → `secondary_clarifier` (6) / 앞 → `primary_clarifier` (2)",
-                              "혼합액 받는 막 → `mbr_unit` / 처리수 막 → `membrane_unit`", "여재·담체·디스크 → `biofilm_reactor/…` (세부형!)", "UASB류 → `anaerobic_wastewater_reactor/…` (세부형!)",
-                              "달걀·돔 + 슬러지 → `digester` (0) / 원뿔 작은 탱크 → `thickener` (9) / 원심·벨트 → `dewatering_unit`",
-                              "여과(7) / 소독(8) / 반류수만 받는 반응기 → `sidestream_reactor` / 연못·습지",
-                              "스크린(1) · 침사지 · 유량조정조 · 펌프장 · 응집탱크 · DAF",
-                              "펌프 · 송풍기 · 저류탱크 · 밸브 · 산기/교반 기호 · 가스홀더 · 발효조 · 건조/소각",
-                              "글자 없음·번호·단계 이름 → `process_unit_generic` + l1_hint + 글자", "그 외 → `unknown_equipment` + l1_hint + 글자"])
-    block(cells[1], "② 판별 한 줄", ["1차/2차 침전지: 생물반응조 **앞/뒤**. RAS 선 있으면 2차.", "농축/탈수: 소화조 **앞/뒤**. 케이크 나오면 탈수.",
-                                    "여재+공기선 → 생물여과(aerobic); 여재+탄소원선 → 생물여과(anoxic); 둘 다 없음 → 여과.",
-                                    "담체가 탱크 전체 → `mbbr_ifas` 한 박스; 일부 케이지만 → 포기조 + 자식.",
-                                    "약품은 선: `io_terminal(chemical_source)` → `junction_merge`. 탱크 있을 때만 `chemical_treatment_unit`.",
-                                    "구역 이름 없을 때: 호기조 앞 교반 구역 0 → 전부 호기 / 1 + 반송 → 무산소(MLE) / 1 유입만 → 혐기(A/O) / 2 → 혐기,무산소(A2O·UCT) / 3 → 무산소(RAS),혐기,무산소(JHB). 호기 뒤 교반 → post_anoxic. 모르면 generic+is_zone+l1_hint.",
-                                    "반류수만 받는 반응기 → `sidestream_reactor`; 본류도 받으면 구역.", "발효액이 본류로 → `fermenter`; 메탄 소화조로 → `digester`.",
-                                    "산화구 → 한 박스 `aerobic_zone`(+ 포기기 위치 구간은 자식 구역).", "상자 안 상자 → 바깥 부모, 안쪽 자식(parent_of). 거의 같은 크기면 자식 없음.",
-                                    "같은 장치 N개 → N개 모두. '×4' 글자면 1개 + n_parallel_lanes.", "SBR 단계 패널 → 패널마다 1개.",
-                                    "", "**visual_form**: 글자로만 앎 → box / 모양이 말해 줌 → symbol / 3D·아이콘 → pictorial",
-                                    "**confidence**: certain / inferred_from_text / inferred_from_context"])
-    block(cells[2], "③ 연결·속성·제출", ["**선 긋기**: 출발 클릭 → Alt+R → 도착 클릭. 기본 라벨 없음.", "예외 라벨: `no_arrow`(화살촉 없음) · `direction_unknown` · `style:dashed` · `optional` · `parent_of`(탱크→구역)",
-                                       "갈라짐·합침은 `junction_*` 박스를 거친다. 인접 구역끼리는 선 없어도 연결 + no_arrow.", "물/슬러지 종류는 고르지 않는다(자동).",
-                                       "", "**필수 속성**: visual_form · confidence · is_zone(구역) · l1_hint(generic·unknown) · label_text(generic·unknown 필수, 나머지 선택) · io_role(단자)",
-                                       "**그림 속성**: diagram_style · language · n_panels · process_configuration(캡션 공정 이름)",
-                                       "", "**완전판(1~20)만**: `arrowhead` 화살촉마다 · `text_label` 장치명/설명 · `stream_tag` 숫자 · `stream_label` 선 옆 글자(RAS, WAS…)",
-                                       "", "**안 치는 것**: 흐름선 자체, 캡션 문장, 범례, 표, 축척, 로고, 그림 제목",
-                                       "", "**애매하면**: 규칙에 가장 가까운 것 + annotator_note 한 줄. 상의 금지.",
-                                       "**단축키**: 숫자 1~0 장치 · a 펌프 · x/z 모를 때 · i/j/l 단자/분기/합류 · Alt+R 연결 · Delete 삭제 · Ctrl+Z 되돌리기 · 휠 확대 · Ctrl+Enter 제출"])
-    D.d.save(OUT_CARD)
-    print("saved", OUT_CARD)
-
-
 if __name__ == "__main__":
     build_lite()
-    build_card()
