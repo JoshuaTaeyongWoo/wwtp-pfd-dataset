@@ -38,7 +38,7 @@ def f1_workflow():
     fig, ax = plt.subplots(figsize=(11, 2.6))
     ax.set_xlim(0, 11); ax.set_ylim(0, 2.6); ax.axis("off")
     steps = [("①", "장치·구역 박스", "탱크·침전지·소화조…\n구역은 따로"), ("②", "연결 요소 박스", "화살촉·글자·단자\n분기·합류·계측"),
-             ("③", "박스 속성", "visual_form\nconfidence · label_text"), ("④", "흐름 연결(엣지)", "출발 클릭 → r →\n도착 클릭 → 라벨"),
+             ("③", "박스 속성", "visual_form\nconfidence · label_text"), ("④", "흐름 연결(엣지)", "출발 클릭 → Alt+R →\n도착 클릭 → 라벨"),
              ("⑤", "이미지 속성 · 제출", "diagram_style · language\nn_panels → Submit")]
     for i, (n, t, d) in enumerate(steps):
         x = 0.2 + i * 2.2
@@ -53,32 +53,33 @@ def f1_workflow():
 
 # ------------------------------------------------------------------ F2 UI call-outs
 def f2_ui_callouts():
-    src = sorted(glob.glob(str(Path.home() / "AppData/Local/Temp/claude/*/*/images/2.png")))
-    if not src:
-        print("F2: screenshot not found, skipped"); return
-    im = Image.open(src[-1]).convert("RGB")
+    """Call-outs on the real labeling screen (config v2 compact layout, captured 2026-11-25 into
+    figures_tutorial/U04_labeling.png, 1916x826). Falls back to skipping when the capture is missing."""
+    src = Path(__file__).resolve().parent / "figures_tutorial" / "U04_labeling.png"
+    if not src.exists():
+        print("F2: capture not found, skipped"); return
+    im = Image.open(src).convert("RGB")
     d = ImageDraw.Draw(im)
     callouts = [  # (x0,y0,x1,y1, number, label)
-        (0, 100, 232, 905, "1", "작업 목록 (1~60)"),
-        (248, 160, 1205, 870, "2", "그림 — 라벨 버튼을 누른 뒤 여기서 드래그"),
-        (1530, 210, 1575, 440, "3", "확대·이동 도구"),
-        (1600, 120, 1910, 500, "4", "Info: 선택한 박스의 속성"),
-        (1600, 530, 1910, 800, "5", "Regions / Relations 목록"),
-        (1438, 872, 1590, 915, "6", "Submit (저장, Ctrl+Enter)"),
-        (280, 878, 400, 910, "7", "되돌리기"),
+        (2, 88, 236, 822, "1", "작업 목록 (1~60)"),
+        (244, 104, 1586, 332, "2", "라벨 버튼 — 처리 단계별 줄, 접힌 줄 2개"),
+        (244, 340, 1520, 770, "3", "그림 — 버튼을 누른 뒤 여기서 드래그"),
+        (1536, 440, 1588, 656, "4", "확대·이동 도구"),
+        (1596, 88, 1912, 438, "5", "Info: 선택한 박스의 속성 (칸은 그림 아래에 펼쳐짐)"),
+        (1596, 458, 1912, 804, "6", "Regions / Relations 목록"),
+        (1428, 778, 1590, 824, "7", "Submit (저장, Ctrl+Enter)"),
+        (274, 780, 346, 822, "8", "되돌리기 / 다시 실행"),
     ]
     for x0, y0, x1, y1, n, lab in callouts:
         d.rectangle([x0, y0, x1, y1], outline="#C0392B", width=4)
-        d.ellipse([x0 - 4, y0 - 4, x0 + 44, y0 + 44], fill="#C0392B")
-        d.text((x0 + 20, y0 + 20), n, fill="white", font=font(26, True), anchor="mm")
-    # legend strip
-    strip = Image.new("RGB", (im.width, 150), "white")
+        d.ellipse([x0 - 2, y0 - 2, x0 + 40, y0 + 40], fill="#C0392B")
+        d.text((x0 + 19, y0 + 19), n, fill="white", font=font(24, True), anchor="mm")
+    strip = Image.new("RGB", (im.width, 120), "white")
     sd = ImageDraw.Draw(strip)
     for i, (_, _, _, _, n, lab) in enumerate(callouts):
-        x = 20 + (i % 4) * 470; y = 15 + (i // 4) * 60
-        sd.ellipse([x, y, x + 40, y + 40], fill="#C0392B"); sd.text((x + 20, y + 20), n, fill="white", font=font(24, True), anchor="mm")
-        sd.text((x + 52, y + 20), lab, fill="black", font=font(24), anchor="lm")
-    sd.text((20, 125), "※ 새 설정에서는 라벨 버튼(색깔 이름 목록)이 그림 위에 나타난다. 이 화면은 설정 변경 전 모습.", fill="#5C6B75", font=font(20), anchor="lm")
+        x = 20 + (i % 4) * 475; y = 12 + (i // 4) * 52
+        sd.ellipse([x, y, x + 36, y + 36], fill="#C0392B"); sd.text((x + 18, y + 18), n, fill="white", font=font(22, True), anchor="mm")
+        sd.text((x + 46, y + 18), lab, fill="black", font=font(21), anchor="lm")
     canvas = Image.new("RGB", (im.width, im.height + strip.height), "white")
     canvas.paste(im, (0, 0)); canvas.paste(strip, (0, im.height))
     canvas.save(OUT / "F2_ui_callouts.png")
@@ -225,7 +226,7 @@ def f5_edges():
     d.text(io, "io", fill=C["io"], font=font(18, True), anchor="mm")
     legend = Image.new("RGB", (im.width, 330), "white")
     ld = ImageDraw.Draw(legend)
-    ld.text((20, 14), "엣지 (출발 박스 클릭 → r → 도착 박스 클릭 → 관계 라벨)", fill="black", font=font(24, True))
+    ld.text((20, 14), "엣지 (출발 박스 클릭 → Alt+R → 도착 박스 클릭 → 관계 라벨)", fill="black", font=font(24, True))
     rows = ["파란 실선: 본류 1→2→3→4→5, 관계 라벨 liquid|arrowhead",
             "초록 실선: 우천 시 우회 1→J→6(FlexFilter)→7(펌프)→8(Bio-FlexFilter)→5, 전부 liquid|arrowhead",
             "주황 점선: 역세척 6→J→2 와 J→io(To Solids Processing), liquid|arrowhead + style:dashed + optional",

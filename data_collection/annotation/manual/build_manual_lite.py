@@ -30,14 +30,14 @@ def build_lite():
         ["② 연결 요소 박스", "유입·유출 끝(`io_terminal`), 갈라짐·합침 지점(`junction_*`), 센서 태그(`instrument`)", "함", "함"],
         ["② 연결 요소 박스", "화살촉(`arrowhead`), 글자(`text_label`·`stream_tag`·`stream_label`)", "**안 함**", "함"],
         ["③ 박스 속성", "visual_form · confidence · (구역) is_zone · (generic·unknown) l1_hint + 글자", "함", "함"],
-        ["④ 흐름 연결", "출발 박스 → r → 도착 박스. 라벨은 예외만", "함", "함"],
+        ["④ 흐름 연결", "출발 박스 → Alt+R → 도착 박스. 라벨은 예외만", "함", "함"],
         ["⑤ 그림 속성", "diagram_style · language · n_panels (+ 공정 이름)", "함", "함"],
     ], [3.0, 7.0, 3.5, 3.5], size=9.5)
 
     D.h("2. 화면과 단축키")
-    D.fig("F2_ui_callouts.png", "그림 2. 라벨 버튼은 그림 위에 있다. 박스를 고르면 ④에 속성 칸이 나온다.", 16)
-    D.table(["키", "하는 일"], [["숫자 1~0", "자주 쓰는 클래스"], ["드래그", "박스 그리기"], ["r", "연결 만들기 (출발 선택 → r → 도착 클릭)"],
-                                ["Delete / Ctrl+Z", "삭제 / 되돌리기"], ["마우스 휠", "확대 (작은 요소는 확대해서)"], ["Ctrl+Enter", "제출하고 다음 장"]], [4, 12])
+    D.fig("F2_ui_callouts.png", "그림 2. 라벨 버튼(②)은 처리 단계별로 줄을 나눠 그림 위에 있다. 박스를 고르면 그 박스의 속성 칸이 그림 아래에 펼쳐지고 ⑤에 요약이 보인다.", 16)
+    D.table(["키", "하는 일"], [["숫자 1~0", "자주 쓰는 장치 10개"], ["a · x z · i j l", "pump · generic/unknown · 단자/분기/합류"], ["드래그", "박스 그리기"], ["Alt+R", "연결 만들기 (출발 선택 → Alt+R → 도착 클릭)"],
+                                ["Backspace / Ctrl+Z", "삭제 / 되돌리기"], ["마우스 휠", "확대 (작은 요소는 확대해서)"], ["Ctrl+Enter", "제출하고 다음 장"]], [4, 12])
 
     D.h("3. 이름(클래스) 고르기")
     D.fig("F3_label_bar.png", "그림 3. 라벨 버튼 전체. 생물막·혐기성 반응기는 슬래시 뒤 세부형까지.", 15)
@@ -74,7 +74,7 @@ def build_lite():
     D.note("약품은 장치가 아니라 선입니다: 시작점 `io_terminal(chemical_source)` → 들어가는 지점 `junction_merge` → 연결. 응집 **탱크**가 그려졌을 때만 `chemical_treatment_unit`.")
 
     D.h("6. 흐름 연결(엣지): 선만 긋는다")
-    D.num("출발 장치 박스 클릭 → `r` → 도착 장치 박스 클릭. 화살표 방향이 흐름 방향.")
+    D.num("출발 장치 박스 클릭 → `Alt+R` → 도착 장치 박스 클릭. 화살표 방향이 흐름 방향.")
     D.num("기본은 라벨 없음(= 보통의 흐름). **예외일 때만** Relations 탭에서 라벨: `no_arrow`(선은 있는데 화살촉이 없음), `direction_unknown`(방향을 모름), `style:dashed`(점선), `optional`('(Optional)'·대안 경로), `parent_of`(탱크 → 구역).")
     D.num("갈라지거나 합쳐지는 곳은 반드시 `junction_*` 박스를 거칩니다(장치 → 장치로 두 갈래 직결 금지).")
     D.num("인접 구역 사이(혐기 → 무산소 → 호기)는 선이 없어도 연결하고 `no_arrow`.")
@@ -148,14 +148,14 @@ def build_card():
                                     "같은 장치 N개 → N개 모두. '×4' 글자면 1개 + n_parallel_lanes.", "SBR 단계 패널 → 패널마다 1개.",
                                     "", "**visual_form**: 글자로만 앎 → box / 모양이 말해 줌 → symbol / 3D·아이콘 → pictorial",
                                     "**confidence**: certain / inferred_from_text / inferred_from_context"])
-    block(cells[2], "③ 연결·속성·제출", ["**선 긋기**: 출발 클릭 → r → 도착 클릭. 기본 라벨 없음.", "예외 라벨: `no_arrow`(화살촉 없음) · `direction_unknown` · `style:dashed` · `optional` · `parent_of`(탱크→구역)",
+    block(cells[2], "③ 연결·속성·제출", ["**선 긋기**: 출발 클릭 → Alt+R → 도착 클릭. 기본 라벨 없음.", "예외 라벨: `no_arrow`(화살촉 없음) · `direction_unknown` · `style:dashed` · `optional` · `parent_of`(탱크→구역)",
                                        "갈라짐·합침은 `junction_*` 박스를 거친다. 인접 구역끼리는 선 없어도 연결 + no_arrow.", "물/슬러지 종류는 고르지 않는다(자동).",
                                        "", "**필수 속성**: visual_form · confidence · is_zone(구역) · l1_hint(generic·unknown) · label_text(generic·unknown 필수, 나머지 선택) · io_role(단자)",
                                        "**그림 속성**: diagram_style · language · n_panels · process_configuration(캡션 공정 이름)",
                                        "", "**완전판(1~20)만**: `arrowhead` 화살촉마다 · `text_label` 장치명/설명 · `stream_tag` 숫자 · `stream_label` 선 옆 글자(RAS, WAS…)",
                                        "", "**안 치는 것**: 흐름선 자체, 캡션 문장, 범례, 표, 축척, 로고, 그림 제목",
                                        "", "**애매하면**: 규칙에 가장 가까운 것 + annotator_note 한 줄. 상의 금지.",
-                                       "**단축키**: 숫자 1~0 클래스 · r 연결 · Delete 삭제 · Ctrl+Z 되돌리기 · 휠 확대 · Ctrl+Enter 제출"])
+                                       "**단축키**: 숫자 1~0 장치 · a 펌프 · x/z 모를 때 · i/j/l 단자/분기/합류 · Alt+R 연결 · Delete 삭제 · Ctrl+Z 되돌리기 · 휠 확대 · Ctrl+Enter 제출"])
     D.d.save(OUT_CARD)
     print("saved", OUT_CARD)
 
